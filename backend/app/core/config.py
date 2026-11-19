@@ -1,6 +1,10 @@
 import os
+from pathlib import Path
 from typing import Literal, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DEFAULT_SQLITE_PATH = (BASE_DIR / "modularmenu.db").as_posix()
 
 
 class Settings(BaseSettings):
@@ -27,7 +31,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
 
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./modularmenu.db"
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{DEFAULT_SQLITE_PATH}"
     # In production PostgreSQL: "postgresql+asyncpg://postgres:password@localhost:5432/modularmenu"
     DB_ECHO: bool = False
     DB_POOL_SIZE: int = 10
