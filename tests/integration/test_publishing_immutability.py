@@ -114,3 +114,56 @@ async def test_publishing_creates_immutable_snapshot_and_serves_publicly(client:
     assert public_res_v2.status_code == 200
     assert public_res_v2.json()["version_number"] == 2
     assert len(public_res_v2.json()["data"]["categories"][0]["items"]) == 2
+
+
+@pytest.mark.asyncio
+async def test_arc02_004_theme_change_does_not_mutate_catalog(client: AsyncClient):
+    """
+    ARC02-004 / Principle P-05:
+    Updating a restaurant's theme preset or design tokens must NEVER alter,
+    duplicate, or modify menu item records, category structures, or prices.
+    """
+    reg = await client.post("/api/v1/auth/register", json={
+        "email": "theme_iso_chef@resto.com",
+        "password": "Password123!",
+        "full_name": "Theme Tester",
+        "organization_name": "Theme Group",
+        "restaurant_name": "Theme Bistro"
+    })
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    rest_id = (await client.get("/api/v1/restaurants", headers=headers)).json()[0]["id"]
+
+    # Create menu and item
+    menu = (await client.post(
+        f"/api/v1/restaurants/{rest_id}/menus",
+        headers=headers,
+        json={"name": "Brunch", "slug": "brunch"}
+    )).json()
+    cat = (await client.post(
+        f"/api/v1/restaurants/{rest_id}/menus/{menu['id']}/categories",
+        headers=headers,
+        json={"name": "Mains"}
+    )).json()
+    item = (await client.post(
+        f"/api/v1/restaurants/{rest_id}/categories/{cat['id']}/items",
+        headers=headers,
+        json={"name": "Avocado Sourdough", "base_price": "395.00", "currency_code": "INR"}
+    )).json()
+
+    # Capture original item attributes
+    orig_name = item["name"]
+    orig_price = item["base_price"]
+
+    # Now change theme to "minimal" with custom colors
+    theme_resp = await client.put(
+        f"/api/v1/restaurants/{rest_id}/design",
+        headers=headers,
+        json={"theme_key": "minimal", "custom_tokens": {"colors": {"primary": "#111111"}}}
+    )
+    assert theme_resp.status_code == 200
+
+    # Retrieve menu item again and assert complete immutability of catalog
+    refetched_item = (await client.get(f"/api/v1/restaurants/{rest_id}/items/{item['id']}", headers=headers)).json()
+    assert refetched_item["name"] == orig_name
+    assert str(refetched_item["base_price"]) == str(orig_price)

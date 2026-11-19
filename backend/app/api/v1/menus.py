@@ -1,6 +1,6 @@
 import uuid
 from typing import Dict, List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -26,6 +26,8 @@ router = APIRouter(tags=["Menus & Items"])
 @router.get("/restaurants/{restaurant_id}/menus", response_model=List[MenuOut])
 async def list_menus(
     restaurant_id: uuid.UUID,
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
     restaurant: Restaurant = Depends(verify_restaurant_access),
     db: AsyncSession = Depends(get_db)
 ):
@@ -33,6 +35,8 @@ async def list_menus(
         select(Menu)
         .where(Menu.restaurant_id == restaurant.id)
         .order_by(Menu.sort_order.asc(), Menu.created_at.asc())
+        .limit(limit)
+        .offset(offset)
     )
     result = await db.execute(stmt)
     return result.scalars().all()
@@ -230,7 +234,43 @@ async def create_item(
         category_id=item.category_id,
         name=item.name,
         description=item.description,
-        base_price=float(item.base_price),
+        base_price=item.base_price,
+        currency_code=item.currency_code,
+        dietary_type=item.dietary_type,
+        spice_level=item.spice_level,
+        image_url=item.image_url,
+        ingredients=item.ingredients,
+        allergens=item.allergens,
+        is_available=item.is_available,
+        is_featured=item.is_featured,
+        sort_order=item.sort_order,
+        variants=[]
+    )
+
+
+@router.get("/restaurants/{restaurant_id}/items/{item_id}", response_model=MenuItemOut)
+async def get_item(
+    restaurant_id: uuid.UUID,
+    item_id: uuid.UUID,
+    restaurant: Restaurant = Depends(verify_restaurant_access),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = (
+        select(MenuItem)
+        .options(selectinload(MenuItem.variants))
+        .where(MenuItem.id == item_id, MenuItem.restaurant_id == restaurant.id)
+    )
+    result = await db.execute(stmt)
+    item = result.scalars().first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found for this restaurant.")
+
+    return MenuItemOut(
+        id=item.id,
+        category_id=item.category_id,
+        name=item.name,
+        description=item.description,
+        base_price=item.base_price,
         currency_code=item.currency_code,
         dietary_type=item.dietary_type,
         spice_level=item.spice_level,
@@ -271,7 +311,7 @@ async def update_item(
         category_id=item.category_id,
         name=item.name,
         description=item.description,
-        base_price=float(item.base_price),
+        base_price=item.base_price,
         currency_code=item.currency_code,
         dietary_type=item.dietary_type,
         spice_level=item.spice_level,

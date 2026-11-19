@@ -40,3 +40,39 @@ async def test_unauthorized_returns_rfc7807_format(client: AsyncClient):
     assert data["title"] == "Unauthorized"
     assert "detail" in data
     assert "instance" in data
+
+
+@pytest.mark.asyncio
+async def test_arc02_api_002_invalid_pagination_returns_rfc7807_validation_error(client: AsyncClient):
+    """
+    ARC02-API-002:
+    Passing invalid pagination parameters (e.g. limit=0, offset=-1) must trigger
+    a 422 Unprocessable Entity error formatted as RFC 7807 problem details.
+    """
+    # 1. Register a user to obtain auth token
+    reg = await client.post("/api/v1/auth/register", json={
+        "email": "page_tester@resto.com",
+        "password": "Password123!",
+        "full_name": "Pagination Tester",
+        "organization_name": "Page Org",
+        "restaurant_name": "Page Cafe"
+    })
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Query with limit=0 (fails ge=1 constraint)
+    resp = await client.get("/api/v1/restaurants?limit=0", headers=headers)
+    assert resp.status_code == 422
+    assert resp.headers.get("content-type") == "application/problem+json"
+
+    data = resp.json()
+    assert data["status"] == 422
+    assert data["title"] == "Validation Error"
+    assert "invalid_params" in data
+    assert any("limit" in str(err) for err in data["invalid_params"])
+
+    # Query with offset=-5 (fails ge=0 constraint)
+    resp2 = await client.get("/api/v1/restaurants?offset=-5", headers=headers)
+    assert resp2.status_code == 422
+    data2 = resp2.json()
+    assert any("offset" in str(err) for err in data2["invalid_params"])

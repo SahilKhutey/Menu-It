@@ -50,14 +50,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     content = {
         "type": "https://errors.modularmenu.in/validation-error",
         "title": "Validation Error",
-        "status": status.HTTP_422_UNPROCESSABLE_ENTITY,
+        "status": 422,
         "detail": "Request payload failed schema validation",
         "instance": request.url.path,
         "invalid_params": exc.errors()
     }
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=422,
         content=content,
         headers={"Content-Type": "application/problem+json"}
     )

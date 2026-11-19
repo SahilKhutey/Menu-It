@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.modularmenu.in/published-snapshot-v1.json",
+  "title": "Published Menu Snapshot Schema",
+  "description": "Immutable compiled menu snapshot served directly to diner QR scans (ARC-02 §3.7, §6.5).",
+  "type": "object",
+  "required": [
+    "id",
+    "menu_id",
+    "version_number",
+    "checksum",
+    "data",
+    "published_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "menu_id": { "type": "string", "format": "uuid" },
+    "version_number": { "type": "integer", "minimum": 1 },
+    "checksum": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "published_at": { "type": "string", "format": "date-time" },
+    "data": {
+      "type": "object",
+      "required": ["restaurant", "menu", "theme", "categories"],
+      "properties": {
+        "restaurant": {
+          "type": "object",
+          "required": ["id", "name", "slug"],
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "name": { "type": "string" },
+            "slug": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "logo_url": { "type": ["string", "null"] },
+            "cover_url": { "type": ["string", "null"] }
+          }
+        },
+        "menu": {
+          "type": "object",
+          "required": ["id", "name", "slug"],
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "name": { "type": "string" },
+            "slug": { "type": "string" },
+            "menu_type": { "type": "string" }
+          }
+        },
+        "theme": {
+          "type": "object",
+          "required": ["theme_key", "tokens"],
+          "properties": {
+            "theme_key": { "type": "string" },
+            "tokens": { "type": "object" }
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "items"],
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "name": { "type": "string" },
+              "description": { "type": ["string", "null"] },
+              "sort_order": { "type": "integer" },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id", "name", "base_price", "currency_code", "dietary_type"],
+                  "properties": {
+                    "id": { "type": "string", "format": "uuid" },
+                    "name": { "type": "string" },
+                    "description": { "type": ["string", "null"] },
+                    "base_price": { "type": "number" },
+                    "currency_code": { "type": "string" },
+                    "dietary_type": { "type": "string" },
+                    "spice_level": { "type": "string" },
+                    "ingredients": { "type": "array", "items": { "type": "string" } },
+                    "allergens": { "type": "array", "items": { "type": "string" } },
+                    "is_available": { "type": "boolean" },
+                    "variants": { "type": "array" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

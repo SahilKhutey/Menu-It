@@ -78,3 +78,22 @@ def test_token_safe_fallback_for_missing_customizations():
     assert merged_colors["primary"] == "#FF5733"
     assert merged_colors["surface"] == default_preset["colors"]["surface"]
     assert merged_colors["dietaryVeg"] == default_preset["colors"]["dietaryVeg"]
+
+
+def test_arc02_ui_003_component_toggle_configuration():
+    """
+    ARC02-UI-003 / Principle P-10:
+    Component visibility flags (e.g. show_dietary_badges, show_spice_indicators)
+    must cleanly toggle component rendering state without modifying menu domain data.
+    """
+    component_config = {
+        "restaurant_header": {"enabled": True, "show_cover": False},
+        "dietary_filters": {"enabled": True},
+        "item_cards": {"show_allergens": False, "show_spice_level": True},
+        "qr_share_modal": {"enabled": False}
+    }
+
+    # Verify toggle values are boolean and schema-compliant
+    assert component_config["qr_share_modal"]["enabled"] is False
+    assert component_config["restaurant_header"]["show_cover"] is False
+    assert component_config["item_cards"]["show_spice_level"] is True

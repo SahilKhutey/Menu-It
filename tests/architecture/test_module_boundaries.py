@@ -46,7 +46,7 @@ def get_imports_from_ast(filepath: Path):
 
 def test_domain_modules_do_not_import_api_layer():
     """
-    MOD-001 / Principle P-02:
+    MOD-001 / Principle P-02 / ARC02-001:
     Domain modules (backend/app/modules/*) must NEVER depend on the API delivery layer (app.api).
     Communication flow is strictly API -> Application -> Domain -> Infrastructure.
     """
@@ -58,6 +58,24 @@ def test_domain_modules_do_not_import_api_layer():
                 violations.append(f"{filepath.relative_to(REPO_ROOT)} imports API layer: '{imp}'")
 
     assert not violations, f"Architectural violation (P-02): Domain modules must not depend on API layer:\n" + "\n".join(violations)
+
+
+def test_arc02_003_domain_models_do_not_import_http_framework():
+    """
+    ARC02-003 / Principle P-02:
+    Domain entity models must be pure database representations and never depend on HTTP frameworks (FastAPI/Starlette).
+    """
+    http_frameworks = {"fastapi", "starlette", "flask", "django"}
+    violations = []
+    for filepath in get_python_files(MODULES_DIR):
+        if filepath.name == "models.py":
+            imports = get_imports_from_ast(filepath)
+            for imp in imports:
+                top_pkg = imp.split(".")[0]
+                if top_pkg in http_frameworks:
+                    violations.append(f"{filepath.relative_to(REPO_ROOT)} imports HTTP framework '{imp}'")
+
+    assert not violations, f"Architectural violation (ARC02-003): Domain models depend on HTTP framework:\n" + "\n".join(violations)
 
 
 def test_no_private_cross_module_imports():

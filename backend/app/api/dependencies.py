@@ -113,3 +113,14 @@ def require_role(allowed_roles: List[str]) -> Callable:
                 detail=f"Action requires one of the following roles: {allowed_roles}"
             )
     return role_checker
+
+
+async def require_platform_admin(
+    user: User = Depends(get_current_user)
+) -> User:
+    if not user.is_platform_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Platform administration privileges required."
+        )
+    return user

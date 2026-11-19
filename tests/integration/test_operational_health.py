@@ -32,3 +32,20 @@ def test_dual_profile_configuration_settings():
     assert settings.DEPLOYMENT_MODE in ["managed", "customer_hosted"]
     assert settings.API_V1_PREFIX == "/api/v1"
     assert settings.ALGORITHM == "HS256"
+
+
+@pytest.mark.asyncio
+async def test_arc02_007_core_module_resilience_without_redis(client: AsyncClient):
+    """
+    ARC02-007 / ARC02-OPS-004:
+    Core platform functionality (public menu reading, authentication, menu catalog)
+    must remain fully operational when Redis is unavailable or unconfigured.
+    """
+    # The application defaults REDIS_URL to None or unconfigured in standard deployment
+    health_resp = await client.get("/health")
+    assert health_resp.status_code == 200
+
+    # Verify public route functions without external cache cluster
+    pub_resp = await client.get("/api/v1/public/restaurants/the-bombay-canteen/menu")
+    # Returns 404 or 200 depending on DB state, but critically NOT a 500 error connecting to Redis
+    assert pub_resp.status_code in [200, 404]

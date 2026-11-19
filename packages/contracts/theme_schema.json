@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.modularmenu.in/theme-v1.json",
+  "title": "ModularMenu Theme Configuration",
+  "description": "Schema definition for restaurant menu visual design tokens (ARC-02 §6.1).",
+  "type": "object",
+  "required": ["colors", "typography", "layout"],
+  "properties": {
+    "colors": {
+      "type": "object",
+      "required": [
+        "surface",
+        "surfaceElevated",
+        "surfaceMuted",
+        "textPrimary",
+        "textMuted",
+        "primary",
+        "primaryForeground",
+        "accent",
+        "border",
+        "dietaryVeg",
+        "dietaryNonVeg",
+        "dietaryEgg"
+      ],
+      "properties": {
+        "surface": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "surfaceElevated": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "surfaceMuted": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "textPrimary": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "textMuted": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "primary": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "primaryForeground": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "accent": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "border": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "dietaryVeg": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "dietaryNonVeg": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+        "dietaryEgg": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" }
+      },
+      "additionalProperties": false
+    },
+    "typography": {
+      "type": "object",
+      "required": ["fontHeading", "fontBody", "fontPrice", "baseSize", "scaleRatio"],
+      "properties": {
+        "fontHeading": { "type": "string" },
+        "fontBody": { "type": "string" },
+        "fontPrice": { "type": "string" },
+        "baseSize": { "type": "number", "minimum": 12, "maximum": 24 },
+        "scaleRatio": { "type": "number", "minimum": 1.1, "maximum": 1.5 }
+      },
+      "additionalProperties": false
+    },
+    "layout": {
+      "type": "object",
+      "required": ["borderRadius", "cardStyle", "itemSpacing", "imageAspectRatio"],
+      "properties": {
+        "borderRadius": { "type": "string", "enum": ["none", "sm", "md", "lg", "full"] },
+        "cardStyle": { "type": "string", "enum": ["flat", "bordered", "elevated", "glass"] },
+        "itemSpacing": { "type": "string", "enum": ["compact", "comfortable", "spacious"] },
+        "imageAspectRatio": { "type": "string", "enum": ["square", "video", "portrait", "none"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

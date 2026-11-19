@@ -88,3 +88,94 @@ async def test_tampered_token_rejected(client: AsyncClient):
     tampered_headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.tampered_signature"}
     resp = await client.get("/api/v1/restaurants", headers=tampered_headers)
     assert resp.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_arc02_sec_003_menu_editor_denied_platform_admin(client: AsyncClient):
+    """
+    ARC02-SEC-003:
+    A standard restaurant user (non-platform admin) attempting to access
+    platform administration endpoints must receive HTTP 403 Forbidden.
+    """
+    reg = await client.post("/api/v1/auth/register", json={
+        "email": "editor_user@resto.com",
+        "password": "Password123!",
+        "full_name": "Menu Editor",
+        "organization_name": "Editor Org",
+        "restaurant_name": "Editor Bistro"
+    })
+    assert reg.status_code == 201
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # Attempt to access platform admin route
+    resp = await client.get("/api/v1/platform/overview", headers=headers)
+    assert resp.status_code == 403
+    assert "Platform administration privileges required" in resp.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_arc02_sec_004_unpublished_menu_inaccessible_to_public(client: AsyncClient):
+    """
+    ARC02-SEC-004:
+    A public diner attempting to read a restaurant's menu before it has been published
+    must receive HTTP 404 Not Found.
+    """
+    reg = await client.post("/api/v1/auth/register", json={
+        "email": "draft_chef@resto.com",
+        "password": "Password123!",
+        "full_name": "Draft Chef",
+        "organization_name": "Draft Group",
+        "restaurant_name": "Draft Cafe Only"
+    })
+    assert reg.status_code == 201
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    rests = await client.get("/api/v1/restaurants", headers=headers)
+    rest_slug = rests.json()[0]["slug"]
+
+    # Public attempts to read menu before publish
+    pub_resp = await client.get(f"/api/v1/public/restaurants/{rest_slug}/menu")
+    assert pub_resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_arc02_sec_006_malformed_configuration_rejected(client: AsyncClient):
+    """
+    ARC02-SEC-006:
+    Submitting malformed or invalid theme/layout configurations must be rejected with 422.
+    """
+    reg = await client.post("/api/v1/auth/register", json={
+        "email": "cfg_chef@resto.com",
+        "password": "Password123!",
+        "full_name": "Config Chef",
+        "organization_name": "Config Group",
+        "restaurant_name": "Config Cafe"
+    })
+    assert reg.status_code == 201
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    rests = await client.get("/api/v1/restaurants", headers=headers)
+    rest_id = rests.json()[0]["id"]
+
+    # Attempt invalid payload (e.g. non-dictionary tokens)
+    resp = await client.put(
+        f"/api/v1/restaurants/{rest_id}/design",
+        headers=headers,
+        json={"theme_key": 12345, "custom_tokens": "not-a-dict"}
+    )
+    assert resp.status_code == 422
+
+
+def test_arc02_sec_007_no_committed_secrets():
+    """
+    ARC02-SEC-007:
+    Repository must not contain committed production secret files (.env, private keys).
+    """
+    from pathlib import Path
+    repo_root = Path(__file__).resolve().parent.parent.parent
+    forbidden_files = [".env", "id_rsa", "credentials.json", "private_key.pem"]
+    for f in forbidden_files:
+        p = repo_root / f
+        assert not p.exists() or p.is_dir(), f"Security violation (ARC02-SEC-007): Secret file committed: {f}"

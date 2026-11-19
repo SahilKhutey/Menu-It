@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.modularmenu.in/component-registry-v1.json",
+  "version": "1.0.0",
+  "components": [
+    {
+      "id": "restaurant-header",
+      "name": "Restaurant Hero & Brand Header",
+      "schema_version": 1,
+      "category": "navigation",
+      "availability": "enabled",
+      "renderer_mapping": "RestaurantHeader",
+      "properties": {
+        "showCover": { "type": "boolean", "default": true },
+        "showLogo": { "type": "boolean", "default": true },
+        "showDescription": { "type": "boolean", "default": true },
+        "headerAlignment": { "type": "string", "enum": ["left", "center"], "default": "center" }
+      },
+      "responsive_rules": {
+        "mobile": { "coverHeight": "140px" },
+        "desktop": { "coverHeight": "240px" }
+      }
+    },
+    {
+      "id": "category-sticky-nav",
+      "name": "Sticky Category Quick Navigation",
+      "schema_version": 1,
+      "category": "navigation",
+      "availability": "enabled",
+      "renderer_mapping": "CategoryStickyNav",
+      "properties": {
+        "style": { "type": "string", "enum": ["pills", "underline"], "default": "pills" },
+        "showItemCount": { "type": "boolean", "default": true }
+      },
+      "responsive_rules": {
+        "mobile": { "sticky": true, "scrollable": true }
+      }
+    },
+    {
+      "id": "dietary-filter-bar",
+      "name": "Dietary Preference Filter Bar",
+      "schema_version": 1,
+      "category": "filter",
+      "availability": "enabled",
+      "renderer_mapping": "DietaryFilterBar",
+      "properties": {
+        "showVeg": { "type": "boolean", "default": true },
+        "showNonVeg": { "type": "boolean", "default": true },
+        "showEgg": { "type": "boolean", "default": true },
+        "showVegan": { "type": "boolean", "default": true },
+        "showJain": { "type": "boolean", "default": true }
+      },
+      "responsive_rules": {
+        "mobile": { "compact": true }
+      }
+    },
+    {
+      "id": "menu-item-card",
+      "name": "Standard Menu Item Card",
+      "schema_version": 1,
+      "category": "content",
+      "availability": "enabled",
+      "renderer_mapping": "MenuItemCard",
+      "properties": {
+        "showImage": { "type": "boolean", "default": true },
+        "showDietaryBadge": { "type": "boolean", "default": true },
+        "showSpiceLevel": { "type": "boolean", "default": true },
+        "showIngredients": { "type": "boolean", "default": true },
+        "showAllergens": { "type": "boolean", "default": true }
+      },
+      "responsive_rules": {
+        "mobile": { "layout": "row", "imageSize": "80px" },
+        "desktop": { "layout": "row", "imageSize": "100px" }
+      }
+    },
+    {
+      "id": "qr-share-modal",
+      "name": "Diner QR Sharing & Table Modal",
+      "schema_version": 1,
+      "category": "utility",
+      "availability": "enabled",
+      "renderer_mapping": "QrShareModal",
+      "properties": {
+        "allowDirectDownload": { "type": "boolean", "default": true },
+        "customTitle": { "type": "string", "default": "Scan & Share Menu" }
+      },
+      "responsive_rules": {
+        "mobile": { "modalType": "bottom-sheet" },
+        "desktop": { "modalType": "dialog" }
+      }
+    }
+  ]
+}
