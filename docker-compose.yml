@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: modularmenu_postgres
+    environment:
+      POSTGRES_USER: modularmenu
+      POSTGRES_PASSWORD: devpassword123
+      POSTGRES_DB: modularmenu_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modularmenu -d modularmenu_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: modularmenu_backend
+    environment:
+      DEPLOYMENT_MODE: managed
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql+asyncpg://modularmenu:devpassword123@postgres:5432/modularmenu_db
+      SECRET_KEY: dev-jwt-super-secret-key-32-chars-long
+      PUBLIC_BASE_URL: http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - backend_uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: modularmenu_frontend
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  postgres_data:
+  backend_uploads:

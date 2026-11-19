@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+  }
+
+  body {
+    background-color: var(--theme-surface, #ffffff);
+    color: var(--theme-text-primary, #09090b);
+    font-family: var(--theme-font-body, system-ui, -apple-system, sans-serif);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Hide scrollbar for category jump pills */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

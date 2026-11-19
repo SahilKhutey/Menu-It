@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: modularmenu_customer_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-modularmenu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_db_password}
+      POSTGRES_DB: ${POSTGRES_DB:-modularmenu_db}
+    volumes:
+      - customer_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modularmenu -d modularmenu_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: modularmenu/backend:latest
+    container_name: modularmenu_customer_api
+    restart: unless-stopped
+    environment:
+      DEPLOYMENT_MODE: self_hosted
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-modularmenu}:${POSTGRES_PASSWORD:-secure_db_password}@postgres:5432/${POSTGRES_DB:-modularmenu_db}
+      SECRET_KEY: ${SECRET_KEY}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL}
+      LICENSE_KEY: ${LICENSE_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - customer_media_storage:/app/uploads
+
+  frontend:
+    image: modularmenu/frontend:latest
+    container_name: modularmenu_customer_web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  customer_db_data:
+  customer_media_storage:

@@ -1,0 +1,208 @@
+from typing import Any, Dict, List
+
+THEME_PRESETS: List[Dict[str, Any]] = [
+    {
+        "name": "Luxury",
+        "theme_key": "luxury",
+        "is_system_preset": True,
+        "tokens": {
+            "colors": {
+                "surface": "#0D0E12",
+                "surfaceElevated": "#16181F",
+                "surfaceMuted": "#222530",
+                "textPrimary": "#F8F9FA",
+                "textMuted": "#9CA3AF",
+                "primary": "#D4AF37",
+                "primaryForeground": "#0D0E12",
+                "accent": "#E5C365",
+                "border": "#2D3139",
+                "dietaryVeg": "#22C55E",
+                "dietaryNonVeg": "#EF4444",
+                "dietaryEgg": "#F59E0B"
+            },
+            "typography": {
+                "fontHeading": "Cinzel",
+                "fontBody": "Plus Jakarta Sans",
+                "fontPrice": "Cinzel",
+                "baseSize": 16,
+                "scaleRatio": 1.25
+            },
+            "layout": {
+                "borderRadius": "sm",
+                "cardStyle": "elevated",
+                "itemSpacing": "comfortable",
+                "imageAspectRatio": "portrait"
+            }
+        }
+    },
+    {
+        "name": "Minimal",
+        "theme_key": "minimal",
+        "is_system_preset": True,
+        "tokens": {
+            "colors": {
+                "surface": "#FFFFFF",
+                "surfaceElevated": "#F4F4F5",
+                "surfaceMuted": "#E4E4E7",
+                "textPrimary": "#09090B",
+                "textMuted": "#71717A",
+                "primary": "#18181B",
+                "primaryForeground": "#FFFFFF",
+                "accent": "#71717A",
+                "border": "#E4E4E7",
+                "dietaryVeg": "#16A34A",
+                "dietaryNonVeg": "#DC2626",
+                "dietaryEgg": "#D97706"
+            },
+            "typography": {
+                "fontHeading": "Inter",
+                "fontBody": "Inter",
+                "fontPrice": "Inter",
+                "baseSize": 16,
+                "scaleRatio": 1.2
+            },
+            "layout": {
+                "borderRadius": "none",
+                "cardStyle": "bordered",
+                "itemSpacing": "compact",
+                "imageAspectRatio": "square"
+            }
+        }
+    },
+    {
+        "name": "Rustic",
+        "theme_key": "rustic",
+        "is_system_preset": True,
+        "tokens": {
+            "colors": {
+                "surface": "#FBF9F5",
+                "surfaceElevated": "#FFFFFF",
+                "surfaceMuted": "#F0EBE1",
+                "textPrimary": "#292524",
+                "textMuted": "#78716C",
+                "primary": "#78350F",
+                "primaryForeground": "#FFFFFF",
+                "accent": "#B45309",
+                "border": "#E7E0D3",
+                "dietaryVeg": "#15803D",
+                "dietaryNonVeg": "#B91C1C",
+                "dietaryEgg": "#B45309"
+            },
+            "typography": {
+                "fontHeading": "Merriweather",
+                "fontBody": "Lora",
+                "fontPrice": "Merriweather",
+                "baseSize": 16,
+                "scaleRatio": 1.25
+            },
+            "layout": {
+                "borderRadius": "md",
+                "cardStyle": "elevated",
+                "itemSpacing": "comfortable",
+                "imageAspectRatio": "portrait"
+            }
+        }
+    },
+    {
+        "name": "Vibrant",
+        "theme_key": "vibrant",
+        "is_system_preset": True,
+        "tokens": {
+            "colors": {
+                "surface": "#FFFDF9",
+                "surfaceElevated": "#FFFFFF",
+                "surfaceMuted": "#FEF3C7",
+                "textPrimary": "#1E1B4B",
+                "textMuted": "#6B7280",
+                "primary": "#E11D48",
+                "primaryForeground": "#FFFFFF",
+                "accent": "#F59E0B",
+                "border": "#FDE68A",
+                "dietaryVeg": "#16A34A",
+                "dietaryNonVeg": "#E11D48",
+                "dietaryEgg": "#F59E0B"
+            },
+            "typography": {
+                "fontHeading": "Outfit",
+                "fontBody": "Plus Jakarta Sans",
+                "fontPrice": "Outfit",
+                "baseSize": 16,
+                "scaleRatio": 1.25
+            },
+            "layout": {
+                "borderRadius": "lg",
+                "cardStyle": "elevated",
+                "itemSpacing": "spacious",
+                "imageAspectRatio": "video"
+            }
+        }
+    },
+    {
+        "name": "Contemporary",
+        "theme_key": "contemporary",
+        "is_system_preset": True,
+        "tokens": {
+            "colors": {
+                "surface": "#F8FAFC",
+                "surfaceElevated": "#FFFFFF",
+                "surfaceMuted": "#F1F5F9",
+                "textPrimary": "#0F172A",
+                "textMuted": "#64748B",
+                "primary": "#2563EB",
+                "primaryForeground": "#FFFFFF",
+                "accent": "#06B6D4",
+                "border": "#E2E8F0",
+                "dietaryVeg": "#16A34A",
+                "dietaryNonVeg": "#DC2626",
+                "dietaryEgg": "#D97706"
+            },
+            "typography": {
+                "fontHeading": "Cabinet Grotesk",
+                "fontBody": "Inter",
+                "fontPrice": "Cabinet Grotesk",
+                "baseSize": 16,
+                "scaleRatio": 1.2
+            },
+            "layout": {
+                "borderRadius": "md",
+                "cardStyle": "bordered",
+                "itemSpacing": "comfortable",
+                "imageAspectRatio": "square"
+            }
+        }
+    },
+    {
+        "name": "Editorial",
+        "theme_key": "editorial",
+        "is_system_preset": True,
+        "tokens": {
+            "colors": {
+                "surface": "#FAFAFA",
+                "surfaceElevated": "#FFFFFF",
+                "surfaceMuted": "#F5F5F5",
+                "textPrimary": "#171717",
+                "textMuted": "#737373",
+                "primary": "#262626",
+                "primaryForeground": "#FFFFFF",
+                "accent": "#A3A3A3",
+                "border": "#E5E5E5",
+                "dietaryVeg": "#16A34A",
+                "dietaryNonVeg": "#DC2626",
+                "dietaryEgg": "#CA8A04"
+            },
+            "typography": {
+                "fontHeading": "Playfair Display",
+                "fontBody": "Source Serif 4",
+                "fontPrice": "Playfair Display",
+                "baseSize": 16,
+                "scaleRatio": 1.333
+            },
+            "layout": {
+                "borderRadius": "none",
+                "cardStyle": "flat",
+                "itemSpacing": "spacious",
+                "imageAspectRatio": "video"
+            }
+        }
+    }
+]

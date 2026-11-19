@@ -1,0 +1,50 @@
+import os
+from typing import Literal, Optional
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
+
+    # Core Application
+    PROJECT_NAME: str = "ModularMenu"
+    VERSION: str = "1.0.0"
+    ENVIRONMENT: Literal["development", "staging", "production", "test"] = "development"
+    DEPLOYMENT_MODE: Literal["managed", "self_hosted"] = "managed"
+    DEBUG: bool = True
+
+    # Public URLs
+    PUBLIC_BASE_URL: str = "http://localhost:3000"
+    API_V1_PREFIX: str = "/api/v1"
+
+    # Security
+    SECRET_KEY: str = "dev-insecure-secret-key-change-in-production-min-32-chars"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+    ALGORITHM: str = "HS256"
+
+    # Database
+    DATABASE_URL: str = "sqlite+aiosqlite:///./modularmenu.db"
+    # In production PostgreSQL: "postgresql+asyncpg://postgres:password@localhost:5432/modularmenu"
+    DB_ECHO: bool = False
+    DB_POOL_SIZE: int = 10
+    DB_MAX_OVERFLOW: int = 20
+
+    # Storage
+    STORAGE_PROVIDER: Literal["local", "s3"] = "local"
+    STORAGE_LOCAL_PATH: str = "./uploads"
+    S3_BUCKET: Optional[str] = None
+    S3_REGION: str = "ap-south-1"
+    S3_ENDPOINT_URL: Optional[str] = None
+    S3_ACCESS_KEY: Optional[str] = None
+    S3_SECRET_KEY: Optional[str] = None
+
+    # Customer Hosted Licensing
+    LICENSE_KEY: Optional[str] = None
+    LICENSE_GRACE_PERIOD_DAYS: int = 30
+
+
+settings = Settings()
