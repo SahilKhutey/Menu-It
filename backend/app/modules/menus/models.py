@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Any, Dict, List, Optional
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.dialects.sqlite import JSON as SQLITE_JSON
@@ -85,7 +86,7 @@ class MenuItem(Base, TimestampMixin):
     )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    base_price: Mapped[float] = mapped_column(Numeric(12, 2), default=0.00, nullable=False)
+    base_price: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     currency_code: Mapped[str] = mapped_column(String(3), default="INR", nullable=False)
     dietary_type: Mapped[str] = mapped_column(String(30), default="vegetarian", nullable=False)
     # veg, non_veg, egg, vegan, jain
@@ -118,7 +119,7 @@ class ItemVariant(Base):
         GUID(), ForeignKey("menu_items.id", ondelete="CASCADE"), nullable=False, index=True
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    price_delta: Mapped[float] = mapped_column(Numeric(12, 2), default=0.00, nullable=False)
+    price_delta: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     is_available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
@@ -133,7 +134,7 @@ class Addon(Base):
         GUID(), ForeignKey("restaurants.id", ondelete="CASCADE"), nullable=False, index=True
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    price_delta: Mapped[float] = mapped_column(Numeric(12, 2), default=0.00, nullable=False)
+    price_delta: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"), nullable=False)
     is_available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 

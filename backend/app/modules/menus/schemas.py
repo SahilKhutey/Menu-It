@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from decimal import Decimal
 from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -7,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 # Item Variant & Addon Schemas
 class ItemVariantBase(BaseModel):
     name: str
-    price_delta: float = 0.00
+    price_delta: Decimal = Decimal("0.00")
     is_available: bool = True
     sort_order: int = 0
 
@@ -25,7 +26,7 @@ class ItemVariantOut(ItemVariantBase):
 
 class AddonBase(BaseModel):
     name: str
-    price_delta: float = 0.00
+    price_delta: Decimal = Decimal("0.00")
     is_available: bool = True
 
 
@@ -43,7 +44,7 @@ SpiceLevel = Literal["none", "mild", "medium", "hot", "extra_hot"]
 class MenuItemBase(BaseModel):
     name: str
     description: Optional[str] = None
-    base_price: float = Field(default=0.00, ge=0)
+    base_price: Decimal = Field(default=Decimal("0.00"), ge=0)
     currency_code: str = "INR"
     dietary_type: DietaryType = "vegetarian"
     spice_level: SpiceLevel = "none"

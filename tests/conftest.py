@@ -1,12 +1,33 @@
-import os
+import sys
+from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
+
+# Ensure backend/ is in sys.path
+REPO_ROOT = Path(__file__).resolve().parent.parent
+BACKEND_DIR = REPO_ROOT / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
 from app.core.database import Base, get_db
+# Explicitly import all domain models so Base.metadata is fully populated
+from app.modules.identity.models import Organization, Restaurant, RestaurantMember, User
+from app.modules.menus.models import (
+    Addon,
+    Category,
+    ItemAddon,
+    ItemVariant,
+    Menu,
+    MenuItem,
+    MenuVersion,
+    Publication,
+)
+from app.modules.themes.models import RestaurantDesignConfig, Theme
 from app.main import app
 
-# In-memory SQLite with StaticPool ensures all connections share the same in-memory DB during a test
+# In-memory SQLite with StaticPool ensures all connections share the same DB during tests
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
 test_engine = create_async_engine(
@@ -47,3 +68,9 @@ async def client():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
+
+
+@pytest.fixture
+async def db_session():
+    async with TestingSessionLocal() as session:
+        yield session

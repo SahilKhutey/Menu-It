@@ -1,0 +1,30 @@
+# ModularMenu Code Ownership Rules
+# Architecture and Governance
+/docs/                      @lead-architect
+/documentation/             @lead-architect
+/docs/decisions/            @lead-architect @backend-lead @frontend-lead
+/docs/governance/           @lead-architect
+
+# Backend Application & Core Modules
+/backend/                   @backend-lead
+/backend/app/core/          @backend-lead @lead-architect
+/backend/app/modules/identity/ @backend-lead @security-lead
+/backend/app/modules/menus/ @backend-lead
+/backend/app/modules/themes/ @backend-lead @frontend-lead
+/backend/app/modules/publishing/ @backend-lead @lead-architect
+
+# Frontend Portals & Menu Renderer
+/frontend/                  @frontend-lead
+/frontend/src/app/r/        @frontend-lead @lead-architect
+/frontend/src/app/app/      @frontend-lead
+/frontend/src/app/platform/ @frontend-lead
+
+# Shared Packages & Cross-cutting Libraries
+/packages/                  @backend-lead @frontend-lead @lead-architect
+
+# Tests & CI Infrastructure
+/tests/                     @backend-lead @frontend-lead
+/tests/architecture/        @lead-architect
+/.github/                   @devops-lead @lead-architect
+/deployment/                @devops-lead
+/docker-compose.yml         @devops-lead

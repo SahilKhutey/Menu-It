@@ -3,6 +3,7 @@ import hashlib
 import json
 import uuid
 from datetime import datetime, timezone
+from decimal import Decimal
 from sqlalchemy import select
 from app.core.database import Base, engine, AsyncSessionLocal
 from app.core.security import hash_password
