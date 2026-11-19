@@ -1,78 +1,327 @@
-# ModularMenu (v1.0.0)
-> Configurable, Multi-Tenant Digital Restaurant Menu Platform
+# Menu-It (ModularMenu™)
+### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It)
+[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20%7C%20ARC--02%20Approved-success.svg?style=for-the-badge)](docs/governance/architecture-compliance-checklist.md)
+[![Tests](https://img.shields.io/badge/Quality%20Gates-32%2F32%20Passing-brightgreen.svg?style=for-the-badge)](docs/reports/ARC-02-test-report.md)
+[![Python](https://img.shields.io/badge/Python-3.12%20FastAPI-005571.svg?style=for-the-badge&logo=python)](backend/)
+[![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?style=for-the-badge&logo=next.js)](frontend/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=for-the-badge&logo=typescript)](frontend/)
+[![License](https://img.shields.io/badge/License-Commercial%20Proprietary-red.svg?style=for-the-badge)](LICENSE)
 
 ---
 
 ## 🍽️ Overview
 
-**ModularMenu** is a multi-tenant digital restaurant menu platform with a hybrid business model (Managed SaaS + Customer-Hosted Docker Profile), built India-First and Web-First.
+**Menu-It** (system identifier `ModularMenu`) is a high-performance, multi-tenant digital restaurant menu platform with a hybrid delivery model (**Managed Multi-Tenant Cloud SaaS** and **Customer-Hosted Dedicated Appliance**). Built **India-First** and **Web-First**, it empowers restaurants to craft, customize, version, and publish ultra-responsive digital dining experiences without engineering custom code forks or managing separate branches.
 
-- **Centralized Restaurant Management:** Multi-branch ready tenant hierarchy (`Organization -> Restaurant -> Menus`).
-- **3-Panel Visual Studio:** Catalog tree, live mobile/tablet/desktop viewport preview, and theme inspector.
-- **Dynamic Theme & Layout Engine:** 6 pre-built visual presets (*Luxury, Minimal, Rustic, Vibrant, Contemporary, Editorial*) with token-based CSS variables.
-- **Immutable Snapshot Publishing:** Instant compile with SHA-256 checksums, atomic activation, and zero-downtime rollback.
-- **Zero-Friction Public QR Experience:** Instant sub-second LCP on 360px+ mobile screens, FSSAI dietary badges, and allergen advisories.
-- **Hardened Multi-Tenancy:** PostgreSQL Row-Level Security (RLS) + tenant-scoped authorization dependencies.
+```
++----------------------------------------------------------------------------------------------------+
+|                                    MENU-IT APPLICATION ECOSYSTEM                                   |
++----------------------------------------------------------------------------------------------------+
+|                                                                                                    |
+|   [ Table QR Code ] ──▶ [ Diner Mobile Webview ]          [ Visual Studio (3-Panel Editor) ]       |
+|    - Sub-second LCP (<1.5s)   - Zero Login Friction         - Real-time CSS token preview (60fps)   |
+|    - 95 kB JS bundle budget  - FSSAI Dietary Tags           - Category tree & dietary badge editor  |
+|    - Dynamic QR Table Modal  - Instant Rollback             - Multi-branch brand governance         |
+|                                     │                                      │                       |
+|                                     ▼                                      ▼                       |
+|                         [ Read Path (CQRS-Lite) ]              [ Write Path (Relational) ]         |
+|                         - Immutable SHA-256 Snapshots          - SQLAlchemy 2.0 Async ORM          |
+|                         - Zero DB Joins at table scan          - Strict `lazy="raise"` loading     |
+|                         - Edge-Cacheable JSON Payload          - Fixed-precision Decimal Currency  |
+|                                     │                                      │                       |
+|                                     └──────────────────┬───────────────────┘                       |
+|                                                        │                                           |
+|                                                        ▼                                           |
+|                                          [ FastAPI Application Core ]                              |
+|                                          - Multi-tenant boundary middleware                        |
+|                                          - RFC 7807 problem details error format                   |
+|                                          - OpenAPI 3.1 contract generation                         |
+|                                                        │                                           |
+|                                                        ▼                                           |
+|                                    [ PostgreSQL 16 + Row-Level Security ]                         |
+|                                    - Multi-tenant shared relational database                       |
+|                                    - WORM (Write-Once, Read-Many) menu_versions                    |
+|                                                                                                    |
++----------------------------------------------------------------------------------------------------+
+```
 
 ---
 
-## 🏛️ Architecture & Tech Stack
+## ✨ Key Platform Features
 
-| Layer | Technology |
-| :--- | :--- |
-| **Frontend Applications** | Next.js 14+ (App Router), React 18, TypeScript, Tailwind CSS, Lucide Icons |
-| **Backend API** | FastAPI (Python 3.12), Pydantic v2, SQLAlchemy 2.0 Async |
-| **Database & Migrations** | PostgreSQL 16 (Multi-tenant shared schema with RLS) + Alembic |
-| **Security & Auth** | Argon2id / Bcrypt password hashing, HS256/RS256 JWT, Tenant Context Dependency |
-| **Deployment Profiles** | Profile A: Managed Multi-Tenant SaaS · Profile B: Customer-Hosted Docker Profile |
+### 🎨 1. Configuration-Driven Theme & Layout Engine (Zero-Fork Invariant)
+- **Zero Bespoke Code:** Visual styling (color palettes, typography pairings, spacing density, card styles) is 100% driven by JSON design token configurations validated via JSON Schema (`packages/contracts/theme_schema.json`).
+- **6 Pre-Built Visual Presets:**
+  - **Luxury:** Dark obsidian surface (`#0D0E12`), Cinzel serif typography, gold accents (`#D4AF37`), elevated card styling.
+  - **Minimal:** Stark monochrome, ultra-clean Inter typography, high-contrast flat styling.
+  - **Rustic:** Earthy terracotta hues (`#8B4513`, `#E6D5B8`), warm amber highlights, comfortable spacing.
+  - **Vibrant:** Playful crimson & mango tones, rounded borders (`borderRadius: "lg"`), dynamic food photography.
+  - **Contemporary:** Slate-charcoal palette, compact density, modern geometric sans typography.
+  - **Editorial:** Serif headlines, spacious magazine-style layouts, elegant high-end tasting presentation.
+- **Instant 60fps Preview:** Design tokens compile directly to CSS Custom Properties (`--theme-*`) on the preview container without expensive React DOM re-renders.
+
+### 🛡️ 2. Defense-in-Depth Multi-Tenancy
+- **Perimeter 1 (Ingress Gateway):** JWT session validation and bearer signature checks.
+- **Perimeter 2 (Application Boundary):** `verify_restaurant_access` dependency ensures callers hold active administrative membership for the targeted tenant before any action.
+- **Perimeter 3 (Kernel Persistence):** PostgreSQL Row-Level Security (RLS) policies prevent data leakage across restaurants coexisting within a shared database.
+
+### ⚡ 3. CQRS-Lite Immutable Snapshot Publishing
+- **Extreme Read/Write Asymmetry:** Dining guests scanning QR codes at tables demand instant load times. Administrative relational tables (`menus`, `categories`, `menu_items`) are separated from the public read path.
+- **Atomic Compilation:** Publishing serializes active dishes, variants, allergens, theme tokens, and layouts into a frozen JSON snapshot stamped with a cryptographic **SHA-256 checksum** and incrementing version integer (`v1`, `v2`, ...).
+- **Zero Relational Joins:** Public diners read pre-compiled snapshot payloads directly in <5ms.
+- **Instant Rollback:** Reverting to a previous menu version merely updates the active publication pointer.
+
+### 📱 4. Diner-First Mobile Ergonomics (India-First & Web-First)
+- **Zero App Download & Zero Login:** Dining guests access the menu immediately upon scanning a table QR code.
+- **Strict Mobile Bundle Budget:** Total First Load JavaScript is **95.2 kB** (well below the 120 kB ceiling).
+- **FSSAI Dietary Classification:** High-contrast, standardized badges for **Veg** (green dot in green square), **Non-Veg** (red dot in red square), **Egg** (amber dot in amber square), **Vegan**, and **Jain**.
+- **Allergen Matrix:** Clear warnings for Dairy, Gluten, Nuts, Soy, Crustaceans, and Shellfish.
+- **Integrated Table QR Sharing:** On-the-fly QR code generation (`image/png`) for table card printing and instant diner sharing.
+
+### 🐳 5. Dual-Model Binary Portability
+- **Profile A (Managed Multi-Tenant Cloud SaaS):** Centralized cloud infrastructure managed for onboarded restaurants.
+- **Profile B (Customer-Hosted Appliance):** Single-tenant / dedicated container appliance running on customer-owned on-premises servers.
+- **Invariant:** Both profiles compile from the **identical codebase and container image**; deployment modes are activated via pluggable environment variable adapters.
 
 ---
 
-## 🚀 Quickstart & Local Development
+## 🏛️ System Architecture Series
 
-### 1. Backend Setup (FastAPI)
+The engineering specifications of ModularMenu are formally documented in the 12-part architecture series located in [`documentation/03_System_Architecture/`](documentation/03_System_Architecture/):
+
+| Architecture Doc | Title | Status | Scope |
+| :--- | :--- | :--- | :--- |
+| **ARC-01** | [System Architecture Overview](documentation/03_System_Architecture/ARC-01_System_Architecture_Overview.md) | **Approved** | 7-layer architecture, 7 external actors, system boundaries, and 10 non-negotiables. |
+| **ARC-02** | [Principles, Standards & Constraints](documentation/03_System_Architecture/ARC-02_Architectural_Principles_Standards_Constraints.md) | **Approved & Implemented** | Principles P-01 to P-10, Constraints CON-01 to CON-16, 10 Work Packages, and 32 tests. |
+| **ARC-03** | Application Architecture | *Next* | Frontend Next.js boundaries, Backend service/repository dispatch lifecycles. |
+| **ARC-04** | Modular Domain Architecture | *Roadmap* | 16 discrete domain modules, event contracts, and inter-module dependencies. |
+| **ARC-05** | Multi-Tenant Architecture | *Roadmap* | Tenant resolution, organization/branch hierarchy, and RLS policy rules. |
+| **ARC-06** | Data Architecture | *Roadmap* | Normalized schema, JSONB snapshot design, indexing, and migration standards. |
+| **ARC-07** | API & Integration Architecture | *Roadmap* | OpenAPI 3.1 contracts, RFC 7807 problem details, and webhook pipelines. |
+| **ARC-08** | Theme & Customization Engine | *Roadmap* | Design token taxonomy, layout engines, and dynamic variable compilation. |
+| **ARC-09** | Menu Rendering Architecture | *Roadmap* | Mobile webview optimization, category jump scrolling, and SSR caching. |
+| **ARC-10** | Publishing & Versioning Lifecycle | *Roadmap* | Snapshot compiling, SHA-256 digest validation, and zero-downtime rollback. |
+| **ARC-11** | Infrastructure & Deployment | *Roadmap* | Docker compose, multi-profile environment handling, and backup/restore. |
+| **ARC-12** | Security, Scalability & Reliability | *Roadmap* | Threat modeling, penetration verification, rate limiting, and failover. |
+
+---
+
+## 📁 Repository Structure
+
+```text
+Menu-it/
+├── .github/
+│   ├── workflows/quality-gates.yml          # GitHub Actions CI with 7 automated quality gates
+│   ├── CODEOWNERS                           # Module ownership and approval requirements
+│   ├── CONTRIBUTING.md                      # Engineering standards, commit conventions & PR rules
+│   └── pull_request_template.md             # Architecture compliance checklist for pull requests
+├── backend/
+│   ├── app/
+│   │   ├── api/                             # API delivery layer
+│   │   │   ├── dependencies.py              # Auth, tenant verification, and role guards
+│   │   │   ├── router.py                    # Consolidated API v1 router
+│   │   │   └── v1/                          # Versioned route controllers
+│   │   │       ├── auth.py                  # User registration, login, JWT issuance
+│   │   │       ├── menus.py                 # Menu, category, and food item management
+│   │   │       ├── platform.py              # Platform admin overview and metrics
+│   │   │       ├── public.py                # Anonymous diner QR read and PNG generator
+│   │   │       ├── publishing.py            # Atomic snapshot publishing and version pointers
+│   │   │       ├── restaurants.py           # Restaurant profile & membership management
+│   │   │       └── themes.py                # Preset listing & restaurant design token updates
+│   │   ├── core/                            # Cross-cutting application infrastructure
+│   │   │   ├── config.py                    # Dual-profile environment configuration
+│   │   │   ├── database.py                  # SQLAlchemy 2.0 Async session & GUID adapters
+│   │   │   ├── errors.py                    # RFC 7807 Problem Details exception handlers
+│   │   │   ├── security.py                  # Bcrypt hashing & JWT cryptographic tokens
+│   │   │   └── tenant_context.py            # ContextVar-based tenant execution tracking
+│   │   ├── modules/                         # Domain models and schemas
+│   │   │   ├── identity/                    # Users, Organizations, Restaurants, Members
+│   │   │   ├── menus/                       # Menus, Categories, Items, Variants, Snapshots
+│   │   │   └── themes/                      # Themes, Design Configs, and 6 visual presets
+│   │   ├── main.py                          # FastAPI application initialization & middleware
+│   │   └── seed.py                          # Deterministic database seeding pipeline
+│   ├── migrations/                          # Alembic schema migrations
+│   ├── Dockerfile                           # Production container definition
+│   ├── pyproject.toml                       # Ruff linter & Pytest configuration
+│   └── requirements.txt                     # Pinned backend dependencies
+├── frontend/
+│   ├── src/
+│   │   ├── app/                             # Next.js 14 App Router
+│   │   │   ├── page.tsx                     # Landing page & Portal Launcher
+│   │   │   ├── layout.tsx                   # Root HTML shell with design token fonts
+│   │   │   ├── app/page.tsx                 # 3-Panel Visual Studio & Catalog Builder
+│   │   │   ├── platform/page.tsx            # Multi-Tenant Platform Administration Dashboard
+│   │   │   └── r/[slug]/page.tsx            # Public Diner Mobile Webview & Table QR Modal
+│   │   └── lib/
+│   │       ├── api.ts                       # Typed REST API client
+│   │       ├── themes.ts                    # Design token definitions & CSS variable compiler
+│   │       └── utils.ts                     # UI utility functions
+│   ├── package.json                         # Frontend dependencies (React 18, Tailwind, Lucide)
+│   ├── tailwind.config.ts                   # Tailwind theme variable mappings
+│   └── tsconfig.json                        # TypeScript strict compiler options
+├── docs/
+│   ├── decisions/
+│   │   ├── ADR-TEMPLATE.md                  # Standardized architectural decision template
+│   │   └── decision-register.md             # Decision register (ADR-0001 through ADR-0012)
+│   ├── governance/
+│   │   ├── architecture-review-policy.md    # Formal governance policy & authority hierarchy
+│   │   └── architecture-compliance-checklist.md # Actionable PR compliance checklist
+│   └── reports/
+│       ├── ARC-02-compliance-report.md      # 15/15 item compliance audit report
+│       ├── ARC-02-test-report.md            # Complete 32-test execution breakdown
+│       ├── ARC-02-security-review.md        # OWASP A01 & tenant isolation security audit
+│       ├── ARC-02-deviation-register.md     # Active architectural deviations (Zero deviations)
+│       └── ARC-02-approval-record.md        # Review board sign-off record
+├── packages/
+│   ├── README.md                            # Shared contracts package guide
+│   └── contracts/
+│       ├── theme_schema.json                # JSON Schema for Design Tokens & Presets
+│       ├── component_registry.json          # Allowlisted UI component registry
+│       └── published_snapshot.json          # Schema for compiled menu snapshots
+├── scripts/
+│   └── validate_arc02_e2e.py                # 10-step formal end-to-end V&V script
+├── tests/
+│   ├── conftest.py                          # Shared async SQLite fixture with model preloading
+│   ├── architecture/
+│   │   └── test_module_boundaries.py        # AST parser: no private imports, no circular imports
+│   ├── contract/
+│   │   └── test_openapi_contracts.py        # OpenAPI 3.1 & REST verb contract checks
+│   ├── integration/
+│   │   ├── test_operational_health.py       # Health probes (/health) & Redis resilience
+│   │   └── test_publishing_immutability.py   # Snapshot immutability & catalog decoupling
+│   ├── security/
+│   │   ├── test_auth.py                     # Bcrypt + JWT authentication tests
+│   │   └── test_tenant_security.py         # Cross-tenant 403 checks & platform admin guards
+│   └── unit/
+│       ├── test_monetary_and_schema.py      # Decimal pricing (CON-05) & slug kebab-case regex
+│       ├── test_rfc7807_errors.py           # Problem details formatting & pagination 422
+│       └── test_theme_tokens.py             # Hex color regex & component visibility toggling
+├── docker-compose.yml                       # Multi-container orchestration (App + Postgres + Caddy)
+├── LICENSE                                  # Commercial Software License Agreement
+└── README.md                                # Master project documentation
+```
+
+---
+
+## 🚀 Quickstart & Local Setup
+
+### Prerequisites
+- **Python:** 3.12+
+- **Node.js:** 20+ (with `pnpm` installed: `npm i -g pnpm`)
+- **Docker & Docker Compose:** Optional for containerized deployment
+
+### 1. Backend Service Setup
 ```bash
+# Navigate to backend directory
 cd backend
+
+# Create and activate Python virtual environment
 python -m venv .venv
 # On Windows:
 .\.venv\Scripts\activate
-# On Linux/macOS:
+# On macOS/Linux:
 source .venv/bin/activate
 
+# Install dependencies
 pip install -r requirements.txt
+
+# Run the database seeding pipeline (creates admin, demo restaurants, categories, dishes & v1 snapshots)
+python -m app.seed
+
+# Run the test suite (32 tests across architecture, security, integration, unit)
 pytest -v
+
+# Launch the FastAPI application server
 uvicorn app.main:app --reload --port 8000
 ```
-- API Docs: `http://localhost:8000/docs`
-- Health: `http://localhost:8000/health`
+- **API Swagger Documentation:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc Contract View:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Service Health Probe:** [http://localhost:8000/health](http://localhost:8000/health)
 
-### 2. Frontend Setup (Next.js)
+### 2. Frontend Web Application Setup
 ```bash
+# Navigate to frontend directory
 cd frontend
+
+# Install dependencies using pnpm
 pnpm install
+
+# Verify production build & bundle size budget (<120 kB)
 pnpm run build
+
+# Start local Next.js development server
 pnpm run dev
 ```
-- Homepage & Portals: `http://localhost:3000`
-- Platform Admin: `http://localhost:3000/platform`
-- Restaurant Visual Studio: `http://localhost:3000/app`
-- Customer QR Experience: `http://localhost:3000/r/the-bombay-canteen`
+- **Portal Launcher & Showcase:** [http://localhost:3000](http://localhost:3000)
+- **3-Panel Visual Studio:** [http://localhost:3000/app](http://localhost:3000/app)
+- **Platform Administration:** [http://localhost:3000/platform](http://localhost:3000/platform)
+- **Public Diner QR Menu (Demo):** [http://localhost:3000/r/the-bombay-canteen](http://localhost:3000/r/the-bombay-canteen)
 
-### 3. Docker Compose (Full Stack)
+### 3. Full-Stack Docker Compose Deployment
 ```bash
-docker compose up -d
+# Build and start all services (PostgreSQL 16, FastAPI backend, Next.js frontend)
+docker compose up -d --build
+
+# View container logs
+docker compose logs -f
 ```
 
 ---
 
-## 📂 Project Documentation Framework
+## 🧪 Automated Quality Gates & Verification
 
-Comprehensive engineering blueprints and specifications are maintained in `documentation/`:
-- `01_Product_Strategy/`: Vision, Business Model, Pricing Strategy
-- `02_Product_Requirements/`: PRD, Functional & Non-Functional Requirements
-- `03_System_Architecture/`: High-Level Diagrams, Domain Boundaries, Request Lifecycles
-- `04_Module_Specifications/`: Specifications for MOD-01 to MOD-16
-- `05_UI_UX_Design/`: Design Tokens, Theme Systems, 6 Visual Presets
-- `06_Security/`: Tenant Isolation Test Matrix, RLS Policies, Threat Model
-- `07_Implementation/`: 12 Work Packages (WP-01 to WP-12) & Milestones
-- `09_Deployment/`: Managed Cloud vs. Customer-Hosted Architecture Guide
+The repository enforces strict automated quality gates prior to any pull request merge:
+
+### 1. Pytest Test Suites (32 Tests Passing)
+```bash
+pytest tests/ -v
+```
+- **Architecture Boundaries (`tests/architecture/`):** Uses Python AST parsing to guarantee domain models never import the API layer or HTTP frameworks, verifies zero circular dependencies, and mandates `lazy="raise"` on all SQLAlchemy relationships.
+- **Security & Tenancy (`tests/security/`):** Verifies that Tenant A is rejected with `HTTP 403 Forbidden` when attempting to access Tenant B's catalog or design settings, and verifies platform administration routes require admin privileges.
+- **Contract & Standards (`tests/contract/`, `tests/unit/`):** Enforces RFC 7807 problem details error envelopes, OpenAPI 3.1 specification validity, and exact Python `Decimal` currency representation.
+- **Snapshot Immutability (`tests/integration/`):** Proves that published snapshots are write-once, read-many (WORM) and that updating theme tokens never alters underlying dish prices.
+
+### 2. Formal End-to-End Product Validation Script
+Execute the 10-step validation scenario specified in ARC-02 §13.2:
+```bash
+python scripts/validate_arc02_e2e.py
+```
+*Output validates:* Restaurant provisioning ➔ Catalog creation ➔ Theme preset selection ➔ Design token overrides ➔ Layout custom configuration ➔ Component registry toggles ➔ Studio draft preview ➔ Atomic snapshot publication with SHA-256 digest ➔ Anonymous zero-auth diner read ➔ Dynamic QR PNG generation.
+
+---
+
+## 📜 Architectural Decision Records (ADRs)
+
+All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md):
+- **ADR-0001:** Python 3.12 & FastAPI Core Application Service
+- **ADR-0002:** Next.js 14 App Router (React 18 + TypeScript) Frontend
+- **ADR-0003:** SQLAlchemy 2.0 Async ORM with Strict Relationship Loading (`lazy="raise"`)
+- **ADR-0004:** PostgreSQL 16 Relational Persistence with Row-Level Security (RLS)
+- **ADR-0005:** CQRS-Lite Asymmetric Pathways with Immutable Published Snapshots
+- **ADR-0006:** Configuration-Driven Presentation Engine (Zero-Fork Invariant)
+- **ADR-0007:** Binary Duality: Single Container Binary for Managed SaaS & Self-Hosted
+- **ADR-0008:** Fixed-Precision Numeric Representation for Monetary Values (`Decimal`)
+- **ADR-0009:** RFC 7807 Problem Details for Standardized API Error Representation
+- **ADR-0010:** CSS Custom Properties (`--theme-*`) for Dynamic Theme Rendering
+- **ADR-0011:** Monorepo Structure with Strict Physical Module Boundaries
+- **ADR-0012:** Monotonically Increasing Integer Versions and SHA-256 Digesting
+
+---
+
+## 📄 License & Commercial Rights
+
+Copyright © 2026 Sahil Khutey. All Rights Reserved.
+
+This software is released under a **Commercial Software License Agreement**. Unauthorized copying, modification, distribution, public hosting as a competing SaaS offering, or sublicensing of this software, via any medium, is strictly prohibited.
+
+For commercial licensing, enterprise self-hosted appliances, or white-label partnerships, please refer to [LICENSE](LICENSE) or contact:
+- **Author & Copyright Holder:** Sahil Khutey
+- **Repository:** [https://github.com/SahilKhutey/Menu-It.git](https://github.com/SahilKhutey/Menu-It.git)
+
+---
+
+## 🏷️ Tags & Keywords
+
+`restaurant-menu` · `digital-menu` · `qr-code-menu` · `multi-tenant` · `fastapi` · `nextjs14` · `react18` · `tailwindcss` · `postgresql-rls` · `sqlalchemy-async` · `pydantic-v2` · `fssai-dietary-badges` · `saas-architecture` · `zero-fork` · `design-tokens`

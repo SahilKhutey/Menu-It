@@ -1,0 +1,60 @@
+COMMERCIAL SOFTWARE LICENSE AGREEMENT
+ModularMenu™ / Menu-It Platform
+Copyright (c) 2026 Sahil Khutey. All Rights Reserved.
+
+IMPORTANT: PLEASE READ THIS SOFTWARE LICENSE AGREEMENT CAREFULLY BEFORE DOWNLOADING,
+INSTALLING, COPYING, ACCESSING, OR USING THIS SOFTWARE.
+
+1. DEFINITIONS
+"Licensor" means Sahil Khutey and authorized affiliates.
+"Software" means the ModularMenu / Menu-It computer software, source code, object code,
+documentation, APIs, themes, design tokens, and related digital assets.
+"Licensee" means the individual or legal entity purchasing or operating a valid commercial
+license entitlement.
+
+2. GRANT OF COMMERCIAL LICENSE
+Subject to the terms and conditions of this Agreement and payment of the applicable
+license or subscription fees, Licensor grants Licensee a non-exclusive, non-transferable,
+non-sublicensable, limited commercial license to:
+(a) Deploy and operate the Software solely for Licensee's internal business operations
+    (Single Restaurant or Enterprise Multi-Branch as specified in the Order Form);
+(b) Customize visual appearance, themes, and layouts using the provided configuration
+    engines and APIs within the authorized deployment profile;
+(c) In customer-hosted editions, install and execute the provided container appliance on
+    Licensee-owned infrastructure strictly for authorized dining locations.
+
+3. RESTRICTIONS AND PROHIBITIONS
+Except as explicitly authorized in writing by Licensor, Licensee shall not:
+(a) Sublicense, sell, rent, lease, distribute, timeshare, or transfer the Software or any
+    portion thereof to any third party;
+(b) Use the Software to operate a competing commercial multi-tenant Software-as-a-Service
+    (SaaS), white-label platform, or menu-hosting service for third-party restaurants;
+(c) Reverse engineer, decompile, decrypt, or disassemble proprietary binary components;
+(d) Remove, obscure, or alter any copyright notices, trademark tags, or proprietary legends;
+(e) Circumvent, disable, or tamper with license verification mechanisms, cryptographic
+    snapshot verifiers, or tenant isolation controls.
+
+4. INTELLECTUAL PROPERTY RIGHTS
+The Software and all intellectual property rights worldwide (including patents, copyrights,
+trademarks, trade secrets, architecture specifications, and design tokens) are and shall
+remain the exclusive property of Licensor.
+
+5. WARRANTY DISCLAIMER
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, TITLE, AND NON-INFRINGEMENT.
+
+6. LIMITATION OF LIABILITY
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, LOSS OF PROFITS, BUSINESS
+INTERRUPTION, OR OTHER DIRECT, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+7. TERMINATION
+This Agreement is effective until terminated. Licensee's rights under this license will
+terminate automatically without notice from the Licensor if Licensee fails to comply with
+any term(s) of this Agreement. Upon termination, Licensee shall immediately cease all use
+of the Software and destroy all copies, full or partial, of the Software.
+
+For commercial inquiries, enterprise licensing, or hosted subscriptions, contact:
+Sahil Khutey (Licensor)
+Repository: https://github.com/SahilKhutey/Menu-It.git
