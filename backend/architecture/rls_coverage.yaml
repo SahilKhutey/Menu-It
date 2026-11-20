@@ -1,0 +1,120 @@
+# ModularMenu — PostgreSQL Row-Level Security (RLS) Coverage Manifest
+# Architecture Reference: ARC-05 Multi-Tenant Architecture (§8 & §23.1)
+# Version: 1.0.0
+
+engine: postgresql
+setting_key: "app.current_organization_id"
+fail_closed_expression: "NULLIF(current_setting('app.current_organization_id', true), '')::uuid"
+
+tables:
+  - table_name: organizations
+    tenant_column: id
+    policy_name: organizations_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: memberships
+    tenant_column: organization_id
+    policy_name: memberships_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: restaurants
+    tenant_column: organization_id
+    policy_name: restaurants_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: restaurant_settings
+    tenant_column: organization_id
+    policy_name: restaurant_settings_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: menus
+    tenant_column: organization_id
+    policy_name: menus_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: categories
+    tenant_column: organization_id
+    policy_name: categories_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: food_items
+    tenant_column: organization_id
+    policy_name: food_items_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: portion_prices
+    tenant_column: organization_id
+    policy_name: portion_prices_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: item_availabilities
+    tenant_column: organization_id
+    policy_name: item_availabilities_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: custom_themes
+    tenant_column: organization_id
+    policy_name: custom_themes_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: generated_qr_codes
+    tenant_column: organization_id
+    policy_name: generated_qr_codes_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: editor_drafts
+    tenant_column: organization_id
+    policy_name: editor_drafts_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: publications
+    tenant_column: organization_id
+    policy_name: publications_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: media_assets
+    tenant_column: organization_id
+    policy_name: media_assets_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: menu_views
+    tenant_column: organization_id
+    policy_name: menu_views_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app
+
+  - table_name: subscriptions
+    tenant_column: organization_id
+    policy_name: subscriptions_tenant_isolation
+    force_rls: true
+    permitted_roles:
+      - modularmenu_app

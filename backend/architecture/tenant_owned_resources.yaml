@@ -1,0 +1,236 @@
+# ModularMenu — Tenant Resource Ownership Manifest
+# Architecture Reference: ARC-05 Multi-Tenant Architecture (§6 & §23.3)
+# Version: 1.0.0
+# Enforces strict ownership boundaries and PostgreSQL RLS requirements across all modules.
+
+version: "1.0.0"
+primary_tenant_boundary: organization_id
+subordinate_resource_boundary: restaurant_id
+
+resources:
+  # MOD-01: Identity & Authentication (Global identity, not tenant-isolated)
+  - name: users
+    owner_module: MOD-01
+    table_name: users
+    tenant_owned: false
+    scope: []
+    rls_required: false
+    description: Global user accounts across the platform
+
+  # MOD-02: Organization & Tenant Management
+  - name: organizations
+    owner_module: MOD-02
+    table_name: organizations
+    tenant_owned: true
+    scope:
+      - organization_id
+    rls_required: true
+    tenant_key_column: id
+    description: Primary tenant boundary entities
+
+  - name: memberships
+    owner_module: MOD-02
+    table_name: memberships
+    tenant_owned: true
+    scope:
+      - organization_id
+      - user_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Organization membership and role assignments
+
+  # MOD-03: Restaurant Management
+  - name: restaurants
+    owner_module: MOD-03
+    table_name: restaurants
+    tenant_owned: true
+    scope:
+      - organization_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Restaurant branches belonging to organizations
+
+  - name: restaurant_settings
+    owner_module: MOD-03
+    table_name: restaurant_settings
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Branch configuration, operational hours, locale settings
+
+  # MOD-04: Menu Core
+  - name: menus
+    owner_module: MOD-04
+    table_name: menus
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Menu containers per restaurant branch
+
+  # MOD-05: Category Management
+  - name: categories
+    owner_module: MOD-05
+    table_name: categories
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - menu_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Hierarchical category structures within menus
+
+  # MOD-06: Food Item Catalog
+  - name: food_items
+    owner_module: MOD-06
+    table_name: food_items
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Food items and dish definitions
+
+  # MOD-07: Pricing & Availability
+  - name: portion_prices
+    owner_module: MOD-07
+    table_name: portion_prices
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - food_item_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Currency and portion pricing rules
+
+  - name: item_availabilities
+    owner_module: MOD-07
+    table_name: item_availabilities
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - food_item_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Branch item availability and 86-ing toggles
+
+  # MOD-08: Theme & Token Engine (Hybrid: System defaults vs custom tenant themes)
+  - name: theme_definitions
+    owner_module: MOD-08
+    table_name: theme_definitions
+    tenant_owned: false
+    scope: []
+    rls_required: false
+    description: System default token palettes and typography presets
+
+  - name: custom_themes
+    owner_module: MOD-08
+    table_name: custom_themes
+    tenant_owned: true
+    scope:
+      - organization_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Tenant-created custom design themes
+
+  # MOD-09: Layout Engine
+  - name: layout_templates
+    owner_module: MOD-09
+    table_name: layout_templates
+    tenant_owned: false
+    scope: []
+    rls_required: false
+    description: Global layout grid configurations
+
+  # MOD-10: Component Registry
+  - name: component_definitions
+    owner_module: MOD-10
+    table_name: component_definitions
+    tenant_owned: false
+    scope: []
+    rls_required: false
+    description: Platform UI component definitions
+
+  # MOD-11: Dynamic Asset Generation
+  - name: generated_qr_codes
+    owner_module: MOD-11
+    table_name: generated_qr_codes
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - menu_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Generated branded vector/raster QR assets
+
+  # MOD-12: Visual Menu Studio
+  - name: editor_drafts
+    owner_module: MOD-12
+    table_name: editor_drafts
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - menu_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Private in-progress editor drafts and sessions
+
+  # MOD-13: Menu Publishing Engine
+  - name: publications
+    owner_module: MOD-13
+    table_name: publications
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - menu_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Published immutable snapshots (public access mediated via resolver)
+
+  # MOD-14: Media Management
+  - name: media_assets
+    owner_module: MOD-14
+    table_name: media_assets
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Tenant-owned images and assets
+
+  # MOD-15: Analytics & Metrics
+  - name: menu_views
+    owner_module: MOD-15
+    table_name: menu_views
+    tenant_owned: true
+    scope:
+      - organization_id
+      - restaurant_id
+      - menu_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Aggregated menu scan and item view telemetry
+
+  # MOD-16: Licensing & Subscription
+  - name: subscriptions
+    owner_module: MOD-16
+    table_name: subscriptions
+    tenant_owned: true
+    scope:
+      - organization_id
+    rls_required: true
+    tenant_key_column: organization_id
+    description: Tenant subscription tiers, branch limits, and feature flags

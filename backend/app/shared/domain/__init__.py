@@ -37,6 +37,17 @@ from app.shared.domain.events import (
     UsageEventRecorded,
 )
 
+from app.shared.domain.permissions import Permission
+from app.shared.domain.tenant_exceptions import (
+    TenantSecurityException,
+    TenantAccessDeniedException,
+    CrossTenantAccessException,
+    InvalidTenantContextException,
+    TenantSuspendedException,
+    TenantResourceNotFoundException,
+    TenantRelationalIntegrityException,
+)
+
 __all__ = [
     "MenuEntity",
     "DomainException",
@@ -47,6 +58,14 @@ __all__ = [
     "RestaurantSlug",
     "MenuSlug",
     "DisplayOrder",
+    "Permission",
+    "TenantSecurityException",
+    "TenantAccessDeniedException",
+    "CrossTenantAccessException",
+    "InvalidTenantContextException",
+    "TenantSuspendedException",
+    "TenantResourceNotFoundException",
+    "TenantRelationalIntegrityException",
     "DomainEvent",
     "UserRegistered",
     "OrganizationCreated",
