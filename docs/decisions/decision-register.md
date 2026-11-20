@@ -270,3 +270,104 @@ This register records all formal Architectural Decision Records (ADRs) governing
 - **Context:** Maintaining separate domain logic for cloud vs self-hosted customers leads to feature divergence.
 - **Decision:** The domain layer is 100% identical and binary-portable across Managed SaaS and Customer-Hosted profiles.
 - **Consequences:** Features built once work everywhere; single unified test suite and release cycle.
+
+
+### ADR-0044: Organization is the Primary Tenant Boundary (ARC05-D01)
+- **Context:** ModularMenu must support multi-branch restaurant brands, franchises, and single cafes under a coherent administrative and billing model.
+- **Decision:** The `Organization` is established as the primary tenant boundary. All billing, users, permissions, custom themes, and branches belong to an organization.
+- **Consequences:** Clean multi-branch hierarchy; unified tenant isolation and billing.
+
+### ADR-0045: Restaurant is a Subordinate Resource Boundary (ARC05-D02)
+- **Context:** Operators need to control branch-level menu publishing, hours, and staff permissions within an organization.
+- **Decision:** The `Restaurant` is a subordinate resource boundary scoped under its parent organization.
+- **Consequences:** Users can be granted organization-wide access or branch-specific permissions.
+
+### ADR-0046: Shared Database and Shared Schema for Managed SaaS (ARC05-D03)
+- **Context:** Infrastructure density and operational simplicity are essential for managed multi-tenant SaaS delivery.
+- **Decision:** Managed SaaS uses a shared PostgreSQL database and shared schema, with logical partitioning via tenant columns, composite keys, and PostgreSQL RLS.
+- **Consequences:** Cost-effective scalability; single migration pipeline; robust defense-in-depth isolation.
+
+### ADR-0047: Authoritative Organization Ownership on Tenant-Owned Resources (ARC05-D04)
+- **Context:** Relying solely on deep parent traversal to determine tenant ownership creates query vulnerability.
+- **Decision:** Every tenant-owned database table includes an indexed `organization_id` column.
+- **Consequences:** Instant O(1) tenant boundary filtering on all queries; direct RLS policy applicability.
+
+### ADR-0048: Server-Side Membership and Role Validation (ARC05-D05)
+- **Context:** Clients must never be trusted to declare their tenant ownership or assigned permissions.
+- **Decision:** Membership and roles are verified authoritatively on the server from validated database records. Client-provided tenant IDs are treated strictly as selectors.
+- **Consequences:** Prevents tenant ID spoofing (ARC05-TH02) and unauthorized privilege escalation.
+
+### ADR-0049: Immutable Request-Scoped TenantContext (ARC05-D06)
+- **Context:** Tenant execution context must be tamper-proof and consistent across the request execution graph.
+- **Decision:** Tenant state is encapsulated in a frozen, immutable `TenantContext` dataclass constructed once per authenticated request.
+- **Consequences:** Eliminates mutable state bugs; simplifies security auditing and tracing.
+
+### ADR-0050: Explicit TenantContext Passing to Application Services (ARC05-D07)
+- **Context:** Hidden thread-local state can introduce subtle context leakage in asynchronous Python runtimes.
+- **Decision:** `TenantContext` is explicitly passed as a parameter to application use cases, command handlers, and queries.
+- **Consequences:** Clear architectural contracts; high unit-testability; explicit authorization requirements.
+
+### ADR-0051: Repository Queries Enforce Tenant Scope (ARC05-D08)
+- **Context:** Accidental unscoped database queries risk exposing data across tenants.
+- **Decision:** Repositories require `TenantContext` and mandate `organization_id` scoping on all reads, mutations, and deletions.
+- **Consequences:** Unscoped SQL queries are structurally eliminated at the application repository layer.
+
+### ADR-0052: PostgreSQL Row-Level Security for Defense-in-Depth (ARC05-D09)
+- **Context:** Application bugs or manual SQL scripts must not compromise multi-tenant isolation.
+- **Decision:** PostgreSQL RLS is enabled and forced (`FORCE ROW LEVEL SECURITY`) across all tenant-owned tables.
+- **Consequences:** Database hardware-level safety net; queries without tenant context fail closed.
+
+### ADR-0053: Restricted Runtime Database Role Cannot Bypass RLS (ARC05-D10)
+- **Context:** If the runtime database user possesses superuser or bypassrls privileges, RLS policies are rendered ineffective.
+- **Decision:** The runtime application database role (`modularmenu_app`) is created with `NOSUPERUSER` and `NOBYPASSRLS`.
+- **Consequences:** Guarantees that RLS policies are strictly enforced on all application database connections.
+
+### ADR-0054: Transaction-Local PostgreSQL Setting for Tenant Context (ARC05-D11)
+- **Context:** Connection pooling (e.g. PgBouncer / SQLAlchemy pool) can leak session state across requests if not cleaned up.
+- **Decision:** Tenant identity is bound using transaction-scoped setting `SELECT set_config('app.current_organization_id', :org_id, true)`.
+- **Consequences:** Context automatically disappears on transaction completion (COMMIT or ROLLBACK); zero connection pool cross-talk.
+
+### ADR-0055: Composite Relational Foreign Keys Enforce Matching Ownership (ARC05-D12)
+- **Context:** Attaching child records (categories, items) to foreign parent records across tenants must be prevented.
+- **Decision:** Database schemas enforce composite foreign keys `(organization_id, parent_id)`.
+- **Consequences:** Cross-tenant entity attachment is rejected by database relational integrity rules.
+
+### ADR-0056: Storage Object Keys Enforce Tenant Scope (ARC05-D13)
+- **Context:** Object storage endpoints can become cross-tenant leakage vectors if keys are guessable or client-defined.
+- **Decision:** Storage keys are server-generated using canonical prefix `media/organizations/{org_id}/...`, and private downloads require HMAC-signed URLs.
+- **Consequences:** Complete media isolation; prevention of arbitrary bucket traversal and enumeration.
+
+### ADR-0057: Tenant-Specific Cache Keys and Isolated Namespaces (ARC05-D14)
+- **Context:** Shared caching layers (Redis/memory) must never return cached data from one tenant to another.
+- **Decision:** All tenant-specific cache keys enforce prefix `tenant:{organization_id}:...`, and tenant switching triggers immediate cache eviction.
+- **Consequences:** Zero cache collisions; instant invalidation upon tenant role or membership changes.
+
+### ADR-0058: Public Menu Delivery Restricted to Published Snapshots (ARC05-D15)
+- **Context:** Public diners must browse active menus without creating accounts, but must never access internal tenant data or drafts.
+- **Decision:** Public menu endpoints only resolve active, immutable published snapshots (`MOD-13`), never draft tables (`MOD-12`).
+- **Consequences:** Public access is decoupled from tenant authentication; complete draft privacy.
+
+### ADR-0059: Background Jobs Carry Explicit TenantJobContext (ARC05-D16)
+- **Context:** Asynchronous workers executing queued tasks must preserve the same tenant boundaries as HTTP requests.
+- **Decision:** Background job envelopes carry an immutable `TenantJobContext`, validate target resource ownership, and clean up context in worker processes.
+- **Consequences:** Background worker isolation verified; prevention of pooled worker context leakage.
+
+### ADR-0060: Platform Administration Strictly Separated from Tenant Roles (ARC05-D17)
+- **Context:** Platform staff privileges must not grant unrestricted access to customer menus or settings.
+- **Decision:** Platform operator roles and tenant roles are completely separate security domains.
+- **Consequences:** Platform administration cannot silently bypass business authorization or tenant policies.
+
+### ADR-0061: Formal Tenant Lifecycle with Suspension Grace Policies (ARC05-D18)
+- **Context:** Non-payment or account suspension must halt administrative modifications without immediately breaking public diner menus.
+- **Decision:** Tenant state machine includes active, suspended, and offboarded states. Public menus observe a documented grace policy during suspension.
+- **Consequences:** Smooth operational handling; protects diners while enforcing subscription boundaries.
+
+### ADR-0062: Time-Bounded, Audited Support Operator Access (ARC05-D19)
+- **Context:** Customer support troubleshooting requires controlled inspection of customer data without permanent superuser access.
+- **Decision:** Support access requires explicit customer authorization, short-lived session grants, and exhaustive audit logging.
+- **Consequences:** Transparent, secure customer support without backdoors or unmonitored access.
+
+### ADR-0063: SaaS and Self-Hosted Share Identical Domain Authorization Rules (ARC05-D20)
+- **Context:** Architectural drift between cloud SaaS and customer-hosted appliance deployments increases maintenance burden.
+- **Decision:** The core domain entities, authorization policies, and TenantContext interfaces are 100% identical across SaaS and Customer-Hosted editions.
+- **Consequences:** Features and security policies developed once operate identically in all deployment profiles.
