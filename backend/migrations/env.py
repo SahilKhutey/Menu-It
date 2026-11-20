@@ -11,6 +11,7 @@ from app.core.database import Base
 from app.modules.identity.models import *
 from app.modules.menus.models import *
 from app.modules.themes.models import *
+from app.infrastructure.database.models import *
 
 config = context.config
 

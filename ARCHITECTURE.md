@@ -14,8 +14,10 @@ Level 1 — System Architecture
 │   └── Frontend/backend separation, application/domain layers, service/repository patterns, and request lifecycles.
 ├── ARC-04: Modular Domain Architecture
 │   └── 16 discrete business modules, bounded contexts, domain primitives, 18-event catalogue, and AST boundaries.
-└── ARC-05: Multi-Tenant Architecture & Isolation Model
-    └── Organization-based tenancy, 8-layer defense in depth, PostgreSQL RLS fail-closed policies, and 50-test security suite.
+├── ARC-05: Multi-Tenant Architecture & Isolation Model
+│   └── Organization-based tenancy, 8-layer defense in depth, PostgreSQL RLS fail-closed policies, and 50-test security suite.
+└── ARC-06: Data Architecture & Persistence Baseline
+    └── Relational-first schema, composite foreign keys, PostgreSQL RLS, SQLAlchemy 2.x, immutable published snapshots, and 55-test persistence catalogue.
 ```
 
 ---
@@ -50,15 +52,23 @@ Level 1 — System Architecture
    - Defense-in-Depth: 8-layer security model, server-derived immutable `TenantContext`, PostgreSQL Row-Level Security (RLS) fail-closed policies, tenant-prefixed storage keys, isolated cache namespaces, and published-only public diner resolution.
    - Documentation & Quality Gates: 24 architectural deliverables in `docs/architecture/ARC-05-multi-tenant-architecture/`; 144 automated tests passing (including 50 multi-tenant test scenarios ARC05-T001 to T050); zero cross-tenant leakage.
 
+6. **[ARC-06 — Data Architecture](documentation/03_System_Architecture/ARC-06_Data_Architecture.md)**
+   - Status: **Approved & Implemented**
+   - Persistence Model: Relational-first, tenant-aware, modular persistence architecture with SQLAlchemy 2.x and Alembic.
+   - Referential Integrity: Composite foreign keys `(organization_id, parent_id)` strictly rejecting cross-tenant entity linkage; transaction-local RLS policies.
+   - Immutability & Financial Rigor: Immutable menu publication snapshots (`menu_versions`) with SHA-256 digests and ORM/trigger mutation guards; fixed-precision monetary minor units.
+   - Documentation & Quality Gates: 27 architectural deliverables in `docs/architecture/ARC-06-data-architecture/`; 199 automated backend tests passing (including 55 data catalogue scenarios ARC06-T001 to T055); 100% schema parity across SaaS and Customer-Hosted Docker appliance.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0063).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0088).
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
 - **[Domain Architecture Suite](docs/architecture/ARC-04-modular-domain-architecture/):** Detailed specifications for MOD-01 to MOD-16, workflows, and risk register.
 - **[Multi-Tenant Architecture Suite](docs/architecture/ARC-05-multi-tenant-architecture/):** Complete specifications for multi-tenancy, RLS policies, threat models, and risk register.
+- **[Data Architecture Suite](docs/architecture/ARC-06-data-architecture/):** Complete specifications for 30+ relational models across 10 capability groups, composite foreign keys, RLS policies, and recovery drills.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, and Published Snapshots.
 
 ---

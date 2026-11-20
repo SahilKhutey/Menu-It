@@ -1,0 +1,352 @@
+# ModularMenu — Data Ownership & Integrity Manifest
+# Architecture Reference: ARC-06 Data Architecture (§3 & §13.2)
+# Version: 1.0.0
+# Enforces module ownership, tenant scoping, composite foreign key requirements, and immutability.
+
+version: "1.0.0"
+database: postgresql
+schema: public
+
+tables:
+  # Identity Group (Platform-owned / Global)
+  users:
+    owner: identity
+    owner_module: MOD-01
+    tenant_scope: global
+    tenant_column: null
+    rls_required: false
+    immutable: false
+    description: Global platform user identities and authentication credentials
+
+  user_sessions:
+    owner: identity
+    owner_module: MOD-01
+    tenant_scope: global
+    tenant_column: null
+    rls_required: false
+    immutable: false
+    description: Active user authentication sessions and refresh tokens
+
+  password_reset_tokens:
+    owner: identity
+    owner_module: MOD-01
+    tenant_scope: global
+    tenant_column: null
+    rls_required: false
+    immutable: false
+    description: Cryptographic time-limited password recovery tokens
+
+  # Tenancy Group (Tenant-owned)
+  organizations:
+    owner: organizations
+    owner_module: MOD-02
+    tenant_scope: organization
+    tenant_column: id
+    rls_required: true
+    immutable: false
+    description: Primary tenant boundary organizations
+
+  organization_members:
+    owner: organizations
+    owner_module: MOD-02
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: false
+    description: User-to-organization membership and role mappings
+
+  organization_invitations:
+    owner: organizations
+    owner_module: MOD-02
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: false
+    description: Pending membership invitations with time-limited tokens
+
+  # Restaurant Group (Branch-owned)
+  restaurants:
+    owner: restaurants
+    owner_module: MOD-03
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: id
+    rls_required: true
+    immutable: false
+    description: Restaurant branches belonging to an organization
+
+  restaurant_members:
+    owner: restaurants
+    owner_module: MOD-03
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Optional branch-specific access permissions for managers/editors
+
+  restaurant_settings:
+    owner: restaurants
+    owner_module: MOD-03
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Operational settings, currency, tax rules, and hours
+
+  restaurant_domains:
+    owner: restaurants
+    owner_module: MOD-03
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Custom domain mappings for public white-label routing
+
+  # Menu Group
+  menus:
+    owner: menus
+    owner_module: MOD-04
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Menu definitions per restaurant branch
+
+  menu_categories:
+    owner: categories
+    owner_module: MOD-05
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Hierarchical category structures within a menu
+
+  menu_items:
+    owner: menu_items
+    owner_module: MOD-06
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Food and beverage dishes and items
+
+  # Pricing & Variations Group
+  item_prices:
+    owner: pricing
+    owner_module: MOD-07
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Fixed-precision monetary prices and currency definitions
+
+  item_variants:
+    owner: pricing
+    owner_module: MOD-07
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Portion sizes and serving variations
+
+  addons:
+    owner: pricing
+    owner_module: MOD-07
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Reusable add-on options (extra cheese, dips, toppings)
+
+  item_addons:
+    owner: pricing
+    owner_module: MOD-07
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Many-to-many associations between items and addons
+
+  item_availabilities:
+    owner: pricing
+    owner_module: MOD-07
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: 86-ing and operational item availability per branch
+
+  menu_item_translations:
+    owner: pricing
+    owner_module: MOD-07
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Localized multilingual item titles and descriptions
+
+  # Presentation Group
+  themes:
+    owner: themes
+    owner_module: MOD-08
+    tenant_scope: hybrid
+    tenant_column: owner_organization_id
+    rls_required: false
+    immutable: false
+    description: System default presets (global) and tenant custom themes
+
+  restaurant_design_configs:
+    owner: themes
+    owner_module: MOD-08
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Active restaurant styling, design tokens, and component options
+
+  layout_presets:
+    owner: layouts
+    owner_module: MOD-09
+    tenant_scope: global
+    tenant_column: null
+    rls_required: false
+    immutable: false
+    description: System layout definitions and grid schemas
+
+  component_definitions:
+    owner: components
+    owner_module: MOD-10
+    tenant_scope: global
+    tenant_column: null
+    rls_required: false
+    immutable: false
+    description: Allowlisted component property schemas
+
+  # Publication & Versioning Group
+  menu_versions:
+    owner: publishing
+    owner_module: MOD-13
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: true
+    description: Immutable published menu snapshots with SHA-256 verification
+
+  publications:
+    owner: publishing
+    owner_module: MOD-13
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Active published pointer per menu and publication event history
+
+  # Media Group
+  media_assets:
+    owner: media
+    owner_module: MOD-14
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Tenant-owned media asset metadata and storage references
+
+  media_usages:
+    owner: media
+    owner_module: MOD-14
+    tenant_scope: organization
+    tenant_column: organization_id
+    resource_scope: restaurant
+    resource_column: restaurant_id
+    rls_required: true
+    immutable: false
+    description: Usage references linking media to menus, items, and logos
+
+  # Commercial & Licensing Group
+  subscription_plans:
+    owner: licensing
+    owner_module: MOD-16
+    tenant_scope: global
+    tenant_column: null
+    rls_required: false
+    immutable: false
+    description: Platform subscription plans and tier limits
+
+  subscriptions:
+    owner: licensing
+    owner_module: MOD-16
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: false
+    description: Organization billing state and branch quota entitlements
+
+  licenses:
+    owner: licensing
+    owner_module: MOD-16
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: false
+    description: Customer-hosted appliance license key entitlements
+
+  # Governance & Operations Group
+  audit_logs:
+    owner: audit
+    owner_module: MOD-15
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: true
+    description: Tamper-evident operational and security audit records
+
+  outbox_events:
+    owner: operations
+    owner_module: MOD-15
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: true
+    description: Transactional outbox events awaiting asynchronous delivery
+
+  idempotency_records:
+    owner: operations
+    owner_module: MOD-15
+    tenant_scope: organization
+    tenant_column: organization_id
+    rls_required: true
+    immutable: false
+    description: Request fingerprint tracking to guarantee idempotent execution
