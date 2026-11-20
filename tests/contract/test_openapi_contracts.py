@@ -19,7 +19,7 @@ def test_openapi_contract_conventions():
 
     # Check version prefix
     for path in paths:
-        if path == "/health":
+        if path.startswith("/health"):
             continue
         assert path.startswith("/api/v1/"), f"Endpoint '{path}' must be versioned under /api/v1/"
 

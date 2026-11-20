@@ -30,6 +30,7 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
     title = title_map.get(status_code, "HTTP Error")
     error_type = f"https://errors.modularmenu.in/{title.lower().replace(' ', '-')}"
 
+    request_id = getattr(request.state, "request_id", None)
     content = {
         "type": error_type,
         "title": title,
@@ -37,16 +38,23 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         "detail": str(exc.detail),
         "instance": request.url.path,
     }
+    if request_id:
+        content["request_id"] = request_id
+
+    headers = {"Content-Type": "application/problem+json"}
+    if request_id:
+        headers["X-Request-ID"] = request_id
 
     return JSONResponse(
         status_code=status_code,
         content=content,
-        headers={"Content-Type": "application/problem+json"}
+        headers=headers
     )
 
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     """Formats validation errors into RFC 7807 format."""
+    request_id = getattr(request.state, "request_id", None)
     content = {
         "type": "https://errors.modularmenu.in/validation-error",
         "title": "Validation Error",
@@ -55,9 +63,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         "instance": request.url.path,
         "invalid_params": exc.errors()
     }
+    if request_id:
+        content["request_id"] = request_id
+
+    headers = {"Content-Type": "application/problem+json"}
+    if request_id:
+        headers["X-Request-ID"] = request_id
 
     return JSONResponse(
         status_code=422,
         content=content,
-        headers={"Content-Type": "application/problem+json"}
+        headers=headers
     )
