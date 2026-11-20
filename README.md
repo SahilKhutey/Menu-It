@@ -1,9 +1,11 @@
 # Menu-It (ModularMenu™)
 ### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It)
-[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20%7C%20ARC--02%20Approved-success.svg?style=for-the-badge)](docs/governance/architecture-compliance-checklist.md)
-[![Tests](https://img.shields.io/badge/Quality%20Gates-32%2F32%20Passing-brightgreen.svg?style=for-the-badge)](docs/reports/ARC-02-test-report.md)
+[![Version](https://img.shields.io/badge/version-1.0.0--arc06-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc06)
+[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--06%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
+[![Tests](https://img.shields.io/badge/Quality%20Gates-199%2F199%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Devlogs](https://img.shields.io/badge/Devlogs-7%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
+[![Tasklogs](https://img.shields.io/badge/Tasklogs-6%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
 [![Python](https://img.shields.io/badge/Python-3.12%20FastAPI-005571.svg?style=for-the-badge&logo=python)](backend/)
 [![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?style=for-the-badge&logo=next.js)](frontend/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=for-the-badge&logo=typescript)](frontend/)
@@ -274,17 +276,19 @@ docker compose logs -f
 
 The repository enforces strict automated quality gates prior to any pull request merge:
 
-### 1. Pytest Test Suites (32 Tests Passing)
+### 1. Pytest Test Suites (199 Tests Passing — 100% Pass Rate)
 ```bash
 pytest tests/ -v
+# ======================== 199 passed in 9.68s ========================
 ```
-- **Architecture Boundaries (`tests/architecture/`):** Uses Python AST parsing to guarantee domain models never import the API layer or HTTP frameworks, verifies zero circular dependencies, and mandates `lazy="raise"` on all SQLAlchemy relationships.
-- **Security & Tenancy (`tests/security/`):** Verifies that Tenant A is rejected with `HTTP 403 Forbidden` when attempting to access Tenant B's catalog or design settings, and verifies platform administration routes require admin privileges.
+- **Architecture Boundaries (`tests/architecture/`):** Uses Python AST parsing to guarantee domain models never import the API layer or HTTP frameworks, verifies zero circular dependencies between all 16 modules, and mandates `lazy="raise"` on all SQLAlchemy relationships.
+- **Security & Tenancy (`tests/security/`):** 50 multi-tenant test scenarios (`ARC05-T001` to `ARC05-T050`) verifying that Tenant A is rejected with `HTTP 403 Forbidden` when attempting to access Tenant B's catalog or design settings, verifying transaction-local PostgreSQL RLS context, and preventing IDOR attacks.
+- **Database & Persistence Integrity (`tests/database/`):** 55 test scenarios (`ARC06-T001` to `ARC06-T055`) proving composite foreign key enforcement, default price uniqueness via partial indexes, JSONB configuration validation, and optimistic concurrency locking.
 - **Contract & Standards (`tests/contract/`, `tests/unit/`):** Enforces RFC 7807 problem details error envelopes, OpenAPI 3.1 specification validity, and exact Python `Decimal` currency representation.
-- **Snapshot Immutability (`tests/integration/`):** Proves that published snapshots are write-once, read-many (WORM) and that updating theme tokens never alters underlying dish prices.
+- **Snapshot Immutability (`tests/integration/`):** Proves that published snapshots are write-once, read-many (WORM) with SHA-256 digests and ORM mutation guards rejecting `UPDATE` and `DELETE`.
 
 ### 2. Formal End-to-End Product Validation Script
-Execute the 10-step validation scenario specified in ARC-02 §13.2:
+Execute the formal multi-step validation scenario:
 ```bash
 python scripts/validate_arc02_e2e.py
 ```
@@ -292,21 +296,35 @@ python scripts/validate_arc02_e2e.py
 
 ---
 
+## 📚 Engineering Chronicles: Devlogs & Tasklogs
+
+Detailed milestone execution and developer journals are documented in dedicated archives:
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** 7 comprehensive engineering chronicles:
+  - [Devlog-001: Project Initialization & Blueprint Baseline](docs/devlogs/devlog-001-project-initialization-and-blueprint.md)
+  - [Devlog-002: ARC-01 System Architecture Overview](docs/devlogs/devlog-002-arc01-system-architecture-overview.md)
+  - [Devlog-003: ARC-02 Principles, Standards & Constraints](docs/devlogs/devlog-003-arc02-architectural-principles-and-standards.md)
+  - [Devlog-004: ARC-03 Application Architecture](docs/devlogs/devlog-004-arc03-application-architecture.md)
+  - [Devlog-005: ARC-04 Modular Domain Architecture](docs/devlogs/devlog-005-arc04-modular-domain-architecture.md)
+  - [Devlog-006: ARC-05 Multi-Tenant Architecture](docs/devlogs/devlog-006-arc05-multi-tenant-architecture.md)
+  - [Devlog-007: ARC-06 Data Architecture & Persistence](docs/devlogs/devlog-007-arc06-data-architecture-and-persistence.md)
+- **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Task verification logs and work package breakdowns:
+  - [Tasklog-ARC01: System Overview Tasks](docs/tasklogs/tasklog-arc01-overview.md)
+  - [Tasklog-ARC02: Engineering Standards (WP-01 to WP-10)](docs/tasklogs/tasklog-arc02-principles.md)
+  - [Tasklog-ARC03: Application Architecture (WP-01 to WP-10)](docs/tasklogs/tasklog-arc03-application.md)
+  - [Tasklog-ARC04: Modular Domain Architecture (WP-01 to WP-10)](docs/tasklogs/tasklog-arc04-domain.md)
+  - [Tasklog-ARC05: Multi-Tenant Architecture (WP-01 to WP-12)](docs/tasklogs/tasklog-arc05-multitenant.md)
+  - [Tasklog-ARC06: Data Architecture & Persistence (WP-01 to WP-12)](docs/tasklogs/tasklog-arc06-data.md)
+
+---
+
 ## 📜 Architectural Decision Records (ADRs)
 
-All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md):
-- **ADR-0001:** Python 3.12 & FastAPI Core Application Service
-- **ADR-0002:** Next.js 14 App Router (React 18 + TypeScript) Frontend
-- **ADR-0003:** SQLAlchemy 2.0 Async ORM with Strict Relationship Loading (`lazy="raise"`)
-- **ADR-0004:** PostgreSQL 16 Relational Persistence with Row-Level Security (RLS)
-- **ADR-0005:** CQRS-Lite Asymmetric Pathways with Immutable Published Snapshots
-- **ADR-0006:** Configuration-Driven Presentation Engine (Zero-Fork Invariant)
-- **ADR-0007:** Binary Duality: Single Container Binary for Managed SaaS & Self-Hosted
-- **ADR-0008:** Fixed-Precision Numeric Representation for Monetary Values (`Decimal`)
-- **ADR-0009:** RFC 7807 Problem Details for Standardized API Error Representation
-- **ADR-0010:** CSS Custom Properties (`--theme-*`) for Dynamic Theme Rendering
-- **ADR-0011:** Monorepo Structure with Strict Physical Module Boundaries
-- **ADR-0012:** Monotonically Increasing Integer Versions and SHA-256 Digesting
+All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (88 decisions recorded):
+- **ADR-0001 to ADR-0012:** System Architecture Principles & Non-Negotiable Standards (ARC-01 / ARC-02)
+- **ADR-0013 to ADR-0027:** Application Architecture, Layering & Monolith Boundaries (ARC-03)
+- **ADR-0028 to ADR-0043:** Modular Domain Architecture, 16 Discrete Modules & Domain Events (ARC-04)
+- **ADR-0044 to ADR-0063:** Multi-Tenant Architecture, 8-Layer Defense in Depth & Fail-Closed RLS (ARC-05)
+- **ADR-0064 to ADR-0088:** Data Architecture, Composite Foreign Keys & Immutable Snapshot Persistence (ARC-06)
 
 ---
 
