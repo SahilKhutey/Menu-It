@@ -20,6 +20,21 @@ This register records all formal Architectural Decision Records (ADRs) governing
 | **ADR-0010** | CSS Custom Properties (`--theme-*`) for Dynamic Theme Rendering | **Accepted** | 2026-11-19 | P-03, P-06 | ARC-02 §4.3, §6.1 |
 | **ADR-0011** | Monorepo Structure with Strict Physical Module Boundaries | **Accepted** | 2026-11-19 | P-01, P-02 | ARC-02 §10 (WP-02) |
 | **ADR-0012** | Monotonically Increasing Integer Versions and SHA-256 Digesting | **Accepted** | 2026-11-19 | P-07, CON-07 | ARC-02 §3.7, §6.5 |
+| **ADR-0013** | Modular Monolith Architecture Baseline (ARC03-D01) | **Accepted** | 2026-11-20 | P-01, P-08 | ARC-03 §2.1 |
+| **ADR-0014** | Next.js 14 App Router for Frontend Applications (ARC03-D02) | **Accepted** | 2026-11-20 | P-03, P-06 | ARC-03 §3.1 |
+| **ADR-0015** | FastAPI Framework for Backend Application Service (ARC03-D03) | **Accepted** | 2026-11-20 | P-01, P-09 | ARC-03 §4.1 |
+| **ADR-0016** | Decoupled Frontend and Backend Processes (ARC03-D04) | **Accepted** | 2026-11-20 | P-02, P-08 | ARC-03 §2.2 |
+| **ADR-0017** | Layered Backend Architecture with Inversion of Control (ARC03-D05) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-03 §4.2 |
+| **ADR-0018** | Application Services Pattern for Domain Use Cases (ARC03-D06) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-03 §5.1 |
+| **ADR-0019** | Abstract Repository Interfaces for Persistence (ARC03-D07) | **Accepted** | 2026-11-20 | P-02, P-08 | ARC-03 §5.2 |
+| **ADR-0020** | Unit of Work Pattern for Atomic Transactions (ARC03-D08) | **Accepted** | 2026-11-20 | P-04, P-09 | ARC-03 §5.3 |
+| **ADR-0021** | Strict Versioned REST APIs (`/api/v1/`) (ARC03-D09) | **Accepted** | 2026-11-20 | P-01, P-09 | ARC-03 §7.1 |
+| **ADR-0022** | Generation of Frontend Contracts from OpenAPI (ARC03-D10) | **Accepted** | 2026-11-20 | P-01, P-10 | ARC-03 §7.4 |
+| **ADR-0023** | Feature-Based Frontend Module Organization (ARC03-D11) | **Accepted** | 2026-11-20 | P-01, P-06 | ARC-03 §3.2 |
+| **ADR-0024** | Reusable Shared Workspace Packages (ARC03-D12) | **Accepted** | 2026-11-20 | P-01, P-08 | ARC-03 §8.1 |
+| **ADR-0025** | Optional Redis / Fallback In-Memory Cache (ARC03-D13) | **Accepted** | 2026-11-20 | P-08, CON-10 | ARC-03 §11.1 |
+| **ADR-0026** | Centralized Configuration Validation and Lifespan Probing (ARC03-D14) | **Accepted** | 2026-11-20 | P-08, P-09 | ARC-03 §9.1 |
+| **ADR-0027** | Automated AST-Based Architecture Compliance Testing (ARC03-D15) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-03 §14.4 |
 
 ---
 
@@ -84,3 +99,78 @@ This register records all formal Architectural Decision Records (ADRs) governing
 - **Context:** Menu rollbacks and cache invalidation require unambiguous version lineage and tamper-proof verification.
 - **Decision:** Every published snapshot receives an incrementing integer version number (`v1`, `v2`, ...) and an immutable SHA-256 payload digest.
 - **Consequences:** Instant rollback via version pointer switch; cryptographic snapshot integrity verification.
+
+### ADR-0013: Modular Monolith Architecture Baseline (ARC03-D01)
+- **Context:** Distributed microservices introduce operational complexity, distributed transaction costs, and networking latency unsuitable for early-stage platform delivery and customer-hosted edge deployments.
+- **Decision:** Build ModularMenu as a modular monolith with strictly enforced internal module boundaries and shared contracts.
+- **Consequences:** Single deployable unit, straightforward local debugging, low operational overhead, seamless path to microservices later if load demands.
+
+### ADR-0014: Next.js 14 App Router for Frontend Applications (ARC03-D02)
+- **Context:** The frontend encompasses public diner rendering requiring sub-second performance and rich admin/studio editing tools.
+- **Decision:** Utilize Next.js 14 App Router, standardizing server-side rendering for public diners and client components for administrative surfaces.
+- **Consequences:** Excellent mobile web performance, optimized bundle sizes (<120 kB First Load JS for diner route), and unified React 18 component model.
+
+### ADR-0015: FastAPI Framework for Backend Application Service (ARC03-D03)
+- **Context:** High concurrency, asynchronous database access, and schema-driven API contracts are required for restaurant management and public menu delivery.
+- **Decision:** Standardize on FastAPI with Pydantic v2 and Python 3.12.
+- **Consequences:** Native asynchronous execution, automatic OpenAPI schema generation, high developer velocity, and robust type safety.
+
+### ADR-0016: Decoupled Frontend and Backend Processes (ARC03-D04)
+- **Context:** Embedding backend logic within Next.js server actions couples UI deployment with persistence logic and complicates self-hosted dual deployments.
+- **Decision:** Run Next.js and FastAPI as decoupled processes communicating strictly over HTTP REST (`/api/v1/`).
+- **Consequences:** Independent horizontal scaling, independent deployments, clear process isolation, and unambiguous security perimeters.
+
+### ADR-0017: Layered Backend Architecture with Inversion of Control (ARC03-D05)
+- **Context:** Direct database calls from route handlers create unmaintainable, untestable code with tight coupling to ORM implementations.
+- **Decision:** Enforce four explicit layers: API ➔ Application ➔ Domain ➔ Infrastructure. Domain logic cannot import HTTP or ORM libraries; dependencies point inward.
+- **Consequences:** Clean separation of concerns, high testability with in-memory test doubles, and adherence to clean architecture principles.
+
+### ADR-0018: Application Services Pattern for Domain Use Cases (ARC03-D06)
+- **Context:** Business workflows such as menu creation, publishing, and theme updates require coordinated domain operations and transaction boundaries.
+- **Decision:** Encapsulate all business workflows in application use cases accepting immutable Command DTOs and returning Result DTOs.
+- **Consequences:** Business use cases are fully testable without database or web server dependencies, eliminating fat controllers.
+
+### ADR-0019: Abstract Repository Interfaces for Persistence (ARC03-D07)
+- **Context:** Hardcoding SQLAlchemy session calls in domain services prevents isolated unit testing and couples business logic to database schema.
+- **Decision:** Define abstract repository interfaces (Protocols) in the application layer, implemented by concrete adapters in the infrastructure layer.
+- **Consequences:** In-memory repositories can be swapped in unit tests; database implementation can evolve without touching business rules.
+
+### ADR-0020: Unit of Work Pattern for Atomic Transactions (ARC03-D08)
+- **Context:** Complex operations involving multiple entities require atomic commit or rollback across repository boundaries.
+- **Decision:** Implement the Unit of Work (UoW) protocol in the application layer with concrete SQLAlchemy context manager implementation.
+- **Consequences:** Explicit transaction boundaries; safe rollback upon domain exceptions; no leaking of database sessions into API routes.
+
+### ADR-0021: Strict Versioned REST APIs (`/api/v1/`) (ARC03-D09)
+- **Context:** Public diners, mobile clients, and third-party integrations require backward-compatible API contracts that evolve smoothly.
+- **Decision:** Mandate version prefix `/api/v1/` on all business endpoints; operational probes reside under `/health`, `/health/live`, `/health/ready`.
+- **Consequences:** Predictable routing, versioning support, zero breaking changes to existing clients.
+
+### ADR-0022: Generation of Frontend Contracts from OpenAPI (ARC03-D10)
+- **Context:** Hand-crafted TypeScript types drifting from backend Pydantic models lead to runtime serialization bugs.
+- **Decision:** Generate TypeScript interfaces directly from the backend OpenAPI 3.1 specification into `packages/contracts` and frontend API clients.
+- **Consequences:** Single source of truth, end-to-end type safety, compile-time detection of API mismatches.
+
+### ADR-0023: Feature-Based Frontend Module Organization (ARC03-D11)
+- **Context:** Monolithic frontend component folders become unwieldy as application complexity grows.
+- **Decision:** Organize frontend code into domain-specific feature folders (`src/features/menus`, `src/features/themes`, `src/features/editor`) containing local components, services, and hooks.
+- **Consequences:** High cohesion, low coupling, easier code navigation, and clear feature ownership.
+
+### ADR-0024: Reusable Shared Workspace Packages (ARC03-D12)
+- **Context:** Contracts, design tokens, and theme definitions must be shared between frontend and backend without duplicating code.
+- **Decision:** Maintain monorepo workspace packages (`packages/contracts`, `packages/theme-tokens`) consumed by both frontend and backend.
+- **Consequences:** Zero code duplication for shared data structures, immediate feedback on schema changes.
+
+### ADR-0025: Optional Redis / Fallback In-Memory Cache (ARC03-D13)
+- **Context:** Customer-hosted environments may not provide Redis, while cloud SaaS deployments require distributed caching for scale.
+- **Decision:** Make Redis optional with automatic fallback to local in-memory TTL caching when Redis is unconfigured or unavailable.
+- **Consequences:** Appliance simplicity for customer-hosted installations; scalable caching for multi-tenant cloud SaaS.
+
+### ADR-0026: Centralize Configuration Validation and Lifespan Probing (ARC03-D14)
+- **Context:** Invalid or missing environment variables cause runtime failures mid-request. Operational orchestrators need granular liveness and readiness states.
+- **Decision:** Validate all configuration at startup using Pydantic Settings; provide explicit `/health/live` (process alive) and `/health/ready` (database connected) probes.
+- **Consequences:** Fail-fast startup on misconfiguration; accurate orchestration by Kubernetes and Docker health checks.
+
+### ADR-0027: Automated AST-Based Architecture Compliance Testing (ARC03-D15)
+- **Context:** Architectural conventions and layer boundaries degrade over time if not continuously enforced by automated tooling.
+- **Decision:** Implement automated Python AST tests (`tests/architecture/`) in CI to enforce boundary rules, layer independence, and forbidden imports.
+- **Consequences:** Zero architectural drift; PRs violating architectural constraints fail automatically in CI.
