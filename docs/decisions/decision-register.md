@@ -371,3 +371,131 @@ This register records all formal Architectural Decision Records (ADRs) governing
 - **Context:** Architectural drift between cloud SaaS and customer-hosted appliance deployments increases maintenance burden.
 - **Decision:** The core domain entities, authorization policies, and TenantContext interfaces are 100% identical across SaaS and Customer-Hosted editions.
 - **Consequences:** Features and security policies developed once operate identically in all deployment profiles.
+
+### ADR-0064: PostgreSQL Primary Relational Persistence (ARC06-D01)
+- **Context:** ModularMenu requires robust relational integrity, composite foreign key enforcement, row-level security, transactional guarantees, and JSONB validation.
+- **Decision:** PostgreSQL (>=15) is selected as the primary relational database across both SaaS and customer-hosted deployments.
+- **Consequences:** Consistent, standards-compliant relational semantics; support for native UUIDs, TIMESTAMPTZ, and RLS.
+
+### ADR-0065: Shared Logical Database Schema for Managed SaaS (ARC06-D02)
+- **Context:** SaaS operations require high multi-tenant operational density, unified schema migrations, and simplified connection pooling.
+- **Decision:** Multi-tenant SaaS operates on a single PostgreSQL database with a shared logical schema, partitioned logically by explicit tenant keys.
+- **Consequences:** Operational simplicity during schema migrations; mandates strict tenant filtering at query and RLS levels.
+
+### ADR-0066: UUIDv4 Primary Identifiers (ARC06-D03)
+- **Context:** Sequential integer IDs expose enumeration attack vectors and complicate distributed generation and data migration.
+- **Decision:** All database entities use random UUIDv4 identifiers as surrogate primary keys.
+- **Consequences:** Unpredictable resource identifiers; client/service generation without database round-trips.
+
+### ADR-0067: Organization-Level Tenant Ownership Boundary (ARC06-D04)
+- **Context:** Multi-branch operations require a top-level commercial and legal tenant boundary that owns all restaurants and user memberships.
+- **Decision:** Organization (organizations) is the primary tenant boundary (organization_id).
+- **Consequences:** All tenant isolation policies, billing, and organizational memberships anchor to organization_id.
+
+### ADR-0068: Restaurant as Subordinate Resource to Organization (ARC06-D05)
+- **Context:** A brand or hospitality group owns multiple restaurant locations or branches.
+- **Decision:** Restaurant (
+estaurants) is strictly subordinate to an organization, carrying both organization_id and id.
+- **Consequences:** Restaurants cannot exist outside an organization; multi-branch operations share billing and asset ownership.
+
+### ADR-0069: Explicit organization_id on All Tenant-Owned Records (ARC06-D06)
+- **Context:** Joining up the relational graph to determine tenant ownership causes security vulnerabilities and query latency.
+- **Decision:** Every tenant-owned table must include an explicit, non-nullable organization_id column.
+- **Consequences:** Enables single-column tenant indexing, row-level security policies, and direct cross-tenant isolation enforcement.
+
+### ADR-0070: Explicit restaurant_id on Restaurant-Scoped Records (ARC06-D07)
+- **Context:** Menus, categories, items, and design configurations belong to a specific restaurant branch.
+- **Decision:** Restaurant-scoped records include an explicit 
+estaurant_id column alongside organization_id.
+- **Consequences:** Direct branch querying and dual-scope authorization without traversal joins.
+
+### ADR-0071: Composite Relational Foreign Keys Enforce Matching Ownership (ARC06-D08)
+- **Context:** An entity in organization A must never be attached to a parent or menu in organization B.
+- **Decision:** Foreign key relationships enforce composite constraints (organization_id, parent_id).
+- **Consequences:** Cross-tenant entity attachment is rejected directly at the database engine level.
+
+### ADR-0072: SQLAlchemy 2.x Declarative ORM Baseline (ARC06-D09)
+- **Context:** Modular monolith backend requires type-safe query formulation, async I/O, declarative mappings, and lifecycle events.
+- **Decision:** Adopt SQLAlchemy 2.x with AsyncAttrs, Mapped, and mapped_column type annotations.
+- **Consequences:** Compile-time type verification, async connection pooling, and standardized lifecycle event listeners.
+
+### ADR-0073: Alembic for Database Migrations (ARC06-D10)
+- **Context:** Database schema evolution across SaaS and Customer-Hosted deployments must be deterministic, versioned, and reversible.
+- **Decision:** Use Alembic with reversible upgrade() and downgrade() steps, discovering all modular models via unified metadata.
+- **Consequences:** Deterministic schema rollouts and zero drift between cloud and on-premise deployments.
+
+### ADR-0074: Validated, Versioned JSONB for Visual Presentation Configuration (ARC06-D11)
+- **Context:** Theme tokens, layout options, and component visibility require schema flexibility without altering relational tables.
+- **Decision:** Use PostgreSQL JSONB exclusively for validated, versioned presentation configs; strictly prohibited for core business relationships.
+- **Consequences:** Schema flexibility for UI customization while preserving relational rigor for core domain entities.
+
+### ADR-0075: Fixed-Precision Monetary Representation (ARC06-D12)
+- **Context:** IEEE 754 floating-point types cause rounding discrepancies and financial errors in menu pricing.
+- **Decision:** Prices are represented as integer minor units (paise/cents) or explicit NUMERIC(12,2); floats are strictly forbidden.
+- **Consequences:** Exact financial calculations across all currency operations and published snapshots.
+
+### ADR-0076: UTC Timestamps for All Temporal Data (ARC06-D13)
+- **Context:** Restaurants operate across diverse time zones; inconsistent offsets cause scheduling and auditing defects.
+- **Decision:** All timestamps use PostgreSQL TIMESTAMPTZ and are generated, stored, and exchanged exclusively in UTC.
+- **Consequences:** Ambiguity-free temporal sequencing, audit logging, and publication scheduling.
+
+### ADR-0077: Defense-in-Depth Tenant Isolation with PostgreSQL RLS (ARC06-D14)
+- **Context:** Relying solely on application-level WHERE organization_id = ... risks data leakage from query bugs or raw SQL execution.
+- **Decision:** Combine application-level tenant filtering with PostgreSQL Row-Level Security policies on all tenant tables.
+- **Consequences:** Multi-layered security; even unintended application queries cannot read or write foreign tenant data.
+
+### ADR-0078: Transaction-Local PostgreSQL Tenant Session Context (ARC06-D15)
+- **Context:** PostgreSQL RLS requires a trusted session variable indicating the authenticated tenant on shared connection pools.
+- **Decision:** Unit of Work sets transaction-local pp.current_organization_id using is_local=true via set_config().
+- **Consequences:** Zero connection pool leakage across pooled connections; context automatically clears on transaction commit or rollback.
+
+### ADR-0079: Immutable Menu Publication Snapshots (ARC06-D16)
+- **Context:** Subsequent draft menu edits or pricing updates must never mutate or destabilize live or historic customer menus.
+- **Decision:** Menu publications create immutable, versioned snapshots (menu_versions) with canonical SHA-256 digests and mutation guards.
+- **Consequences:** Historical auditability, instant rollback capabilities, and tamper-proof public rendering.
+
+### ADR-0080: Explicit Tenant Scoping in Repositories (ARC06-D17)
+- **Context:** Generic ORM query methods (session.get(Model, id)) omit tenant filters, risking cross-tenant object access.
+- **Decision:** Repository interfaces require explicit organization_id parameters and enforce tenant scoping in all queries.
+- **Consequences:** Impossible for application developers to perform unscoped lookups on tenant-owned entities.
+
+### ADR-0081: Use-Case-Scoped Transaction Boundaries (ARC06-D18)
+- **Context:** Long-lived transactions or multi-transaction use cases cause connection exhaustion, deadlocks, and inconsistent state.
+- **Decision:** Transactions are managed via Unit of Work, exactly matching the lifecycle of a single application use case.
+- **Consequences:** Atomic, consistent operations with bounded transaction lifecycles and automatic rollback on failure.
+
+### ADR-0082: Optimistic Concurrency Control via row_version (ARC06-D19)
+- **Context:** Concurrent updates from multiple restaurant managers can cause lost updates without locking entire tables.
+- **Decision:** Editable draft entities include a integer 
+ow_version column incremented on every update and checked on save.
+- **Consequences:** Prevents lost updates with high concurrency and zero pessimistic row locking overhead.
+
+### ADR-0083: Transactional Outbox for Reliable Event Dispatch (ARC06-D20)
+- **Context:** Dual writes to the database and external message brokers cause silent event loss on application crashes.
+- **Decision:** Domain events are committed atomically to an outbox_events table within the business transaction.
+- **Consequences:** Guaranteed at-least-once message delivery and decoupling of domain transactions from external message queues.
+
+### ADR-0084: Controlled Data Deletion and Retention Lifecycle (ARC06-D21)
+- **Context:** Immediate cascading deletes of tenant data risk accidental data loss and compliance violations.
+- **Decision:** Enforce structured lifecycle states (ctive, suspended, offboarded), grace periods, and soft-delete before purge.
+- **Consequences:** Reversible operations during disputes, customer recovery grace periods, and GDPR/compliance auditability.
+
+### ADR-0085: Decoupled Public Menu Read Model (ARC06-D22)
+- **Context:** Public diners browsing menus generate read traffic that should not query normalized draft tables or require tenant auth.
+- **Decision:** Public menu endpoints resolve active publication snapshots directly without tenant auth or relational draft joins.
+- **Consequences:** High-performance caching, negligible database load, and zero exposure of draft or unpublished changes.
+
+### ADR-0086: Object Storage for Media Bytes and PostgreSQL for Metadata (ARC06-D23)
+- **Context:** Storing large image/media binaries in PostgreSQL Blobs causes database bloat and performance degradation.
+- **Decision:** Media binaries reside in S3-compatible object storage; PostgreSQL stores strictly typed metadata and tenant paths.
+- **Consequences:** Optimized relational storage, high-throughput media serving via CDN, and tenant-scoped media quotas.
+
+### ADR-0087: Repeatable, Tested Backup and Restore Procedures (ARC06-D24)
+- **Context:** Backups that are never tested fail unexpectedly during disaster recovery incidents.
+- **Decision:** Automated daily logical and continuous physical backups with periodic, automated restore verification drills.
+- **Consequences:** Documented, proven Recovery Time Objectives (RTO < 4h) and Recovery Point Objectives (RPO < 1h).
+
+### ADR-0088: 100% Schema and Binary Parity Across SaaS and Customer-Hosted Editions (ARC06-D25)
+- **Context:** Maintaining separate database architectures for cloud and self-hosted environments doubles testing and maintenance costs.
+- **Decision:** Both editions run identical SQLAlchemy models, Alembic migrations, constraints, and seed routines.
+- **Consequences:** Zero architectural bifurcation; self-hosted customers receive enterprise-grade security and data rigor out of the box.
