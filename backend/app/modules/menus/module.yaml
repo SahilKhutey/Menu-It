@@ -1,0 +1,28 @@
+module:
+  id: MOD-04
+  name: Menu Management
+  status: approved
+  ownership:
+    aggregates:
+      - Menu
+    entities:
+      - Menu
+      - MenuMetadata
+  contracts:
+    provides:
+      - MenuReader
+    consumes:
+      - RestaurantReader
+      - CategoryReader
+  dependencies:
+    allowed:
+      - restaurants
+      - categories
+    prohibited:
+      - identity
+      - publishing
+      - licensing
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

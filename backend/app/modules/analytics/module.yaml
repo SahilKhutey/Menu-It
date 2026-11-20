@@ -1,0 +1,22 @@
+module:
+  id: MOD-16
+  name: Analytics & Integrations
+  status: approved
+  ownership:
+    aggregates:
+      - Integration Configuration
+    entities:
+      - Integration
+      - UsageEvent
+  contracts:
+    provides:
+      - AnalyticsRecorder
+    consumes: []
+  dependencies:
+    allowed: []
+    prohibited:
+      - editor
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

@@ -1,0 +1,31 @@
+module:
+  id: MOD-01
+  name: Identity & Authentication
+  status: approved
+  ownership:
+    aggregates:
+      - User Account
+    entities:
+      - User
+      - Credential
+      - Session
+      - VerificationToken
+  contracts:
+    provides:
+      - IdentityVerifier
+      - SessionManager
+    consumes: []
+  dependencies:
+    allowed: []
+    prohibited:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - publishing
+      - rendering
+      - editor
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

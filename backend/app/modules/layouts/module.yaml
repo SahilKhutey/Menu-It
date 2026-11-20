@@ -1,0 +1,26 @@
+module:
+  id: MOD-09
+  name: Layout Engine
+  status: approved
+  ownership:
+    aggregates:
+      - Layout Definition
+    entities:
+      - LayoutDefinition
+      - LayoutRegion
+  contracts:
+    provides:
+      - LayoutResolver
+    consumes:
+      - ComponentRegistryReader
+  dependencies:
+    allowed:
+      - components
+    prohibited:
+      - menus
+      - food_items
+      - publishing
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

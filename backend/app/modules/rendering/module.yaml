@@ -1,0 +1,30 @@
+module:
+  id: MOD-11
+  name: Menu Rendering Engine
+  status: approved
+  ownership:
+    aggregates: []
+    entities:
+      - RenderInput
+      - RenderResult
+  contracts:
+    provides:
+      - MenuRenderer
+    consumes:
+      - ThemeResolver
+      - LayoutResolver
+      - ComponentRegistryReader
+      - PublishedSnapshotReader
+  dependencies:
+    allowed:
+      - themes
+      - layouts
+      - components
+      - publishing
+    prohibited:
+      - editor
+      - identity
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

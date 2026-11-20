@@ -1,0 +1,37 @@
+module:
+  id: MOD-13
+  name: Publishing & Versioning
+  status: approved
+  ownership:
+    aggregates:
+      - Publication
+    entities:
+      - Publication
+      - PublishedVersion
+  contracts:
+    provides:
+      - PublishedSnapshotReader
+    consumes:
+      - MenuReader
+      - CategoryReader
+      - FoodItemReader
+      - PricingReader
+      - ThemeResolver
+      - LayoutResolver
+      - ComponentRegistryReader
+  dependencies:
+    allowed:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - themes
+      - layouts
+      - components
+    prohibited:
+      - editor
+      - identity
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

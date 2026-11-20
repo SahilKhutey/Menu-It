@@ -42,6 +42,22 @@ class GUID(TypeDecorator):
             return value
 
 
+# Platform-agnostic JSON column
+class PortableJSON(TypeDecorator):
+    """Platform-independent JSON type supporting PostgreSQL JSONB and SQLite JSON."""
+    impl = CHAR
+    cache_ok = True
+
+    def load_dialect_impl(self, dialect):
+        from sqlalchemy import Text
+        from sqlalchemy.dialects.postgresql import JSONB
+        from sqlalchemy.dialects.sqlite import JSON as SQLITE_JSON
+        if dialect.name == "postgresql":
+            return dialect.type_descriptor(JSONB())
+        else:
+            return dialect.type_descriptor(SQLITE_JSON())
+
+
 # Consistent naming convention for constraints and indexes
 convention = {
     "ix": "ix_%(column_0_label)s",

@@ -1,0 +1,31 @@
+module:
+  id: MOD-12
+  name: Visual Menu Editor
+  status: approved
+  ownership:
+    aggregates:
+      - Editor Draft
+    entities:
+      - EditorSession
+      - EditorDraft
+      - EditorHistoryEntry
+  contracts:
+    provides:
+      - EditorDraftManager
+    consumes:
+      - ThemeResolver
+      - LayoutResolver
+      - ComponentRegistryReader
+      - MenuReader
+  dependencies:
+    allowed:
+      - themes
+      - layouts
+      - components
+      - menus
+    prohibited:
+      - identity
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

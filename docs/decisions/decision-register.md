@@ -35,6 +35,22 @@ This register records all formal Architectural Decision Records (ADRs) governing
 | **ADR-0025** | Optional Redis / Fallback In-Memory Cache (ARC03-D13) | **Accepted** | 2026-11-20 | P-08, CON-10 | ARC-03 §11.1 |
 | **ADR-0026** | Centralized Configuration Validation and Lifespan Probing (ARC03-D14) | **Accepted** | 2026-11-20 | P-08, P-09 | ARC-03 §9.1 |
 | **ADR-0027** | Automated AST-Based Architecture Compliance Testing (ARC03-D15) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-03 §14.4 |
+| **ADR-0028** | Modular Monolith with Explicit Domain Boundaries (ARC04-D01) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-04 §1 |
+| **ADR-0029** | Sixteen Logical Business Modules Decomposition (ARC04-D02) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-04 §4.1 |
+| **ADR-0030** | Single Authoritative Owner Per Business Concept (ARC04-D03) | **Accepted** | 2026-11-20 | P-01, P-04 | ARC-04 §3.4 |
+| **ADR-0031** | Domain Independence from Frameworks and Infrastructure (ARC04-D04) | **Accepted** | 2026-11-20 | P-02, P-08 | ARC-04 §3.3 |
+| **ADR-0032** | Cross-Module Communication via Public Contracts & Protocols (ARC04-D05) | **Accepted** | 2026-11-20 | P-01, P-02 | ARC-04 §8 |
+| **ADR-0033** | Prohibition of Cross-Module Direct ORM Access (ARC04-D06) | **Accepted** | 2026-11-20 | P-01, P-04 | ARC-04 §3.1, §9.3 |
+| **ADR-0034** | Fine-Grained Aggregate Boundaries for Invariant Consistency (ARC04-D07) | **Accepted** | 2026-11-20 | P-01, P-05 | ARC-04 §7.3 |
+| **ADR-0035** | Standardized Domain Events for Completed Business Facts (ARC04-D08) | **Accepted** | 2026-11-20 | P-01, P-09 | ARC-04 §10 |
+| **ADR-0036** | In-Process Event Dispatch as Default Communication (ARC04-D09) | **Accepted** | 2026-11-20 | P-01, P-08 | ARC-04 §3.5, §10.3 |
+| **ADR-0037** | Transactional Outbox for High-Reliability Operations (ARC04-D10) | **Accepted** | 2026-11-20 | P-07, P-09 | ARC-04 §11.3 |
+| **ADR-0038** | Schema-Versioned Theme, Layout, and Component Configurations (ARC04-D11) | **Accepted** | 2026-11-20 | P-03, P-10 | ARC-04 §6.8, §6.10 |
+| **ADR-0039** | Visual Editor Independent Draft State and Reversible Revisions (ARC04-D12) | **Accepted** | 2026-11-20 | P-06, P-07 | ARC-04 §6.12 |
+| **ADR-0040** | Immutable Published Snapshots with Cryptographic SHA-256 (ARC04-D13) | **Accepted** | 2026-11-20 | P-07, CON-07 | ARC-04 §6.13 |
+| **ADR-0041** | Menu Rendering Engine Complete Decoupling from Editor State (ARC04-D14) | **Accepted** | 2026-11-20 | P-06, CON-12 | ARC-04 §6.11 |
+| **ADR-0042** | Graceful Degradation for Supporting and Optional Domains (ARC04-D15) | **Accepted** | 2026-11-20 | P-08, P-09 | ARC-04 §5.7 |
+| **ADR-0043** | Absolute Domain Parity Across Managed SaaS and Customer-Hosted (ARC04-D16) | **Accepted** | 2026-11-20 | P-08, CON-10 | ARC-04 §2 |
 
 ---
 
@@ -174,3 +190,83 @@ This register records all formal Architectural Decision Records (ADRs) governing
 - **Context:** Architectural conventions and layer boundaries degrade over time if not continuously enforced by automated tooling.
 - **Decision:** Implement automated Python AST tests (`tests/architecture/`) in CI to enforce boundary rules, layer independence, and forbidden imports.
 - **Consequences:** Zero architectural drift; PRs violating architectural constraints fail automatically in CI.
+
+### ADR-0028: Modular Monolith with Explicit Domain Boundaries (ARC04-D01)
+- **Context:** Premature microservices introduce network latency and distributed failure modes. A monolithic codebase without boundaries becomes an unmaintainable "big ball of mud".
+- **Decision:** ModularMenu is engineered as an in-process modular monolith with strictly enforced logical boundaries.
+- **Consequences:** Single deployment artifact, high developer velocity, in-memory function calls, and clear module contracts.
+
+### ADR-0029: Sixteen Logical Business Modules Decomposition (ARC04-D02)
+- **Context:** Restaurant platforms encompass authentication, restaurant operations, menu catalogs, visual customization, and publishing.
+- **Decision:** Partition backend capabilities into 16 discrete modules (MOD-01 to MOD-16) across 5 capability groups.
+- **Consequences:** Unambiguous code ownership, modular testability, and isolated feature evolution.
+
+### ADR-0030: Single Authoritative Owner Per Business Concept (ARC04-D03)
+- **Context:** Duplicating business authority across modules creates conflicting validation rules and data divergence.
+- **Decision:** Every domain concept has exactly one authoritative owning module; other modules consume via read models or contracts.
+- **Consequences:** Deterministic business invariants; single source of truth for all business operations.
+
+### ADR-0031: Domain Independence from Frameworks and Infrastructure (ARC04-D04)
+- **Context:** Embedding FastAPI, SQLAlchemy, or HTTP models into domain logic couples business rules to external dependencies.
+- **Decision:** Core domain entities and value objects are pure Python dataclasses with zero external framework imports.
+- **Consequences:** Sub-millisecond unit test execution, complete test independence, and clean architectural separation.
+
+### ADR-0032: Cross-Module Communication via Public Contracts & Protocols (ARC04-D05)
+- **Context:** Direct imports of peer module internal implementation classes create tight coupling.
+- **Decision:** Cross-module collaboration occurs strictly via Python `typing.Protocol` interfaces and public contract schemas.
+- **Consequences:** Concrete implementations can be refactored or mocked without affecting consumer modules.
+
+### ADR-0033: Prohibition of Cross-Module Direct ORM Access (ARC04-D06)
+- **Context:** Directly querying or updating another module's database tables bypasses business rules and invariants.
+- **Decision:** Modules are strictly prohibited from importing peer ORM models or executing cross-module database writes.
+- **Consequences:** Invariants are preserved; database table ownership is respected; enforced by CI AST checks.
+
+### ADR-0034: Fine-Grained Aggregate Boundaries for Invariant Consistency (ARC04-D07)
+- **Context:** Monolithic aggregates (e.g. Restaurant containing all menus, dishes, and media) cause locking bottlenecks.
+- **Decision:** Define fine-grained aggregate roots referencing other aggregates by immutable UUID.
+- **Consequences:** Minimal database lock contention; clear transaction boundaries; high concurrent throughput.
+
+### ADR-0035: Standardized Domain Events for Completed Business Facts (ARC04-D08)
+- **Context:** Side effects across modules must be traceable, auditable, and decoupled.
+- **Decision:** Establish an 18-event domain catalogue (EVT-001 to EVT-018) carrying metadata, correlation IDs, and timestamps.
+- **Consequences:** Comprehensive operational auditability; clean asynchronous decoupling.
+
+### ADR-0036: In-Process Event Dispatch as Default Communication (ARC04-D09)
+- **Context:** Distributed message brokers (Kafka, RabbitMQ) introduce operational burdens unsuited for single-appliance edge setups.
+- **Decision:** Default to synchronous in-process event dispatching within the application memory space.
+- **Consequences:** Zero external message broker dependencies; simple operations; fast execution.
+
+### ADR-0037: Transactional Outbox for High-Reliability Operations (ARC04-D10)
+- **Context:** Operations requiring dual-write consistency between database records and external message delivery.
+- **Decision:** Mandate transactional outbox records only for critical events requiring guaranteed delivery.
+- **Consequences:** Avoids distributed 2PC transactions while guaranteeing at-least-once delivery for critical events.
+
+### ADR-0038: Schema-Versioned Theme, Layout, and Component Configurations (ARC04-D11)
+- **Context:** Visual customizations evolve over time and must not break historical menu snapshots.
+- **Decision:** All theme tokens, layout definitions, and component property schemas must be strictly versioned and validated.
+- **Consequences:** Backward compatibility guaranteed; old snapshots render reliably across UI releases.
+
+### ADR-0039: Visual Editor Independent Draft State and Reversible Revisions (ARC04-D12)
+- **Context:** Operator customization experiments must not disrupt active public menus or diner experiences.
+- **Decision:** The Visual Menu Editor operates on isolated drafts with reversible undo/redo revision stacks.
+- **Consequences:** 100% draft isolation; active menus remain undisturbed until deliberate publication.
+
+### ADR-0040: Immutable Published Snapshots with Cryptographic SHA-256 (ARC04-D13)
+- **Context:** Menu publishing must guarantee immutability, auditability, and instant rollback capability.
+- **Decision:** Publishing compiles a frozen JSON snapshot stamped with a cryptographic SHA-256 digest.
+- **Consequences:** Read path requires zero relational joins; snapshots cannot be tampered with; instant rollback.
+
+### ADR-0041: Menu Rendering Engine Complete Decoupling from Editor State (ARC04-D14)
+- **Context:** Diners loading public menus must never download heavy visual editor libraries or load draft states.
+- **Decision:** The Menu Rendering Engine consumes only published snapshots and styling tokens, completely isolated from editor code.
+- **Consequences:** Lightweight customer mobile bundles (<120 kB JS); zero exposure of administrative tools to diners.
+
+### ADR-0042: Graceful Degradation for Supporting and Optional Domains (ARC04-D15)
+- **Context:** Network or storage failures in optional capabilities (media, analytics) must not block core menu access.
+- **Decision:** Core menu management and customer rendering gracefully degrade when optional domains are unavailable.
+- **Consequences:** High system resilience; menu displays text gracefully if media thumbnails fail to load.
+
+### ADR-0043: Absolute Domain Parity Across Managed SaaS and Customer-Hosted (ARC04-D16)
+- **Context:** Maintaining separate domain logic for cloud vs self-hosted customers leads to feature divergence.
+- **Decision:** The domain layer is 100% identical and binary-portable across Managed SaaS and Customer-Hosted profiles.
+- **Consequences:** Features built once work everywhere; single unified test suite and release cycle.

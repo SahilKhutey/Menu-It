@@ -1,0 +1,31 @@
+module:
+  id: MOD-03
+  name: Restaurant Management & Configuration
+  status: approved
+  ownership:
+    aggregates:
+      - Restaurant
+    entities:
+      - Restaurant
+      - RestaurantProfile
+      - RestaurantSettings
+  contracts:
+    provides:
+      - RestaurantReader
+    consumes:
+      - OrganizationReader
+  dependencies:
+    allowed:
+      - organizations
+    prohibited:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - publishing
+      - rendering
+      - editor
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

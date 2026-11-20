@@ -1,0 +1,199 @@
+# Machine-readable Module Dependency Specification (ARC-04 §13.2)
+# Enforces directional dependencies and prevents unauthorized cross-module coupling.
+
+version: 1
+monolith:
+  name: ModularMenu
+  model: modular_monolith
+
+modules:
+  MOD-01:
+    name: identity
+    package: app.modules.identity
+    tier: foundation
+    may_import: []
+    prohibited:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - publishing
+      - rendering
+      - editor
+      - themes
+      - layouts
+      - components
+
+  MOD-02:
+    name: organizations
+    package: app.modules.organizations
+    tier: foundation
+    may_import:
+      - identity
+    prohibited:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - publishing
+      - rendering
+      - editor
+
+  MOD-03:
+    name: restaurants
+    package: app.modules.restaurants
+    tier: foundation
+    may_import:
+      - organizations
+    prohibited:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - publishing
+      - rendering
+      - editor
+
+  MOD-04:
+    name: menus
+    package: app.modules.menus
+    tier: core_business
+    may_import:
+      - restaurants
+      - categories
+    prohibited:
+      - identity
+      - publishing
+      - licensing
+
+  MOD-05:
+    name: categories
+    package: app.modules.categories
+    tier: core_business
+    may_import:
+      - menus
+    prohibited:
+      - identity
+      - publishing
+
+  MOD-06:
+    name: food_items
+    package: app.modules.food_items
+    tier: core_business
+    may_import:
+      - categories
+      - media
+    prohibited:
+      - identity
+      - publishing
+
+  MOD-07:
+    name: pricing
+    package: app.modules.pricing
+    tier: core_business
+    may_import:
+      - food_items
+    prohibited:
+      - identity
+      - publishing
+
+  MOD-08:
+    name: themes
+    package: app.modules.themes
+    tier: experience
+    may_import: []
+    prohibited:
+      - menus
+      - food_items
+      - publishing
+
+  MOD-09:
+    name: layouts
+    package: app.modules.layouts
+    tier: experience
+    may_import:
+      - components
+    prohibited:
+      - menus
+      - food_items
+      - publishing
+
+  MOD-10:
+    name: components
+    package: app.modules.components
+    tier: experience
+    may_import: []
+    prohibited:
+      - menus
+      - food_items
+      - editor
+      - publishing
+
+  MOD-11:
+    name: rendering
+    package: app.modules.rendering
+    tier: delivery
+    may_import:
+      - themes
+      - layouts
+      - components
+      - publishing
+    prohibited:
+      - editor
+      - identity
+
+  MOD-12:
+    name: editor
+    package: app.modules.editor
+    tier: experience
+    may_import:
+      - themes
+      - layouts
+      - components
+      - menus
+    prohibited:
+      - identity
+
+  MOD-13:
+    name: publishing
+    package: app.modules.publishing
+    tier: delivery
+    may_import:
+      - menus
+      - categories
+      - food_items
+      - pricing
+      - themes
+      - layouts
+      - components
+    prohibited:
+      - editor
+      - identity
+
+  MOD-14:
+    name: media
+    package: app.modules.media
+    tier: supporting
+    may_import: []
+    prohibited:
+      - menus
+      - publishing
+
+  MOD-15:
+    name: licensing
+    package: app.modules.licensing
+    tier: commercial
+    may_import:
+      - organizations
+    prohibited:
+      - menus
+      - publishing
+      - rendering
+
+  MOD-16:
+    name: analytics
+    package: app.modules.analytics
+    tier: operational
+    may_import: []
+    prohibited:
+      - editor

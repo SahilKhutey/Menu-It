@@ -1,0 +1,25 @@
+module:
+  id: MOD-07
+  name: Pricing & Availability
+  status: approved
+  ownership:
+    aggregates:
+      - Item Commercial Configuration
+    entities:
+      - Price
+      - AvailabilityRule
+  contracts:
+    provides:
+      - PricingReader
+    consumes:
+      - FoodItemReader
+  dependencies:
+    allowed:
+      - food_items
+    prohibited:
+      - identity
+      - publishing
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

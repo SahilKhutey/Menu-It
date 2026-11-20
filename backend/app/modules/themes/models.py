@@ -2,8 +2,7 @@ import uuid
 from typing import Any, Dict, Optional
 from sqlalchemy import Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
-from app.core.database import Base, GUID, TimestampMixin
-from app.modules.menus.models import PortableJSON
+from app.core.database import Base, GUID, TimestampMixin, PortableJSON
 
 
 class Theme(Base, TimestampMixin):
