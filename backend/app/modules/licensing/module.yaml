@@ -1,0 +1,29 @@
+module:
+  id: MOD-15
+  name: Subscription & Licensing
+  status: approved
+  ownership:
+    aggregates:
+      - Subscription
+      - License
+    entities:
+      - Subscription
+      - Plan
+      - Entitlement
+      - License
+  contracts:
+    provides:
+      - LicenseEvaluator
+    consumes:
+      - OrganizationReader
+  dependencies:
+    allowed:
+      - organizations
+    prohibited:
+      - menus
+      - publishing
+      - rendering
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

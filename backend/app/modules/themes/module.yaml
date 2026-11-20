@@ -1,0 +1,24 @@
+module:
+  id: MOD-08
+  name: Theme Engine
+  status: approved
+  ownership:
+    aggregates:
+      - Theme Configuration
+    entities:
+      - ThemeDefinition
+      - ThemePreset
+  contracts:
+    provides:
+      - ThemeResolver
+    consumes: []
+  dependencies:
+    allowed: []
+    prohibited:
+      - menus
+      - food_items
+      - publishing
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

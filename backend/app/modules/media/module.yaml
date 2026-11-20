@@ -1,0 +1,23 @@
+module:
+  id: MOD-14
+  name: Media Management
+  status: approved
+  ownership:
+    aggregates:
+      - Media Asset
+    entities:
+      - MediaAsset
+      - MediaVariant
+  contracts:
+    provides:
+      - MediaStorage
+    consumes: []
+  dependencies:
+    allowed: []
+    prohibited:
+      - menus
+      - publishing
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

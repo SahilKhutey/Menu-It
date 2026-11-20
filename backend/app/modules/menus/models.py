@@ -7,18 +7,7 @@ from sqlalchemy.dialects.sqlite import JSON as SQLITE_JSON
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import TypeDecorator
-from app.core.database import Base, GUID, TimestampMixin
-
-# Platform-agnostic JSON column
-class PortableJSON(TypeDecorator):
-    impl = Text
-    cache_ok = True
-
-    def load_dialect_impl(self, dialect):
-        if dialect.name == "postgresql":
-            return dialect.type_descriptor(JSONB())
-        else:
-            return dialect.type_descriptor(SQLITE_JSON())
+from app.core.database import Base, GUID, TimestampMixin, PortableJSON
 
 
 class Menu(Base, TimestampMixin):

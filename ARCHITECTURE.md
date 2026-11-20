@@ -10,8 +10,10 @@ Level 1 — System Architecture
 │   └── High-level system definition, 7 external actors, system boundaries, and 10 invariants.
 ├── ARC-02: Architectural Principles, Standards & Constraints
 │   └── 10 governing principles (P-01 to P-10), 16 constraints (CON-01 to CON-16), and 7 quality gates.
-└── ARC-03: Application Architecture (Modular Monolith)
-    └── Frontend/backend separation, application/domain layers, service/repository patterns, and request lifecycles.
+├── ARC-03: Application Architecture (Modular Monolith)
+│   └── Frontend/backend separation, application/domain layers, service/repository patterns, and request lifecycles.
+└── ARC-04: Modular Domain Architecture
+    └── 16 discrete business modules, bounded contexts, domain primitives, 18-event catalogue, and AST boundaries.
 ```
 
 ---
@@ -34,13 +36,20 @@ Level 1 — System Architecture
    - Structure: Layered architecture (API ➔ Application ➔ Domain ➔ Infrastructure) with dependency inversion, Repository & Unit of Work protocols, and request correlation.
    - Quality Gates: 46 automated tests passing with 100% compliance; 95.2 kB First Load JS diner bundle; 10 audit reports in `docs/reports/ARC-03/`.
 
+4. **[ARC-04 — Modular Domain Architecture](documentation/03_System_Architecture/ARC-04_Modular_Domain_Architecture.md)**
+   - Status: **Approved & Implemented**
+   - Domain Model: 16 discrete business modules (MOD-01 to MOD-16) across 5 capability groups.
+   - Bounded Contexts & Events: Fine-grained aggregate boundaries, pure Python domain entities, 18 domain events (EVT-001 to EVT-018), and Protocol contracts.
+   - Documentation & Quality Gates: 18 architectural deliverables in `docs/architecture/ARC-04-modular-domain-architecture/`; 94 automated tests passing (including 50-test catalogue ARC04-T001 to T050); zero prohibited cross-module imports.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0027).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0043).
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
+- **[Domain Architecture Suite](docs/architecture/ARC-04-modular-domain-architecture/):** Detailed specifications for MOD-01 to MOD-16, workflows, and risk register.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, and Published Snapshots.
 
 ---

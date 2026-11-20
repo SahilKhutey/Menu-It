@@ -1,0 +1,26 @@
+module:
+  id: MOD-06
+  name: Food Item Management
+  status: approved
+  ownership:
+    aggregates:
+      - Food Item
+    entities:
+      - FoodItem
+      - ItemAttribute
+  contracts:
+    provides:
+      - FoodItemReader
+    consumes:
+      - CategoryReader
+  dependencies:
+    allowed:
+      - categories
+      - media
+    prohibited:
+      - identity
+      - publishing
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true
