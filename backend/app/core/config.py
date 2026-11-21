@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     S3_ACCESS_KEY: Optional[str] = None
     S3_SECRET_KEY: Optional[str] = None
 
+    # Rate Limiting (ARC-07 §9.1)
+    PUBLIC_RATE_LIMIT_PER_MINUTE: int = 120
+    AUTHENTICATED_RATE_LIMIT_PER_MINUTE: int = 600
+
     # Customer Hosted Licensing
     LICENSE_KEY: Optional[str] = None
     LICENSE_GRACE_PERIOD_DAYS: int = 30

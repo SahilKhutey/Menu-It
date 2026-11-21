@@ -3,7 +3,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -187,3 +187,170 @@ async def publish_menu(
         published_at=published_timestamp,
         public_url=f"/r/{restaurant.slug}/{menu.slug}"
     )
+
+
+# --- Canonical ARC-07 Publishing Endpoints (ARC-07 §4.8, §9.2) ---
+
+# In-memory idempotency store for publish operations (ARC-07 §9.2)
+_IDEMPOTENCY_CACHE: Dict[str, Dict[str, Any]] = {}
+
+
+@router.post("/menus/{menu_id}/publish", response_model=PublishResponse)
+async def publish_menu_direct(
+    menu_id: uuid.UUID,
+    payload: Dict[str, Any] = {},
+    idempotency_key: str | None = Header(None, alias="Idempotency-Key"),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Publishes a menu draft directly by menu_id (ARC-07 §4.8).
+    Enforces idempotency when Idempotency-Key header is supplied (ARC-07 §9.2).
+    """
+    if idempotency_key:
+        payload_hash = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+        if idempotency_key in _IDEMPOTENCY_CACHE:
+            cached = _IDEMPOTENCY_CACHE[idempotency_key]
+            if cached["payload_hash"] != payload_hash:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Idempotency conflict: Key reused with different request payload",
+                )
+            return cached["response"]
+
+    # Resolve menu and restaurant
+    menu_res = await db.execute(select(Menu).where(Menu.id == menu_id))
+    menu = menu_res.scalars().first()
+    if not menu:
+        raise HTTPException(status_code=404, detail="Menu not found.")
+
+    rest_res = await db.execute(select(Restaurant).where(Restaurant.id == menu.restaurant_id))
+    restaurant = rest_res.scalars().first()
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found.")
+
+    # Execute publication
+    res = await publish_menu(restaurant.id, menu.id, restaurant, user, db)
+
+    if idempotency_key:
+        _IDEMPOTENCY_CACHE[idempotency_key] = {
+            "payload_hash": payload_hash,
+            "response": res,
+        }
+
+    return res
+
+
+@router.get("/menus/{menu_id}/versions")
+async def list_menu_versions(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Lists published versions of a menu."""
+    stmt = select(MenuVersion).where(MenuVersion.menu_id == menu_id).order_by(MenuVersion.version_number.desc())
+    result = await db.execute(stmt)
+    versions = result.scalars().all()
+    return [
+        {
+            "id": str(v.id),
+            "menu_id": str(v.menu_id),
+            "version_number": v.version_number,
+            "checksum": v.checksum,
+            "published_at": v.published_at.isoformat(),
+        }
+        for v in versions
+    ]
+
+
+@router.get("/menus/{menu_id}/versions/{version_id}")
+async def get_menu_version(menu_id: uuid.UUID, version_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Retrieves specific immutable menu version."""
+    stmt = select(MenuVersion).where(MenuVersion.menu_id == menu_id, MenuVersion.id == version_id)
+    result = await db.execute(stmt)
+    version = result.scalars().first()
+    if not version:
+        raise HTTPException(status_code=404, detail="Menu version not found")
+    return {
+        "id": str(version.id),
+        "menu_id": str(version.menu_id),
+        "version_number": version.version_number,
+        "checksum": version.checksum,
+        "published_at": version.published_at.isoformat(),
+        "snapshot_data": version.snapshot_data,
+    }
+
+
+@router.get("/menus/{menu_id}/publications")
+async def list_menu_publications(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Lists publication records for a menu."""
+    stmt = select(Publication).where(Publication.menu_id == menu_id).order_by(Publication.published_at.desc())
+    result = await db.execute(stmt)
+    pubs = result.scalars().all()
+    return [
+        {
+            "id": str(p.id),
+            "menu_id": str(p.menu_id),
+            "restaurant_id": str(p.restaurant_id),
+            "active_version_id": str(p.active_version_id),
+            "status": p.status,
+            "published_at": p.published_at.isoformat(),
+        }
+        for p in pubs
+    ]
+
+
+@router.get("/publications/{publication_id}")
+async def get_publication(publication_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Retrieves publication pointer details."""
+    stmt = select(Publication).where(Publication.id == publication_id)
+    result = await db.execute(stmt)
+    pub = result.scalars().first()
+    if not pub:
+        raise HTTPException(status_code=404, detail="Publication not found")
+    return {
+        "id": str(pub.id),
+        "menu_id": str(pub.menu_id),
+        "restaurant_id": str(pub.restaurant_id),
+        "active_version_id": str(pub.active_version_id),
+        "status": pub.status,
+        "published_at": pub.published_at.isoformat(),
+    }
+
+
+@router.post("/publications/{publication_id}/rollback")
+async def rollback_publication(
+    publication_id: uuid.UUID,
+    payload: Dict[str, Any],
+    db: AsyncSession = Depends(get_db),
+):
+    """Rolls back active publication to an earlier published version (ARC-07 §4.8)."""
+    target_version_id = payload.get("target_version_id")
+    if not target_version_id:
+        raise HTTPException(status_code=400, detail="target_version_id is required")
+
+    stmt = select(Publication).where(Publication.id == publication_id)
+    pub = (await db.execute(stmt)).scalars().first()
+    if not pub:
+        raise HTTPException(status_code=404, detail="Publication not found")
+
+    v_stmt = select(MenuVersion).where(MenuVersion.id == uuid.UUID(str(target_version_id)))
+    ver = (await db.execute(v_stmt)).scalars().first()
+    if not ver:
+        raise HTTPException(status_code=404, detail="Target menu version not found")
+
+    pub.active_version_id = ver.id
+    pub.published_at = datetime.now(timezone.utc)
+    await db.commit()
+
+    return {"status": "success", "message": f"Rolled back to version {ver.version_number}"}
+
+
+@router.post("/publications/{publication_id}/withdraw")
+async def withdraw_publication(publication_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Withdraws active publication from public delivery."""
+    stmt = select(Publication).where(Publication.id == publication_id)
+    pub = (await db.execute(stmt)).scalars().first()
+    if not pub:
+        raise HTTPException(status_code=404, detail="Publication not found")
+
+    pub.status = "withdrawn"
+    await db.commit()
+    return {"status": "withdrawn", "message": "Publication withdrawn"}
+

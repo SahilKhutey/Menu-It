@@ -1,0 +1,69 @@
+# ModularMenu Approved Outbound Webhook Event Catalogue (ARC-07 §12, §24.3)
+
+version: "1.0.0"
+signature_header: "X-ModularMenu-Signature"
+timestamp_header: "X-ModularMenu-Timestamp"
+signature_algorithm: "HMAC-SHA256"
+replay_tolerance_seconds: 300
+
+events:
+  - event_type: "restaurant.created"
+    description: "Triggered when a new restaurant branch is created under an organization."
+    payload_schema:
+      organization_id: "UUID"
+      restaurant_id: "UUID"
+      name: "string"
+      slug: "string"
+
+  - event_type: "menu.created"
+    description: "Triggered when a new menu catalog aggregate is initialized."
+    payload_schema:
+      organization_id: "UUID"
+      restaurant_id: "UUID"
+      menu_id: "UUID"
+      name: "string"
+      slug: "string"
+
+  - event_type: "menu.updated"
+    description: "Triggered when menu metadata, categories, or items are modified in draft state."
+    payload_schema:
+      organization_id: "UUID"
+      restaurant_id: "UUID"
+      menu_id: "UUID"
+      row_version: "integer"
+
+  - event_type: "menu.published"
+    description: "Triggered when a menu version is compiled into an immutable snapshot and activated."
+    payload_schema:
+      organization_id: "UUID"
+      restaurant_id: "UUID"
+      menu_id: "UUID"
+      version_id: "UUID"
+      version_number: "integer"
+      sha256_digest: "string"
+      publication_id: "UUID"
+
+  - event_type: "menu.publication.withdrawn"
+    description: "Triggered when an active published menu is taken offline."
+    payload_schema:
+      organization_id: "UUID"
+      restaurant_id: "UUID"
+      menu_id: "UUID"
+      publication_id: "UUID"
+
+  - event_type: "media.uploaded"
+    description: "Triggered when a media asset upload intent is confirmed and metadata is persisted."
+    payload_schema:
+      organization_id: "UUID"
+      media_id: "UUID"
+      file_name: "string"
+      mime_type: "string"
+      byte_size: "integer"
+
+  - event_type: "subscription.updated"
+    description: "Triggered when an organization's subscription plan or billing status changes."
+    payload_schema:
+      organization_id: "UUID"
+      plan_id: "UUID"
+      status: "string"
+      valid_until: "ISO 8601 UTC timestamp"

@@ -1,0 +1,647 @@
+# ModularMenu API Endpoint Permission Manifest (ARC-07 §4, §6, §24.3)
+# Authoritative endpoint-to-permission mapping, tenant scope, and security policy.
+
+version: "1.0.0"
+endpoints:
+  # --- Authentication APIs (/api/v1/auth) ---
+  - method: POST
+    path: /api/v1/auth/register
+    authentication: public
+    permission: null
+    tenant_scope: global
+    rate_limit_class: auth_strict
+    audit: true
+
+  - method: POST
+    path: /api/v1/auth/login
+    authentication: public
+    permission: null
+    tenant_scope: global
+    rate_limit_class: auth_strict
+    audit: true
+
+  - method: POST
+    path: /api/v1/auth/logout
+    authentication: required
+    permission: null
+    tenant_scope: session
+    rate_limit_class: authenticated_default
+    audit: true
+
+  - method: GET
+    path: /api/v1/auth/session
+    authentication: required
+    permission: null
+    tenant_scope: session
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/auth/password/forgot
+    authentication: public
+    permission: null
+    tenant_scope: global
+    rate_limit_class: auth_strict
+    audit: true
+
+  - method: POST
+    path: /api/v1/auth/password/reset
+    authentication: token
+    permission: null
+    tenant_scope: global
+    rate_limit_class: auth_strict
+    audit: true
+
+  - method: GET
+    path: /api/v1/auth/me
+    authentication: required
+    permission: null
+    tenant_scope: session
+    rate_limit_class: authenticated_default
+    audit: false
+
+  # --- Organization & Tenancy APIs (/api/v1/organizations) ---
+  - method: GET
+    path: /api/v1/organizations
+    authentication: required
+    permission: organization.read
+    tenant_scope: user_memberships
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/organizations
+    authentication: required
+    permission: organization.create
+    tenant_scope: global
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/organizations/{organization_id}
+    authentication: required
+    permission: organization.read
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PATCH
+    path: /api/v1/organizations/{organization_id}
+    authentication: required
+    permission: organization.update
+    tenant_scope: organization
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/organizations/{organization_id}/members
+    authentication: required
+    permission: organization.members.manage
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/organizations/{organization_id}/invitations
+    authentication: required
+    permission: organization.members.manage
+    tenant_scope: organization
+    rate_limit_class: authenticated_write
+    idempotency: supported
+    audit: true
+
+  - method: DELETE
+    path: /api/v1/organizations/{organization_id}/members/{user_id}
+    authentication: required
+    permission: organization.members.manage
+    tenant_scope: organization
+    rate_limit_class: privileged_write
+    audit: true
+
+  # --- Restaurant APIs (/api/v1/restaurants) ---
+  - method: GET
+    path: /api/v1/restaurants
+    authentication: required
+    permission: restaurant.read
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/restaurants
+    authentication: required
+    permission: restaurant.create
+    tenant_scope: organization
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/restaurants/{restaurant_id}
+    authentication: required
+    permission: restaurant.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PATCH
+    path: /api/v1/restaurants/{restaurant_id}
+    authentication: required
+    permission: restaurant.update
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/restaurants/{restaurant_id}/settings
+    authentication: required
+    permission: restaurant.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PATCH
+    path: /api/v1/restaurants/{restaurant_id}/settings
+    authentication: required
+    permission: restaurant.update
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/restaurants/{restaurant_id}/members
+    authentication: required
+    permission: restaurant.members.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/restaurants/{restaurant_id}/members
+    authentication: required
+    permission: restaurant.members.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/restaurants/{restaurant_id}/design-config
+    authentication: required
+    permission: design.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PUT
+    path: /api/v1/restaurants/{restaurant_id}/design-config
+    authentication: required
+    permission: design.update
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: POST
+    path: /api/v1/restaurants/{restaurant_id}/design-config/validate
+    authentication: required
+    permission: design.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: false
+
+  # --- Menu APIs (/api/v1/menus) ---
+  - method: GET
+    path: /api/v1/restaurants/{restaurant_id}/menus
+    authentication: required
+    permission: menu.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/restaurants/{restaurant_id}/menus
+    authentication: required
+    permission: menu.create
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/menus/{menu_id}
+    authentication: required
+    permission: menu.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PATCH
+    path: /api/v1/menus/{menu_id}
+    authentication: required
+    permission: menu.update
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    concurrency_check: etag_or_row_version
+    audit: true
+
+  - method: DELETE
+    path: /api/v1/menus/{menu_id}
+    authentication: required
+    permission: menu.delete
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/menus/{menu_id}/categories
+    authentication: required
+    permission: menu.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/categories
+    authentication: required
+    permission: category.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/categories/reorder
+    authentication: required
+    permission: category.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  # --- Category & Item APIs ---
+  - method: PATCH
+    path: /api/v1/categories/{category_id}
+    authentication: required
+    permission: category.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: DELETE
+    path: /api/v1/categories/{category_id}
+    authentication: required
+    permission: category.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/categories/{category_id}/items
+    authentication: required
+    permission: menu.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/categories/{category_id}/items
+    authentication: required
+    permission: item.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: GET
+    path: /api/v1/items/{item_id}
+    authentication: required
+    permission: menu.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PATCH
+    path: /api/v1/items/{item_id}
+    authentication: required
+    permission: item.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: DELETE
+    path: /api/v1/items/{item_id}
+    authentication: required
+    permission: item.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    audit: true
+
+  - method: PATCH
+    path: /api/v1/items/{item_id}/availability
+    authentication: required
+    permission: availability.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: POST
+    path: /api/v1/items/reorder
+    authentication: required
+    permission: item.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  # --- Pricing APIs ---
+  - method: GET
+    path: /api/v1/items/{item_id}/prices
+    authentication: required
+    permission: menu.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/items/{item_id}/prices
+    authentication: required
+    permission: pricing.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: PATCH
+    path: /api/v1/prices/{price_id}
+    authentication: required
+    permission: pricing.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: true
+
+  - method: DELETE
+    path: /api/v1/prices/{price_id}
+    authentication: required
+    permission: pricing.manage
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    audit: true
+
+  # --- Theme, Layout & Component APIs ---
+  - method: GET
+    path: /api/v1/themes
+    authentication: public_or_authenticated
+    permission: theme.read
+    tenant_scope: global
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/themes/{theme_id}
+    authentication: public_or_authenticated
+    permission: theme.read
+    tenant_scope: global
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/layouts
+    authentication: public_or_authenticated
+    permission: layout.read
+    tenant_scope: global
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/components
+    authentication: public_or_authenticated
+    permission: component.read
+    tenant_scope: global
+    rate_limit_class: public_read
+    audit: false
+
+  # --- Editor & Preview APIs ---
+  - method: GET
+    path: /api/v1/menus/{menu_id}/editor-state
+    authentication: required
+    permission: editor.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: PUT
+    path: /api/v1/menus/{menu_id}/editor-state
+    authentication: required
+    permission: editor.write
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    concurrency_check: etag_or_row_version
+    audit: true
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/preview
+    authentication: required
+    permission: editor.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: false
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/validate
+    authentication: required
+    permission: menu.update
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_write
+    audit: false
+
+  # --- Publishing & Versioning APIs ---
+  - method: GET
+    path: /api/v1/menus/{menu_id}/versions
+    authentication: required
+    permission: publication.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: GET
+    path: /api/v1/menus/{menu_id}/versions/{version_id}
+    authentication: required
+    permission: publication.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/publish
+    authentication: required
+    permission: menu.publish
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    idempotency: required
+    audit: true
+
+  - method: GET
+    path: /api/v1/menus/{menu_id}/publications
+    authentication: required
+    permission: publication.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: GET
+    path: /api/v1/publications/{publication_id}
+    authentication: required
+    permission: publication.read
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: POST
+    path: /api/v1/publications/{publication_id}/rollback
+    authentication: required
+    permission: menu.rollback
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    idempotency: required
+    audit: true
+
+  - method: POST
+    path: /api/v1/publications/{publication_id}/withdraw
+    authentication: required
+    permission: menu.publish
+    tenant_scope: organization
+    resource_scope: restaurant
+    rate_limit_class: privileged_write
+    idempotency: required
+    audit: true
+
+  # --- Media APIs ---
+  - method: POST
+    path: /api/v1/media/upload-intents
+    authentication: required
+    permission: media.upload
+    tenant_scope: organization
+    rate_limit_class: upload_intent
+    audit: true
+
+  - method: POST
+    path: /api/v1/media/{media_id}/complete
+    authentication: required
+    permission: media.upload
+    tenant_scope: organization
+    rate_limit_class: upload_complete
+    audit: true
+
+  - method: GET
+    path: /api/v1/media
+    authentication: required
+    permission: media.read_private
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: GET
+    path: /api/v1/media/{media_id}
+    authentication: required
+    permission: media.read_private
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: DELETE
+    path: /api/v1/media/{media_id}
+    authentication: required
+    permission: media.delete
+    tenant_scope: organization
+    rate_limit_class: privileged_write
+    audit: true
+
+  # --- Public Menu Delivery APIs (/api/v1/public) ---
+  - method: GET
+    path: /api/v1/public/restaurants/{restaurant_slug}
+    authentication: public
+    permission: null
+    tenant_scope: public_profile
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/public/restaurants/{restaurant_slug}/menus
+    authentication: public
+    permission: null
+    tenant_scope: public_publication
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/public/restaurants/{restaurant_slug}/menus/{menu_slug}
+    authentication: public
+    permission: null
+    tenant_scope: public_publication
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/public/restaurants/{restaurant_slug}/menus/{menu_slug}/metadata
+    authentication: public
+    permission: null
+    tenant_scope: public_publication
+    rate_limit_class: public_read
+    audit: false
+
+  # --- Subscription & Licensing APIs ---
+  - method: GET
+    path: /api/v1/subscription-plans
+    authentication: public_or_authenticated
+    permission: null
+    tenant_scope: global
+    rate_limit_class: public_read
+    audit: false
+
+  - method: GET
+    path: /api/v1/organizations/{organization_id}/subscription
+    authentication: required
+    permission: subscription.read
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false
+
+  - method: GET
+    path: /api/v1/organizations/{organization_id}/license
+    authentication: required
+    permission: license.manage
+    tenant_scope: organization
+    rate_limit_class: authenticated_default
+    audit: false

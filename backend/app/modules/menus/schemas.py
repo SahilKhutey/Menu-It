@@ -85,9 +85,11 @@ class MenuItemOut(MenuItemBase):
 # Category Schemas
 class CategoryBase(BaseModel):
     name: str
+    slug: Optional[str] = None
     description: Optional[str] = None
     image_url: Optional[str] = None
     sort_order: int = 0
+    display_order: Optional[int] = None
     is_visible: bool = True
     parent_id: Optional[uuid.UUID] = None
 

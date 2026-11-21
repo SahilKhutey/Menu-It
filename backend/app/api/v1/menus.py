@@ -1,5 +1,5 @@
 import uuid
-from typing import Dict, List
+from typing import Any, Dict, List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -323,3 +323,117 @@ async def update_item(
         sort_order=item.sort_order,
         variants=[]
     )
+
+
+# --- Canonical ARC-07 Menu Endpoints (ARC-07 §3.1, §4.4) ---
+
+@router.get("/menus/{menu_id}", response_model=MenuOut)
+async def get_menu_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Retrieves menu details directly by menu_id (ARC-07 §4.4)."""
+    result = await db.execute(select(Menu).where(Menu.id == menu_id))
+    menu = result.scalars().first()
+    if not menu:
+        raise HTTPException(status_code=404, detail="Menu not found.")
+    return menu
+
+
+@router.patch("/menus/{menu_id}", response_model=MenuOut)
+async def update_menu_by_id(
+    menu_id: uuid.UUID,
+    req: MenuUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    """Updates menu metadata directly by menu_id (ARC-07 §4.4)."""
+    result = await db.execute(select(Menu).where(Menu.id == menu_id))
+    menu = result.scalars().first()
+    if not menu:
+        raise HTTPException(status_code=404, detail="Menu not found.")
+
+    for field, val in req.model_dump(exclude_unset=True).items():
+        setattr(menu, field, val)
+
+    await db.commit()
+    await db.refresh(menu)
+    return menu
+
+
+@router.delete("/menus/{menu_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_menu_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Archives or deletes menu directly by menu_id (ARC-07 §4.4)."""
+    result = await db.execute(select(Menu).where(Menu.id == menu_id))
+    menu = result.scalars().first()
+    if menu:
+        await db.delete(menu)
+        await db.commit()
+    return None
+
+
+@router.get("/menus/{menu_id}/categories", response_model=List[CategoryOut])
+async def list_menu_categories_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    """Lists categories under a menu (ARC-07 §4.4)."""
+    stmt = (
+        select(Category)
+        .options(selectinload(Category.items))
+        .where(Category.menu_id == menu_id)
+        .order_by(Category.sort_order.asc())
+    )
+    result = await db.execute(stmt)
+    return result.scalars().all()
+
+
+@router.post("/menus/{menu_id}/categories", response_model=CategoryOut, status_code=status.HTTP_201_CREATED)
+async def create_menu_category_by_id(
+    menu_id: uuid.UUID,
+    req: CategoryCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    """Creates category under a menu (ARC-07 §4.4)."""
+    res = await db.execute(select(Menu).where(Menu.id == menu_id))
+    menu = res.scalars().first()
+    if not menu:
+        raise HTTPException(status_code=404, detail="Menu not found.")
+
+    category = Category(
+        restaurant_id=menu.restaurant_id,
+        menu_id=menu.id,
+        name=req.name,
+        description=req.description,
+        sort_order=req.display_order if req.display_order is not None else req.sort_order,
+        is_visible=req.is_visible
+    )
+    db.add(category)
+    await db.commit()
+    await db.refresh(category)
+    return CategoryOut(
+        id=category.id,
+        menu_id=category.menu_id,
+        name=category.name,
+        slug=req.slug,
+        description=category.description,
+        image_url=category.image_url,
+        sort_order=category.sort_order,
+        display_order=category.sort_order,
+        is_visible=category.is_visible,
+        parent_id=category.parent_id,
+        items=[]
+    )
+
+
+@router.post("/menus/{menu_id}/categories/reorder")
+async def reorder_menu_categories(
+    menu_id: uuid.UUID,
+    payload: Dict[str, Any],
+    db: AsyncSession = Depends(get_db)
+):
+    """Reorders categories within a menu (ARC-07 §4.4)."""
+    items = payload.get("items") or payload.get("category_orders") or []
+    for it in items:
+        cat_id = it.get("id")
+        sort_order = it.get("sort_order") if "sort_order" in it else it.get("display_order", 0)
+        if cat_id:
+            res = await db.execute(select(Category).where(Category.id == uuid.UUID(str(cat_id))))
+            cat = res.scalars().first()
+            if cat:
+                cat.sort_order = sort_order
+    await db.commit()
+    return {"status": "success", "success": True, "reordered_count": len(items)}

@@ -1,0 +1,97 @@
+# ModularMenu Central API Error Code Catalogue (ARC-07 §5.5, §5.6, §24.3)
+# Based on RFC 9457 / RFC 7807 Problem Details for HTTP APIs
+
+standard_envelope:
+  type: "https://api.modularmenu.com/problems/{code_slug}"
+  title: "Human-readable summary of problem"
+  status: "HTTP Status Code (integer)"
+  detail: "Safe, specific explanation of failure"
+  instance: "Request URI path"
+  code: "STABLE_ERROR_CODE"
+  request_id: "Client or server-generated correlation ID"
+  errors: "Optional list of field-level validation issues [{field, code, message}]"
+
+error_codes:
+  - code: "VALIDATION_ERROR"
+    status: 422
+    title: "Request validation failed"
+    category: "client_error"
+    safe_for_display: true
+    description: "One or more request parameters, body attributes, or query strings failed schema constraints."
+
+  - code: "AUTHENTICATION_REQUIRED"
+    status: 401
+    title: "Authentication required"
+    category: "auth_error"
+    safe_for_display: true
+    description: "No active session cookie or valid bearer credential provided with request."
+
+  - code: "PERMISSION_DENIED"
+    status: 403
+    title: "Permission denied"
+    category: "auth_error"
+    safe_for_display: true
+    description: "Actor holds insufficient role permissions or is not an active member of the target tenant."
+
+  - code: "RESOURCE_NOT_FOUND"
+    status: 404
+    title: "Resource not found"
+    category: "client_error"
+    safe_for_display: true
+    description: "The requested entity does not exist or is intentionally concealed under tenant isolation policy."
+
+  - code: "RESOURCE_CONFLICT"
+    status: 409
+    title: "Resource state conflict"
+    category: "client_error"
+    safe_for_display: true
+    description: "A unique constraint violation or duplicate slug collision occurred within the tenant boundary."
+
+  - code: "VERSION_CONFLICT"
+    status: 409
+    title: "Concurrency version conflict"
+    category: "concurrency_error"
+    safe_for_display: true
+    description: "Stale update rejected. The resource was modified concurrently by another user."
+
+  - code: "IDEMPOTENCY_CONFLICT"
+    status: 409
+    title: "Idempotency key payload mismatch"
+    category: "concurrency_error"
+    safe_for_display: true
+    description: "The supplied Idempotency-Key has already been used with a different request payload."
+
+  - code: "RATE_LIMIT_EXCEEDED"
+    status: 429
+    title: "Rate limit exceeded"
+    category: "traffic_control"
+    safe_for_display: true
+    description: "The allowed operation request budget for this client or tenant window has been exhausted."
+
+  - code: "UPLOAD_TOO_LARGE"
+    status: 413
+    title: "Payload exceeds size limit"
+    category: "client_error"
+    safe_for_display: true
+    description: "The uploaded file or media binary exceeds the maximum permitted byte threshold."
+
+  - code: "UNSUPPORTED_MEDIA_TYPE"
+    status: 415
+    title: "Unsupported media type"
+    category: "client_error"
+    safe_for_display: true
+    description: "The MIME type or file content does not match allowlisted media formats."
+
+  - code: "DEPENDENCY_UNAVAILABLE"
+    status: 503
+    title: "Service dependency temporarily unavailable"
+    category: "server_error"
+    safe_for_display: true
+    description: "A required external subsystem, storage provider, or database connection is temporarily unreachable."
+
+  - code: "INTERNAL_ERROR"
+    status: 500
+    title: "Internal server error"
+    category: "server_error"
+    safe_for_display: false
+    description: "An unexpected server exception occurred. Internal trace sanitized to prevent information disclosure."

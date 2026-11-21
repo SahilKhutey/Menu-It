@@ -1,0 +1,357 @@
+version: 1.0.0-arc07
+architecture_standard: ARC-07
+total_scenarios: 75
+passing_scenarios: 75
+pass_rate: 100%
+categories:
+- category: A. Routing and contract tests
+  scenarios:
+  - code: ARC07-T001
+    description: Start API application -> Successful startup with title and version
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t001
+  - code: ARC07-T002
+    description: Access registered endpoint -> Correct route resolves (200 OK)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t002
+  - code: ARC07-T003
+    description: Access unknown endpoint -> 404 Not Found
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t003
+  - code: ARC07-T004
+    description: Send unsupported HTTP method -> 405 Method Not Allowed
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t004
+  - code: ARC07-T005
+    description: Retrieve OpenAPI schema -> Valid schema generated with OpenAPI 3.1
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t005
+  - code: ARC07-T006
+    description: Validate response against declared schema -> Pass
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t006
+  - code: ARC07-T007
+    description: Submit unexpected field -> Handled or rejected according to schema
+      policy (422)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t007
+  - code: ARC07-T008
+    description: Submit malformed JSON -> 400 Bad Request or 422
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t008
+  - code: ARC07-T009
+    description: Submit invalid UUID -> 422 Unprocessable Entity
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t009
+  - code: ARC07-T010
+    description: Submit empty request body where body is required -> 422 Unprocessable
+      Entity
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t010
+- category: B. Error handling tests
+  scenarios:
+  - code: ARC07-T011
+    description: Standard validation error -> RFC 7807/9457 error response format
+      with invalid_params
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t011
+  - code: ARC07-T012
+    description: Not found error -> RFC 7807 error format with RESOURCE_NOT_FOUND
+      code
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t012
+  - code: ARC07-T013
+    description: Unauthorized error -> RFC 7807 error format with AUTHENTICATION_REQUIRED
+      code
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t013
+  - code: ARC07-T014
+    description: Forbidden error -> RFC 7807 error format with PERMISSION_DENIED code
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t014
+  - code: ARC07-T015
+    description: Conflict error -> RFC 7807 error format with CONFLICT code
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t015
+  - code: ARC07-T016
+    description: Rate limit error -> RFC 7807 error format with RATE_LIMIT_EXCEEDED
+      and Retry-After
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t016
+  - code: ARC07-T017
+    description: Internal error -> Safe error response without stack trace exposure
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t017
+  - code: ARC07-T018
+    description: External provider error -> Standardized error response with DEPENDENCY_UNAVAILABLE
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t018
+  - code: ARC07-T019
+    description: Error includes trace ID -> Request ID present in error payload and
+      header
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t019
+  - code: ARC07-T020
+    description: Error timestamp format -> ISO 8601 UTC timestamp
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t020
+- category: C. Authentication, authorization and tenancy tests
+  scenarios:
+  - code: ARC07-T021
+    description: Access protected endpoint without authentication -> 401 Unauthorized
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t021
+  - code: ARC07-T022
+    description: User accesses unrelated organization -> Denied or concealed (403/404)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t022
+  - code: ARC07-T023
+    description: User accesses unauthorized restaurant -> Denied (403 Forbidden)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t023
+  - code: ARC07-T024
+    description: Viewer attempts menu modification -> Denied (403 Forbidden)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t024
+  - code: ARC07-T025
+    description: Menu editor attempts platform administration -> Denied (403 Forbidden)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t025
+  - code: ARC07-T026
+    description: Central permission evaluation rejects -> Correct permission name
+      in denial log/response
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t026
+  - code: ARC07-T027
+    description: Header-based tenant context override -> Ignored; server derives context
+      authoritatively
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t027
+  - code: ARC07-T028
+    description: Organization-scoped endpoint -> Verified against authenticated user's
+      memberships
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t028
+  - code: ARC07-T029
+    description: Restaurant-scoped endpoint -> Verified against user's restaurant
+      assignments
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t029
+  - code: ARC07-T030
+    description: User removed from organization during session -> Access rejected
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t030
+- category: D. Restaurant and menu API tests
+  scenarios:
+  - code: ARC07-T031
+    description: Create restaurant -> 201 Created with Location header and model
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t031
+  - code: ARC07-T032
+    description: Duplicate restaurant slug -> 409 Conflict
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t032
+  - code: ARC07-T033
+    description: Create menu under authorized restaurant -> 201 Created
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t033
+  - code: ARC07-T034
+    description: Create menu under unauthorized restaurant -> Denied (403/404)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t034
+  - code: ARC07-T035
+    description: Create category under menu -> 201 Created
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t035
+  - code: ARC07-T036
+    description: Create item under category -> 201 Created
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t036
+  - code: ARC07-T037
+    description: Create price under item -> 201 Created
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t037
+  - code: ARC07-T038
+    description: Negative price validation -> 422 Unprocessable Entity
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t038
+  - code: ARC07-T039
+    description: Reorder categories -> Correct order persisted and returned
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t039
+  - code: ARC07-T040
+    description: Request oversized page size -> Rejected or capped according to policy
+      (422)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t040
+- category: E. Theme, editor and publication tests
+  scenarios:
+  - code: ARC07-T041
+    description: List available themes -> Approved presets returned
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t041
+  - code: ARC07-T042
+    description: Save valid design configuration -> Accepted (200 OK)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t042
+  - code: ARC07-T043
+    description: Save invalid design configuration -> 422 Unprocessable Entity
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t043
+  - code: ARC07-T044
+    description: Generate menu preview -> Ephemeral preview generated without affecting
+      public menu
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t044
+  - code: ARC07-T045
+    description: Validate valid menu for publication -> Passes validation with 0 errors
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t045
+  - code: ARC07-T046
+    description: Validate invalid menu for publication -> Fails validation with specific
+      issue list
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t046
+  - code: ARC07-T047
+    description: Publish valid menu -> Immutable publication snapshot created with
+      SHA-256
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t047
+  - code: ARC07-T048
+    description: Publish invalid menu -> Publication rejected
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t048
+  - code: ARC07-T049
+    description: Publish concurrent version -> Concurrency conflict detected (409
+      Conflict)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t049
+  - code: ARC07-T050
+    description: Rollback to previous publication -> Prior snapshot reinstated without
+      history rewrite
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t050
+  - code: ARC07-T051
+    description: Visual editor stale state save -> 409 Conflict or 412 Precondition
+      Failed
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t051
+  - code: ARC07-T052
+    description: List publication history -> Correct sequence of versions returned
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t052
+- category: F. Public menu API tests
+  scenarios:
+  - code: ARC07-T053
+    description: Access public menu by restaurant and menu slug -> Correct published
+      snapshot returned
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t053
+  - code: ARC07-T054
+    description: Access unpublished draft menu through public route -> 404 Not Found
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t054
+  - code: ARC07-T055
+    description: Access deactivated public menu -> Appropriate status returned (404/410)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t055
+  - code: ARC07-T056
+    description: Public menu includes theme and layout configuration -> Self-contained
+      payload for client render
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t056
+- category: G. Media API tests
+  scenarios:
+  - code: ARC07-T057
+    description: Request image upload URL -> Pre-signed URL or direct upload token
+      issued
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t057
+  - code: ARC07-T058
+    description: Request upload for disallowed MIME type -> Rejected (422 Unprocessable
+      Entity)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t058
+  - code: ARC07-T059
+    description: Request upload for oversized file -> Rejected (422 or 413 Payload
+      Too Large)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t059
+  - code: ARC07-T060
+    description: Upload without tenant context -> Denied (401/403)
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t060
+  - code: ARC07-T061
+    description: Access uploaded image -> Accessible via public CDN/storage URL
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t061
+  - code: ARC07-T062
+    description: Delete media asset -> Media record removed and storage cleanup initiated
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t062
+- category: H. Outbox and webhook tests
+  scenarios:
+  - code: ARC07-T063
+    description: Menu published -> Outbox record created in the same database transaction
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t063
+  - code: ARC07-T064
+    description: Outbox dispatcher processes event -> Event delivered or queued for
+      delivery
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t064
+  - code: ARC07-T065
+    description: Webhook delivery failure -> Retry scheduled with exponential backoff
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t065
+  - code: ARC07-T066
+    description: Webhook payload verification -> Signature verified using shared secret
+      and HMAC-SHA256
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t066
+  - code: ARC07-T067
+    description: Exhausted retries -> Event marked failed, alert generated, dead-letter
+      recorded
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t067
+- category: I. Security, CORS and rate limiting tests
+  scenarios:
+  - code: ARC07-T068
+    description: Exceed public endpoint rate limit -> 429 Too Many Requests with Retry-After
+      header
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t068
+  - code: ARC07-T069
+    description: CORS preflight from unauthorized origin -> Preflight rejected
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t069
+  - code: ARC07-T070
+    description: CORS preflight from authorized origin -> Allowed origins and headers
+      returned
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t070
+  - code: ARC07-T071
+    description: Submit payload exceeding max body size -> 413 Payload Too Large
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t071
+  - code: ARC07-T072
+    description: Public endpoint accessed without credentials -> Permitted within
+      rate limits
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t072
+- category: J. Observability and metadata tests
+  scenarios:
+  - code: ARC07-T073
+    description: Request includes X-Request-ID -> Request ID preserved across processing
+      and response
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t073
+  - code: ARC07-T074
+    description: Request without X-Request-ID -> Server generates request ID and includes
+      in response
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t074
+  - code: ARC07-T075
+    description: Health check endpoint -> System status reported with dependency health
+    status: PASSED
+    automated_test: tests/api/test_arc07_api_catalogue.py::arc07-t075

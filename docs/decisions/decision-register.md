@@ -499,3 +499,128 @@ ow_version column incremented on every update and checked on save.
 - **Context:** Maintaining separate database architectures for cloud and self-hosted environments doubles testing and maintenance costs.
 - **Decision:** Both editions run identical SQLAlchemy models, Alembic migrations, constraints, and seed routines.
 - **Consequences:** Zero architectural bifurcation; self-hosted customers receive enterprise-grade security and data rigor out of the box.
+
+### ADR-0089: RESTful API Architectural Style (ARC07-D01)
+- **Context:** ModularMenu requires a proven, universally supported communication standard across web, mobile, and third-party consumers.
+- **Decision:** ModularMenu adopts standard RESTful HTTP APIs with resource-oriented URIs, standard HTTP verbs, and JSON payloads.
+- **Consequences:** Maximized developer familiarity, universal HTTP client support, predictable caching semantics, and decoupled client-server lifecycles.
+
+### ADR-0090: Mandatory HTTPS Transport Security (ARC07-D02)
+- **Context:** Unencrypted network traffic exposes authentication credentials, tenant IDs, and business data to eavesdropping and tampering.
+- **Decision:** All API communication is strictly encrypted via TLS 1.3 in production with HSTS enforcement.
+- **Consequences:** Complete confidentiality and integrity of all in-transit requests and responses.
+
+### ADR-0091: JSON Payload Encoding (ARC07-D03)
+- **Context:** A standardized data interchange format is required across all API endpoints.
+- **Decision:** UTF-8 JSON is the exclusive data interchange format for all structured request and response bodies.
+- **Consequences:** Consistent serialization, broad language interoperability, and human-readable debugging.
+
+### ADR-0092: URI Path Versioning (/api/v1) (ARC07-D04)
+- **Context:** API evolution requires deterministic version routing without silent breaking changes.
+- **Decision:** API versions are explicitly prefixed in the URI path (/api/v1/). Breaking changes require a major version increment.
+- **Consequences:** Transparent endpoint routing, zero header ambiguity, and smooth consumer migration pathways.
+
+### ADR-0093: OpenAPI 3.1 Contract-First Generation (ARC07-D05)
+- **Context:** Maintaining manual API documentation leads to inevitable drift between implementation and docs.
+- **Decision:** OpenAPI 3.1 schemas are derived directly from FastAPI endpoint definitions and Pydantic schemas.
+- **Consequences:** Guaranteed synchronization between runtime code, documentation, and client SDK contracts.
+
+### ADR-0094: FastAPI as Canonical Backend Framework (ARC07-D06)
+- **Context:** High-performance asynchronous API execution with automated schema validation is required.
+- **Decision:** FastAPI is the canonical Python backend framework across both SaaS and customer-hosted editions.
+- **Consequences:** Native async/await concurrency, automatic OpenAPI documentation, and dependency injection architecture.
+
+### ADR-0095: Pydantic v2 Request Validation (ARC07-D07)
+- **Context:** Invalid or malicious request payloads must be rejected before reaching service logic.
+- **Decision:** All incoming request bodies, query parameters, and path variables are validated via strict Pydantic v2 schemas.
+- **Consequences:** Fail-fast validation with detailed field-level error messages and zero malformed entity propagation.
+
+### ADR-0096: Generated TypeScript Client Contracts (ARC07-D08)
+- **Context:** Manual TypeScript interface authoring in frontend applications causes contract drift and runtime errors.
+- **Decision:** Frontend TypeScript types are generated automatically from the backend OpenAPI schema.
+- **Consequences:** Compile-time type safety across frontend network boundaries and immediate notification of backend contract changes.
+
+### ADR-0097: Server-Managed Cookie Sessions for First-Party Web (ARC07-D09)
+- **Context:** Storing JWTs in browser localStorage makes web applications vulnerable to XSS token exfiltration.
+- **Decision:** First-party Next.js web applications use HttpOnly, SameSite=Lax, Secure session cookies.
+- **Consequences:** Complete immunity to JavaScript token theft and transparent browser session management.
+
+### ADR-0098: Scoped Credentials for External API Consumers (ARC07-D10)
+- **Context:** Third-party integrations require programmatic access without interactive session cookies.
+- **Decision:** External consumers authenticate using cryptographically signed, scoped tokens with explicit revocation and expiry.
+- **Consequences:** Fine-grained API delegation, secure machine-to-machine communication, and immediate revocation capability.
+
+### ADR-0099: Centralized Application-Level Authorization (ARC07-D11)
+- **Context:** Decentralized permission checks across route handlers lead to authorization bypass vulnerabilities.
+- **Decision:** Authorization policies are centrally evaluated via FastAPI dependencies using the fine-grained permission catalogue.
+- **Consequences:** Enforceable, auditable security boundaries with fail-closed default behavior.
+
+### ADR-0100: Server-Derived Immutable Tenant Context (ARC07-D12)
+- **Context:** Relying on client-supplied tenant identifiers enables Broken Object Level Authorization (BOLA/IDOR) exploits.
+- **Decision:** TenantContext is derived strictly on the server from authenticated sessions and active database memberships.
+- **Consequences:** Complete prevention of tenant spoofing; client-supplied organization IDs act strictly as selectors.
+
+### ADR-0101: RFC 7807 / RFC 9457 Problem Details Error Standard (ARC07-D13)
+- **Context:** Inconsistent error formats create fragile frontend error handling and poor developer experience.
+- **Decision:** All 4xx and 5xx API responses strictly adhere to the RFC 7807 / RFC 9457 Problem Details specification.
+- **Consequences:** Standardized machine-parseable error codes, request correlation IDs, and structured field-level invalid parameters.
+
+### ADR-0102: Default Cursor-Based Pagination (ARC07-D14)
+- **Context:** Offset-based pagination degrades severely on large datasets and produces duplicate or skipped records during live mutations.
+- **Decision:** Collections use opaque, base64-encoded cursor pagination by default, with capped maximum page sizes.
+- **Consequences:** High-performance index-backed pagination and stable collection traversal during concurrent inserts.
+
+### ADR-0103: Optimistic Concurrency Control via ETags and Row Versions (ARC07-D15)
+- **Context:** Concurrent visual menu edits risk silent data loss if updates overwrite without conflict detection.
+- **Decision:** Stateful entities maintain row_version counters; mutating requests require If-Match or row_version verification.
+- **Consequences:** Immediate detection of concurrent edits, returning 409 Conflict to protect editor state.
+
+### ADR-0104: Idempotency Key Pattern for Mutation Retries (ARC07-D16)
+- **Context:** Network interruptions during mutations cause duplicate creations or redundant charges on client retry.
+- **Decision:** Critical mutating endpoints accept an Idempotency-Key header to cache and replay identical transaction responses.
+- **Consequences:** Safe automated client retries with guaranteed once-and-only-once operational semantics.
+
+### ADR-0105: Explicit Domain Contracts for Internal Module Communication (ARC07-D17)
+- **Context:** Direct cross-module database joins inside the modular monolith erode domain boundaries and increase coupling.
+- **Decision:** Modules interact strictly through explicit application service interfaces and published domain events.
+- **Consequences:** Clean domain modularity, ease of testing with mock interfaces, and future microservice extraction viability.
+
+### ADR-0106: Transactional Outbox for Reliable Event Dispatch (ARC07-D18)
+- **Context:** Emitting external events without transactional guarantees risks event loss if the process crashes after DB commit.
+- **Decision:** Domain events are written to the outbox_events table within the primary business transaction.
+- **Consequences:** Guaranteed at-least-once event delivery to external listeners and webhooks.
+
+### ADR-0107: Provider Adapter Pattern for External Services (ARC07-D19)
+- **Context:** Direct coupling to external vendor SDKs (SendGrid, AWS S3, Stripe) prevents local testing and limits portability.
+- **Decision:** External dependencies are abstracted behind abstract service protocols with pluggable provider adapters.
+- **Consequences:** Painless local development with in-memory/console mocks and zero vendor lock-in.
+
+### ADR-0108: Cryptographically Signed Webhook Delivery with Replay Defense (ARC07-D20)
+- **Context:** Webhooks delivered over the public internet can be intercepted, forged, or replayed.
+- **Decision:** Webhook payloads are signed with HMAC-SHA256, include timestamp headers, and require signature verification.
+- **Consequences:** Guaranteed payload authenticity, tamper prevention, and complete defense against replay attacks.
+
+### ADR-0109: Decoupled Public Menu Read Model (ARC07-D21)
+- **Context:** High-volume public QR menu browsing must not put read contention on transactional draft menu tables.
+- **Decision:** Public menu endpoints serve immutable published snapshots without tenant authentication overhead.
+- **Consequences:** Sub-millisecond response times, edge CDN cacheability, and zero draft leakage to public consumers.
+
+### ADR-0110: Tiered Rate Limiting by Endpoint Class (ARC07-D22)
+- **Context:** Uniform rate limits either throttle legitimate interactive users or fail to protect against DDoS attacks.
+- **Decision:** Rate limits are tiered by endpoint sensitivity: public diners (120/min), tenant users (600/min), auth (10/min).
+- **Consequences:** Robust defense against brute force and DDoS attacks while maintaining a responsive user experience.
+
+### ADR-0111: Correlation IDs and Structured Telemetry (ARC07-D23)
+- **Context:** Debugging distributed request failures without request tracing is inefficient and prone to error.
+- **Decision:** Every request receives an X-Request-ID preserved across logs, errors, and background outbox dispatchers.
+- **Consequences:** Instant trace correlation across frontend clients, backend services, and external webhook logs.
+
+### ADR-0112: TanStack Query for Frontend API State Management (ARC07-D24)
+- **Context:** Uncoordinated client-side fetch calls cause redundant network traffic, stale data, and race conditions.
+- **Decision:** Frontend network state is managed via TanStack Query with structured query keys and optimistic mutation updates.
+- **Consequences:** Automated background refetching, intelligent cache invalidation, and reduced client network load.
+
+### ADR-0113: 100% API Parity Between Managed SaaS and Customer-Hosted Editions (ARC07-D25)
+- **Context:** Separate API implementations for cloud and self-hosted editions create maintenance overhead and feature drift.
+- **Decision:** Both editions share identical FastAPI route declarations, schemas, validation rules, and error contracts.
+- **Consequences:** Complete architectural parity; customer-hosted deployments receive all enterprise capabilities without code changes.

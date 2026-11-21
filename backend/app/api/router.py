@@ -1,12 +1,13 @@
+"""
+ModularMenu — Root API Router (ARC-03 §4.3, ARC-07 §14.2).
+Mounts API version routers under their respective prefixes.
+"""
 from fastapi import APIRouter
-from app.api.v1 import auth, menus, platform, public, restaurants, themes, publishing
+from app.api.v1.router import v1_router
+from app.api.v1 import platform
 
 api_router = APIRouter()
 
-api_router.include_router(auth.router)
-api_router.include_router(restaurants.router)
-api_router.include_router(menus.router)
-api_router.include_router(themes.router)
-api_router.include_router(publishing.router)
-api_router.include_router(public.router)
+# Mount v1 routers
+api_router.include_router(v1_router)
 api_router.include_router(platform.router)

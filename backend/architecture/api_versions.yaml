@@ -1,0 +1,30 @@
+# ModularMenu API Versions and Compatibility Register (ARC-07 §7, §24.3)
+
+current_version: "v1"
+supported_versions:
+  - version: "v1"
+    status: "active"
+    base_path: "/api/v1"
+    release_date: "2026-11-21"
+    sunset_date: null
+    deprecation_notice: null
+    changelog_url: "docs/architecture/ARC-07-api-integration-architecture/06-api-versioning-and-compatibility.md"
+    compatibility_policy:
+      breaking_changes_allowed: false
+      additive_changes_allowed: true
+      strict_field_forbidden: false
+      deprecation_window_days: 180
+
+compatibility_rules:
+  additive_changes:
+    - Adding new optional request query/body parameters with safe default values.
+    - Adding new fields to response JSON bodies.
+    - Adding new HTTP routes and resources.
+    - Adding new enumeration choices where client decoders tolerate expansion.
+  breaking_changes:
+    - Removing or renaming an existing HTTP route.
+    - Changing the HTTP method for an existing endpoint.
+    - Removing or renaming any response field.
+    - Changing the primitive type of an existing field.
+    - Altering authentication requirements or permissions.
+    - Modifying error status codes or problem detail structures.
