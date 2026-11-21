@@ -107,3 +107,26 @@ async def update_restaurant_design(
 
     await db.commit()
     return {"status": "success", "message": "Design configuration updated"}
+
+
+@router.get("/layouts")
+async def list_supported_layouts():
+    """Lists supported layout presets (ARC-07 §4.6)."""
+    return [
+        {"id": str(uuid.UUID("22222222-0000-0000-0000-000000000001")), "name": "Grid", "slug": "grid", "supported_slots": ["header", "categories", "grid_items", "footer"], "is_system_preset": True},
+        {"id": str(uuid.UUID("22222222-0000-0000-0000-000000000002")), "name": "List", "slug": "list", "supported_slots": ["header", "categories", "list_items", "footer"], "is_system_preset": True},
+        {"id": str(uuid.UUID("22222222-0000-0000-0000-000000000003")), "name": "Cards", "slug": "cards", "supported_slots": ["header", "hero", "card_items", "footer"], "is_system_preset": True},
+        {"id": str(uuid.UUID("22222222-0000-0000-0000-000000000004")), "name": "Magazine", "slug": "magazine", "supported_slots": ["header", "feature", "editorial_items", "footer"], "is_system_preset": True},
+    ]
+
+
+@router.get("/components")
+async def list_registered_components():
+    """Lists whitelisted UI components from the component registry (ARC-07 §4.6)."""
+    return [
+        {"id": str(uuid.UUID("33333333-0000-0000-0000-000000000001")), "component_key": "hero_banner", "name": "Hero Banner", "category": "header", "props_schema": {}, "is_deprecated": False},
+        {"id": str(uuid.UUID("33333333-0000-0000-0000-000000000002")), "component_key": "category_nav", "name": "Category Navigation", "category": "navigation", "props_schema": {}, "is_deprecated": False},
+        {"id": str(uuid.UUID("33333333-0000-0000-0000-000000000003")), "component_key": "food_card", "name": "Food Card", "category": "items", "props_schema": {}, "is_deprecated": False},
+        {"id": str(uuid.UUID("33333333-0000-0000-0000-000000000004")), "component_key": "dietary_badges", "name": "Dietary Badges", "category": "badges", "props_schema": {}, "is_deprecated": False},
+    ]
+

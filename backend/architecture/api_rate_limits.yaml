@@ -1,0 +1,58 @@
+# ModularMenu API Rate Limit Quotas and Endpoint Classifications (ARC-07 §15, §24.3)
+
+rate_limit_classes:
+  auth_strict:
+    description: "Strict controls on authentication endpoints to prevent brute-force attacks and credential stuffing."
+    window_seconds: 60
+    max_requests: 10
+    key_strategy: "ip_and_account"
+    action_on_breach: "http_429"
+    retry_after_seconds: 60
+
+  authenticated_default:
+    description: "Standard rate allowance for authenticated dashboard operations."
+    window_seconds: 60
+    max_requests: 120
+    key_strategy: "user_and_organization"
+    action_on_breach: "http_429"
+    retry_after_seconds: 10
+
+  authenticated_write:
+    description: "Rate limit for mutating catalog, settings, and design operations."
+    window_seconds: 60
+    max_requests: 60
+    key_strategy: "user_and_organization"
+    action_on_breach: "http_429"
+    retry_after_seconds: 15
+
+  privileged_write:
+    description: "Rate limit for high-impact publishing, rollbacks, and deletions."
+    window_seconds: 60
+    max_requests: 15
+    key_strategy: "user_and_organization"
+    action_on_breach: "http_429"
+    retry_after_seconds: 30
+
+  upload_intent:
+    description: "Limit on requesting upload authorization tokens."
+    window_seconds: 60
+    max_requests: 20
+    key_strategy: "organization_id"
+    action_on_breach: "http_429"
+    retry_after_seconds: 30
+
+  upload_complete:
+    description: "Limit on confirming completed uploads."
+    window_seconds: 60
+    max_requests: 20
+    key_strategy: "organization_id"
+    action_on_breach: "http_429"
+    retry_after_seconds: 30
+
+  public_read:
+    description: "High-volume read allowance for public diner QR scanning and CDN edge caches."
+    window_seconds: 60
+    max_requests: 300
+    key_strategy: "client_ip"
+    action_on_breach: "http_429"
+    retry_after_seconds: 5

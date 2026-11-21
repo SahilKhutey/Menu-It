@@ -68,3 +68,6 @@ media_uploads/
 
 # Docker
 *.docker.log
+
+# Scratch scripts
+scratch/

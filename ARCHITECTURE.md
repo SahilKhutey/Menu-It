@@ -16,8 +16,10 @@ Level 1 — System Architecture
 │   └── 16 discrete business modules, bounded contexts, domain primitives, 18-event catalogue, and AST boundaries.
 ├── ARC-05: Multi-Tenant Architecture & Isolation Model
 │   └── Organization-based tenancy, 8-layer defense in depth, PostgreSQL RLS fail-closed policies, and 50-test security suite.
-└── ARC-06: Data Architecture & Persistence Baseline
-    └── Relational-first schema, composite foreign keys, PostgreSQL RLS, SQLAlchemy 2.x, immutable published snapshots, and 55-test persistence catalogue.
+├── ARC-06: Data Architecture & Persistence Baseline
+│   └── Relational-first schema, composite foreign keys, PostgreSQL RLS, SQLAlchemy 2.x, immutable published snapshots, and 55-test persistence catalogue.
+└── ARC-07: API & Integration Architecture
+    └── Contract-first REST API, versioned endpoints (/api/v1), OpenAPI 3.1, server-derived tenant context, TypeScript contracts, reliable outbox webhooks, and 75-test API catalogue.
 ```
 
 ---
@@ -59,18 +61,27 @@ Level 1 — System Architecture
    - Immutability & Financial Rigor: Immutable menu publication snapshots (`menu_versions`) with SHA-256 digests and ORM/trigger mutation guards; fixed-precision monetary minor units.
    - Documentation & Quality Gates: 27 architectural deliverables in `docs/architecture/ARC-06-data-architecture/`; 199 automated backend tests passing (including 55 data catalogue scenarios ARC06-T001 to T055); 100% schema parity across SaaS and Customer-Hosted Docker appliance.
 
+7. **[ARC-07 — API & Integration Architecture](documentation/03_System_Architecture/ARC-07_API_Integration_Architecture.md)**
+   - Status: **Approved & Implemented**
+   - API Style & Routing: Contract-first REST API under `/api/v1` with 66 registered endpoints across 10 functional groups.
+   - Enforceable Contracts: Generated OpenAPI 3.1 schema (`openapi.json`/`openapi.yaml`) synchronized with frontend TypeScript types (`schema.d.ts`).
+   - Tenant Security: Server-derived, immutable `TenantContext` eliminating BOLA/IDOR vulnerabilities; fail-closed authorization checking against fine-grained permission catalogue.
+   - Error & Resilience Standards: Standard RFC 7807/RFC 9457 Problem Details envelopes; optimistic concurrency via ETags/row_version; reliable outbox event dispatch with HMAC-SHA256 signed webhooks.
+   - Documentation & Quality Gates: 27 architectural deliverables in `docs/architecture/ARC-07-api-integration-architecture/`; 274 automated backend tests passing (including 75 API catalogue scenarios ARC07-T001 to T075); 0 regressions.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0088).
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-007).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0113).
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-008).
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Comprehensive work package execution and test verification records.
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
 - **[Domain Architecture Suite](docs/architecture/ARC-04-modular-domain-architecture/):** Detailed specifications for MOD-01 to MOD-16, workflows, and risk register.
 - **[Multi-Tenant Architecture Suite](docs/architecture/ARC-05-multi-tenant-architecture/):** Complete specifications for multi-tenancy, RLS policies, threat models, and risk register.
 - **[Data Architecture Suite](docs/architecture/ARC-06-data-architecture/):** Complete specifications for 30+ relational models across 10 capability groups, composite foreign keys, RLS policies, and recovery drills.
+- **[API Architecture Suite](docs/architecture/ARC-07-api-integration-architecture/):** Complete specifications for 66 REST endpoints, RFC 7807 error models, OpenAPI 3.1 contracts, and outbox webhooks.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, and Published Snapshots.
 
 ---

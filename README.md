@@ -1,11 +1,11 @@
 # Menu-It (ModularMenu™)
 ### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
 
-[![Version](https://img.shields.io/badge/version-1.0.0--arc06-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc06)
-[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--06%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
-[![Tests](https://img.shields.io/badge/Quality%20Gates-199%2F199%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
-[![Devlogs](https://img.shields.io/badge/Devlogs-7%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
-[![Tasklogs](https://img.shields.io/badge/Tasklogs-6%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Version](https://img.shields.io/badge/version-1.0.0--arc07-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc07)
+[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--07%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
+[![Tests](https://img.shields.io/badge/Quality%20Gates-274%2F274%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Devlogs](https://img.shields.io/badge/Devlogs-8%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
+[![Tasklogs](https://img.shields.io/badge/Tasklogs-7%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
 [![Python](https://img.shields.io/badge/Python-3.12%20FastAPI-005571.svg?style=for-the-badge&logo=python)](backend/)
 [![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?style=for-the-badge&logo=next.js)](frontend/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=for-the-badge&logo=typescript)](frontend/)

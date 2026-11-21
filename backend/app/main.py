@@ -7,7 +7,7 @@ from app.api.router import api_router
 from app.bootstrap import lifespan
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal
-from app.core.errors import http_exception_handler, validation_exception_handler
+from app.core.errors import register_error_handlers
 from app.core.middleware import CorrelationIdMiddleware
 
 
@@ -25,14 +25,17 @@ def create_application() -> FastAPI:
     # Register Request Correlation ID Middleware (ARC-03 §6.1)
     application.add_middleware(CorrelationIdMiddleware)
 
-    # Register RFC 7807 Exception Handlers (ARC-02 §4.4 & ARC-03 §6.4)
-    application.add_exception_handler(HTTPException, http_exception_handler)
-    application.add_exception_handler(RequestValidationError, validation_exception_handler)
+    # Register Central RFC 7807 / RFC 9457 Exception Handlers (ARC-02 §4.4, ARC-03 §6.4, ARC-07 §5.5, §14.6)
+    register_error_handlers(application)
 
-    # CORS Middleware configuration
+    # CORS Middleware configuration (ARC-07 §14.5, §20.2 ARC07-T069, ARC07-T075)
+    cors_origins = [settings.PUBLIC_BASE_URL]
+    if settings.ENVIRONMENT in ("development", "test"):
+        cors_origins.extend(["http://localhost:3000", "http://127.0.0.1:3000", "http://test"])
+
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

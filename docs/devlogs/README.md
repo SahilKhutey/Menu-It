@@ -16,6 +16,7 @@ This directory contains chronological engineering chronicles capturing the archi
 | **[Devlog-005](devlog-005-arc04-modular-domain-architecture.md)** | **ARC-04 Modular Domain Architecture** | 2026-11-20 | `v1.0.0-arc04` | 16 discrete business modules (MOD-01 to MOD-16), pure domain models, 18 domain events, AST checks, 94 tests. |
 | **[Devlog-006](devlog-006-arc05-multi-tenant-architecture.md)** | **ARC-05 Multi-Tenant Architecture & Isolation** | 2026-11-20 | `v1.0.0-arc05` | Organization primary tenancy, 8-layer defense in depth, PostgreSQL RLS, storage/cache isolation, 144 tests. |
 | **[Devlog-007](devlog-007-arc06-data-architecture-and-persistence.md)** | **ARC-06 Data Architecture & Persistence Baseline** | 2026-11-20 | `v1.0.0-arc06` | Relational schema, composite FKs, 30+ SQLAlchemy models across 10 groups, immutable published snapshots, 199 tests. |
+| **[Devlog-008](devlog-008-arc07-api-and-integration-architecture.md)** | **ARC-07 API & Integration Architecture** | 2026-11-21 | `v1.0.0-arc07` | REST API, 66 endpoints, OpenAPI 3.1, TypeScript SDK, server-derived tenancy, outbox webhooks, 274 tests (75 API tests). |
 
 ---
 
