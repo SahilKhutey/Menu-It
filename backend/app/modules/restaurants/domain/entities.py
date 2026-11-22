@@ -1,9 +1,10 @@
 """
 Restaurant Domain Entities (ARC-04 §6.3, MOD-03).
 """
+
 from dataclasses import dataclass, field
-from typing import Any
 from uuid import UUID
+
 from app.shared.domain.value_objects import RestaurantSlug
 
 

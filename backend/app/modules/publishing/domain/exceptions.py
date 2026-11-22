@@ -5,6 +5,7 @@ ARC-10 Domain Exceptions for Publishing & Versioning.
 
 class PublicationDomainError(Exception):
     """Base domain exception for publishing module."""
+
     def __init__(self, message: str, code: str = "PUBLICATION_ERROR"):
         super().__init__(message)
         self.message = message

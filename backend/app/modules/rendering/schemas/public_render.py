@@ -3,7 +3,9 @@ Pydantic Schemas for Public Menu Rendering (ARC-09 §4, WP-ARC09-01).
 Conforms strictly to public-menu-response.schema.json.
 Guarantees zero internal metadata, tenant keys, or draft properties leak.
 """
-from typing import Any, Dict, List, Optional
+
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -11,48 +13,48 @@ class PublicRestaurantOut(BaseModel):
     id: str
     name: str
     slug: str
-    description: Optional[str] = None
-    logo_url: Optional[str] = None
-    cover_url: Optional[str] = None
+    description: str | None = None
+    logo_url: str | None = None
+    cover_url: str | None = None
     currency: str = "INR"
     time_zone: str = "Asia/Kolkata"
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    address: Optional[str] = None
+    phone: str | None = None
+    email: str | None = None
+    address: str | None = None
 
 
 class PublicItemOut(BaseModel):
     id: str
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     price: float
     formatted_price: str
     currency_code: str = "INR"
-    dietary_type: Optional[str] = None
-    spice_level: Optional[int] = 0
-    image_url: Optional[str] = None
-    ingredients: List[str] = Field(default_factory=list)
-    allergens: List[str] = Field(default_factory=list)
+    dietary_type: str | None = None
+    spice_level: int | None = 0
+    image_url: str | None = None
+    ingredients: list[str] = Field(default_factory=list)
+    allergens: list[str] = Field(default_factory=list)
     is_available: bool = True
     is_featured: bool = False
     sort_order: int = 0
-    badges: List[str] = Field(default_factory=list)
+    badges: list[str] = Field(default_factory=list)
 
 
 class PublicCategoryOut(BaseModel):
     id: str
     name: str
-    description: Optional[str] = None
-    image_url: Optional[str] = None
+    description: str | None = None
+    image_url: str | None = None
     sort_order: int = 0
-    items: List[PublicItemOut] = Field(default_factory=list)
+    items: list[PublicItemOut] = Field(default_factory=list)
 
 
 class PublicMenuOut(BaseModel):
     id: str
     name: str
     slug: str
-    description: Optional[str] = None
+    description: str | None = None
     menu_type: str = "standard"
 
 
@@ -60,7 +62,7 @@ class PublicThemeOut(BaseModel):
     id: str
     name: str
     mode: str = "light"
-    tokens: Dict[str, Any] = Field(default_factory=dict)
+    tokens: dict[str, Any] = Field(default_factory=dict)
 
 
 class PublicLayoutOut(BaseModel):
@@ -70,18 +72,20 @@ class PublicLayoutOut(BaseModel):
     density: str = "comfortable"
     show_images: bool = True
     show_descriptions: bool = True
-    slots: Dict[str, str] = Field(default_factory=dict)
+    slots: dict[str, str] = Field(default_factory=dict)
 
 
 class PublicRenderPlanOut(BaseModel):
     layout_type: str
-    slots: Dict[str, str]
-    active_components: List[str]
-    responsive_breakpoints: Dict[str, str] = Field(default_factory=lambda: {
-        "mobile": "0px - 639px",
-        "tablet": "640px - 1023px",
-        "desktop": "1024px+"
-    })
+    slots: dict[str, str]
+    active_components: list[str]
+    responsive_breakpoints: dict[str, str] = Field(
+        default_factory=lambda: {
+            "mobile": "0px - 639px",
+            "tablet": "640px - 1023px",
+            "desktop": "1024px+",
+        }
+    )
 
 
 class PublicMetadataOut(BaseModel):
@@ -96,7 +100,7 @@ class PublicMenuRenderResponse(BaseModel):
     status: str = "success"
     restaurant: PublicRestaurantOut
     menu: PublicMenuOut
-    categories: List[PublicCategoryOut]
+    categories: list[PublicCategoryOut]
     theme: PublicThemeOut
     layout: PublicLayoutOut
     render_plan: PublicRenderPlanOut

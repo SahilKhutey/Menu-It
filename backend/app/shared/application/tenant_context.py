@@ -3,8 +3,8 @@ ModularMenu — Tenant Context (ARC-05 §4.1, ARC05-D06).
 Immutable, request-scoped context derived strictly by server-side authentication
 and active organization membership resolution.
 """
+
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
 
 
@@ -14,11 +14,12 @@ class TenantContext:
     Authoritative, server-derived tenant execution context.
     Must NEVER be deserialized directly from client-supplied request payloads.
     """
+
     user_id: UUID
     organization_id: UUID
     membership_id: UUID
     organization_role: str
-    allowed_restaurant_ids: Optional[frozenset[UUID]] = None
+    allowed_restaurant_ids: frozenset[UUID] | None = None
     request_id: str = ""
     authentication_method: str = "session"
 

@@ -3,11 +3,13 @@ ModularMenu — Python Theme & Customization Resolution Engine (ARC-08 §11).
 Authoritative, deterministic server-side merge of theme presets, restaurant overrides,
 layout settings, and component default properties.
 """
-from typing import Any, Dict, List
+
+from typing import Any
+
 from app.modules.customization.registries import component_registry, layout_registry, theme_registry
 
 
-def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+def deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
     """Deterministically merges override dict into base dict without mutating inputs."""
     result = dict(base)
     for key, value in (override or {}).items():
@@ -22,7 +24,7 @@ def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]
     return result
 
 
-def resolve_menu_customization(config: Dict[str, Any]) -> Dict[str, Any]:
+def resolve_menu_customization(config: dict[str, Any]) -> dict[str, Any]:
     """Resolves raw customization document into normalized, fully-populated presentation configuration."""
     theme_sel = config.get("theme", {})
     theme_id = theme_sel.get("id", "theme-minimal")
@@ -44,7 +46,7 @@ def resolve_menu_customization(config: Dict[str, Any]) -> Dict[str, Any]:
     default_responsive = layout_def.get("responsive", {}) if layout_def else {}
     layout_responsive = deep_merge(default_responsive, layout_sel.get("responsive", {}))
 
-    resolved_components: List[Dict[str, Any]] = []
+    resolved_components: list[dict[str, Any]] = []
     for comp in config.get("components", []):
         c_id = comp.get("component_id")
         c_ver = comp.get("component_version", "1.0.0")
@@ -52,15 +54,17 @@ def resolve_menu_customization(config: Dict[str, Any]) -> Dict[str, Any]:
         c_defaults = c_def.get("default_props", {}) if c_def else {}
         c_merged_props = deep_merge(c_defaults, comp.get("props", {}))
 
-        resolved_components.append({
-            "instanceId": comp.get("instance_id"),
-            "componentId": c_id,
-            "componentVersion": c_ver,
-            "slot": comp.get("slot"),
-            "position": comp.get("position", 0),
-            "visible": comp.get("visible", True),
-            "props": c_merged_props,
-        })
+        resolved_components.append(
+            {
+                "instanceId": comp.get("instance_id"),
+                "componentId": c_id,
+                "componentVersion": c_ver,
+                "slot": comp.get("slot"),
+                "position": comp.get("position", 0),
+                "visible": comp.get("visible", True),
+                "props": c_merged_props,
+            }
+        )
 
     resolved_components.sort(key=lambda x: x["position"])
 

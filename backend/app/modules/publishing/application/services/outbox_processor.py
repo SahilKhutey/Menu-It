@@ -1,9 +1,9 @@
 """
 Transactional Outbox Processor & Event Dispatcher (ARC-10 §13, WP-ARC10-09).
 """
+
 import asyncio
-from datetime import datetime, timezone
-from typing import Callable, Dict, List
+from collections.abc import Callable
 from uuid import UUID
 
 from app.modules.publishing.domain.events import PublicationEvent
@@ -16,9 +16,9 @@ class OutboxProcessor:
 
     def __init__(self, max_retries: int = 3):
         self.max_retries = max_retries
-        self._consumers: Dict[str, List[Callable]] = {}
+        self._consumers: dict[str, list[Callable]] = {}
         self._processed_event_ids: set[UUID] = set()
-        self.dead_letter_events: List[PublicationEvent] = []
+        self.dead_letter_events: list[PublicationEvent] = []
 
     def register_consumer(self, event_type: str, handler: Callable) -> None:
         self._consumers.setdefault(event_type, []).append(handler)
@@ -57,7 +57,7 @@ class OutboxProcessor:
                 self.dead_letter_events.append(event)
             return False
 
-    async def process_batch(self, events: List[PublicationEvent]) -> int:
+    async def process_batch(self, events: list[PublicationEvent]) -> int:
         delivered_count = 0
         for ev in events:
             success = await self.process_event(ev)

@@ -1,8 +1,9 @@
 """
 ModularMenu — Email Integration Contracts & Services (ARC-07 §11.1, §11.3).
 """
+
 from dataclasses import dataclass
-from typing import Optional, Protocol
+from typing import Protocol
 
 
 @dataclass(frozen=True)
@@ -11,7 +12,7 @@ class EmailMessage:
     subject: str
     html_body: str
     text_body: str
-    reply_to: Optional[str] = None
+    reply_to: str | None = None
 
 
 class EmailProvider(Protocol):
@@ -22,6 +23,7 @@ class EmailProvider(Protocol):
 
 class ConsoleEmailProvider:
     """Development and test provider logging emails to memory."""
+
     def __init__(self):
         self.sent_messages: list[EmailMessage] = []
 
@@ -31,7 +33,7 @@ class ConsoleEmailProvider:
 
 
 class EmailService:
-    def __init__(self, provider: Optional[EmailProvider] = None):
+    def __init__(self, provider: EmailProvider | None = None):
         self.provider = provider or ConsoleEmailProvider()
 
     async def send_verification(self, recipient: str, token: str) -> str:

@@ -1,9 +1,11 @@
 """
 Pricing & Availability Domain Entities (ARC-04 §6.7, MOD-07).
 """
+
 from dataclasses import dataclass
 from decimal import Decimal
 from uuid import UUID
+
 from app.shared.domain.value_objects import Money
 
 

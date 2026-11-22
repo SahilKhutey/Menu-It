@@ -2,8 +2,10 @@
 ModularMenu — RFC 9457 / RFC 7807 Problem Details and Exception Mapping (ARC-07 §5.5, §14.6).
 Provides consistent, machine-readable error responses with zero stack trace or internal credential leaks.
 """
-from typing import Any, Dict, List, Optional
-from fastapi import FastAPI, HTTPException, Request, status
+
+from typing import Any
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -11,20 +13,21 @@ from pydantic import BaseModel
 
 class ProblemDetails(BaseModel):
     """RFC 7807 / RFC 9457 Problem Details representation."""
+
     type: str = "about:blank"
     title: str
     status: int
-    detail: Optional[str] = None
-    instance: Optional[str] = None
-    code: Optional[str] = None
-    request_id: Optional[str] = None
-    invalid_params: Optional[list] = None
-    errors: Optional[list] = None
+    detail: str | None = None
+    instance: str | None = None
+    code: str | None = None
+    request_id: str | None = None
+    invalid_params: list | None = None
+    errors: list | None = None
 
 
 # Domain / Application Exception Classes
 class ApiBaseException(Exception):
-    def __init__(self, detail: str, code: Optional[str] = None):
+    def __init__(self, detail: str, code: str | None = None):
         super().__init__(detail)
         self.detail = detail
         self.code = code
@@ -41,7 +44,9 @@ class PermissionDeniedError(ApiBaseException):
 
 
 class AuthenticationRequiredError(ApiBaseException):
-    def __init__(self, detail: str = "Authentication required", code: str = "AUTHENTICATION_REQUIRED"):
+    def __init__(
+        self, detail: str = "Authentication required", code: str = "AUTHENTICATION_REQUIRED"
+    ):
         super().__init__(detail=detail, code=code)
 
 
@@ -55,19 +60,28 @@ class ConcurrencyConflictError(ApiBaseException):
         self,
         detail: str = "Concurrency version conflict: stale update rejected",
         code: str = "VERSION_CONFLICT",
-        current_version: Optional[str] = None,
+        current_version: str | None = None,
     ):
         super().__init__(detail=detail, code=code)
         self.current_version = current_version
 
 
 class IdempotencyConflictError(ApiBaseException):
-    def __init__(self, detail: str = "Idempotency key reused with different request payload", code: str = "IDEMPOTENCY_CONFLICT"):
+    def __init__(
+        self,
+        detail: str = "Idempotency key reused with different request payload",
+        code: str = "IDEMPOTENCY_CONFLICT",
+    ):
         super().__init__(detail=detail, code=code)
 
 
 class RateLimitExceededError(ApiBaseException):
-    def __init__(self, detail: str = "Rate limit exceeded. Please retry later.", retry_after: int = 30, code: str = "RATE_LIMIT_EXCEEDED"):
+    def __init__(
+        self,
+        detail: str = "Rate limit exceeded. Please retry later.",
+        retry_after: int = 30,
+        code: str = "RATE_LIMIT_EXCEEDED",
+    ):
         super().__init__(detail=detail, code=code)
         self.retry_after = retry_after
 
@@ -78,12 +92,18 @@ class UploadTooLargeError(ApiBaseException):
 
 
 class UnsupportedMediaTypeError(ApiBaseException):
-    def __init__(self, detail: str = "Unsupported media type", code: str = "UNSUPPORTED_MEDIA_TYPE"):
+    def __init__(
+        self, detail: str = "Unsupported media type", code: str = "UNSUPPORTED_MEDIA_TYPE"
+    ):
         super().__init__(detail=detail, code=code)
 
 
 class DependencyUnavailableError(ApiBaseException):
-    def __init__(self, detail: str = "Required upstream dependency unavailable", code: str = "DEPENDENCY_UNAVAILABLE"):
+    def __init__(
+        self,
+        detail: str = "Required upstream dependency unavailable",
+        code: str = "DEPENDENCY_UNAVAILABLE",
+    ):
         super().__init__(detail=detail, code=code)
 
 
@@ -93,14 +113,14 @@ def _build_problem_response(
     detail: str,
     instance: str,
     code: str,
-    request_id: Optional[str] = None,
-    errors: Optional[list] = None,
-    extra_headers: Optional[Dict[str, str]] = None,
+    request_id: str | None = None,
+    errors: list | None = None,
+    extra_headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     error_slug = title.lower().replace(" ", "-")
     error_type = f"https://errors.modularmenu.in/{error_slug}"
 
-    content: Dict[str, Any] = {
+    content: dict[str, Any] = {
         "type": error_type,
         "title": title,
         "status": status_code,
@@ -174,16 +194,20 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
 
 
 # Request Validation Exception Handler
-async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
     request_id = getattr(request.state, "request_id", None)
     formatted_errors = []
     for err in exc.errors():
-        loc = ".".join(str(l) for l in err.get("loc", []))
-        formatted_errors.append({
-            "field": loc,
-            "code": err.get("type", "INVALID"),
-            "message": err.get("msg", "Invalid field"),
-        })
+        loc = ".".join(str(part) for part in err.get("loc", []))
+        formatted_errors.append(
+            {
+                "field": loc,
+                "code": err.get("type", "INVALID"),
+                "message": err.get("msg", "Invalid field"),
+            }
+        )
 
     return _build_problem_response(
         status_code=422,

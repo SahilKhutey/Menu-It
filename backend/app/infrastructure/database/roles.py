@@ -2,11 +2,13 @@
 ModularMenu — Database Runtime Role & Privilege Enforcement (ARC-05 §8.4, ARC05-D10).
 Guarantees runtime database user lacks BYPASSRLS and SUPERUSER privileges.
 """
+
 from app.shared.domain.tenant_exceptions import TenantSecurityException
 
 
 class RuntimeRolePrivilegeException(TenantSecurityException):
     """Raised when the database runtime role has prohibited superuser or bypassrls privileges."""
+
     pass
 
 

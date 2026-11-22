@@ -3,8 +3,9 @@ ModularMenu â€” PostgreSQL Transaction-Local Tenant Session Management (ARC-05 Â
 Enforces transaction-scoped tenant identity via 'app.current_organization_id'
 and guarantees clean teardown across connection pooling.
 """
+
+from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
-from typing import Any, AsyncGenerator, Generator, Optional
 from uuid import UUID
 
 from sqlalchemy import text
@@ -16,7 +17,7 @@ from app.shared.domain.tenant_exceptions import InvalidTenantContextException
 TENANT_CONFIG_KEY = "app.current_organization_id"
 
 
-def set_tenant_transaction_context_sync(session: Session, organization_id: Optional[UUID]) -> None:
+def set_tenant_transaction_context_sync(session: Session, organization_id: UUID | None) -> None:
     """
     Sets the PostgreSQL session config for the duration of the current transaction.
     Passing is_local=true guarantees context is discarded upon COMMIT or ROLLBACK.
@@ -32,7 +33,7 @@ def set_tenant_transaction_context_sync(session: Session, organization_id: Optio
 
 
 async def set_tenant_transaction_context_async(
-    session: AsyncSession, organization_id: Optional[UUID]
+    session: AsyncSession, organization_id: UUID | None
 ) -> None:
     """
     Async variant for asyncpg / SQLAlchemy AsyncSession.
@@ -64,7 +65,9 @@ def tenant_transaction_scope_sync(
     Context manager guaranteeing transaction-local context and post-execution cleanup.
     """
     if not organization_id:
-        raise InvalidTenantContextException("Cannot establish tenant scope with empty organization_id")
+        raise InvalidTenantContextException(
+            "Cannot establish tenant scope with empty organization_id"
+        )
     try:
         set_tenant_transaction_context_sync(session, organization_id)
         yield session
@@ -80,7 +83,9 @@ async def tenant_transaction_scope_async(
     Async context manager guaranteeing transaction-local context and post-execution cleanup.
     """
     if not organization_id:
-        raise InvalidTenantContextException("Cannot establish tenant scope with empty organization_id")
+        raise InvalidTenantContextException(
+            "Cannot establish tenant scope with empty organization_id"
+        )
     try:
         await set_tenant_transaction_context_async(session, organization_id)
         yield session

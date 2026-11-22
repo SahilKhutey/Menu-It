@@ -1,16 +1,15 @@
 """
 ModularMenu — Restaurant & Branch API Endpoints (ARC-07 §4.3).
 """
+
 import uuid
-from typing import Any, Dict, List, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies.authentication import AuthenticatedActor, get_current_actor
-from app.api.dependencies.authorization import require_permission
-from app.api.dependencies.tenant import get_tenant_context
 from app.api.dependencies import get_current_user, verify_restaurant_access
+from app.api.dependencies.authorization import require_permission
 from app.api.schemas.restaurants import (
     DesignConfigRequest,
     DesignConfigResponse,
@@ -21,14 +20,14 @@ from app.api.schemas.restaurants import (
     RestaurantUpdateRequest,
 )
 from app.core.database import get_db
-from app.modules.identity.models import Organization, Restaurant, RestaurantMember, User
+from app.modules.identity.models import Restaurant, RestaurantMember, User
 from app.modules.identity.schemas import RestaurantOut
 from app.shared.application.tenant_context import TenantContext
 
 router = APIRouter(prefix="/restaurants", tags=["Restaurants"])
 
 
-@router.get("", response_model=List[RestaurantOut])
+@router.get("", response_model=list[RestaurantOut])
 async def list_restaurants(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
@@ -38,10 +37,7 @@ async def list_restaurants(
     """Lists restaurants accessible to the authenticated user."""
     if user.is_platform_admin:
         result = await db.execute(
-            select(Restaurant)
-            .order_by(Restaurant.created_at.desc())
-            .limit(limit)
-            .offset(offset)
+            select(Restaurant).order_by(Restaurant.created_at.desc()).limit(limit).offset(offset)
         )
         return result.scalars().all()
 
@@ -173,10 +169,9 @@ async def get_design_config(
 ):
     """Retrieves the restaurant's visual design token configuration."""
     from app.modules.themes.models import RestaurantDesignConfig
+
     result = await db.execute(
-        select(RestaurantDesignConfig).where(
-            RestaurantDesignConfig.restaurant_id == restaurant_id
-        )
+        select(RestaurantDesignConfig).where(RestaurantDesignConfig.restaurant_id == restaurant_id)
     )
     config = result.scalars().first()
     if not config:
@@ -196,10 +191,14 @@ async def get_design_config(
         restaurant_id=restaurant.id,
         organization_id=restaurant.organization_id,
         theme_id=config.theme_id,
-        layout_preset=config.layout_config.get("preset", "grid") if isinstance(config.layout_config, dict) else "grid",
+        layout_preset=config.layout_config.get("preset", "grid")
+        if isinstance(config.layout_config, dict)
+        else "grid",
         token_overrides=config.custom_tokens or {},
         component_visibility=config.component_config or {},
-        custom_css=config.layout_config.get("custom_css") if isinstance(config.layout_config, dict) else None,
+        custom_css=config.layout_config.get("custom_css")
+        if isinstance(config.layout_config, dict)
+        else None,
         schema_version=config.config_version,
     )
 
@@ -213,6 +212,7 @@ async def save_design_config(
 ):
     """Saves or updates the restaurant's visual design token configuration."""
     from app.modules.themes.models import RestaurantDesignConfig, Theme
+
     theme_id = payload.theme_id
     if not theme_id:
         theme_res = await db.execute(select(Theme).limit(1))
@@ -229,9 +229,7 @@ async def save_design_config(
         theme_id = theme.id
 
     result = await db.execute(
-        select(RestaurantDesignConfig).where(
-            RestaurantDesignConfig.restaurant_id == restaurant_id
-        )
+        select(RestaurantDesignConfig).where(RestaurantDesignConfig.restaurant_id == restaurant_id)
     )
     config = result.scalars().first()
     if not config:
@@ -258,10 +256,14 @@ async def save_design_config(
         restaurant_id=restaurant.id,
         organization_id=restaurant.organization_id,
         theme_id=config.theme_id,
-        layout_preset=config.layout_config.get("preset", "grid") if isinstance(config.layout_config, dict) else "grid",
+        layout_preset=config.layout_config.get("preset", "grid")
+        if isinstance(config.layout_config, dict)
+        else "grid",
         token_overrides=config.custom_tokens or {},
         component_visibility=config.component_config or {},
-        custom_css=config.layout_config.get("custom_css") if isinstance(config.layout_config, dict) else None,
+        custom_css=config.layout_config.get("custom_css")
+        if isinstance(config.layout_config, dict)
+        else None,
         schema_version=config.config_version,
     )
 

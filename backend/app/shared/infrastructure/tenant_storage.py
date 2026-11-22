@@ -3,10 +3,10 @@ ModularMenu — Tenant-Aware Storage & Media Isolation (ARC-05 §10, ARC05-D13).
 Enforces organization-scoped object storage keys, upload authorization,
 and private signed URL verification.
 """
+
 import hashlib
 import hmac
 import time
-from typing import Optional
 from uuid import UUID
 
 from app.shared.application.tenant_context import TenantContext
@@ -21,6 +21,7 @@ class TenantStorageManager:
     Manages object keys and access policies for tenant media assets.
     Prevents cross-tenant path traversal and arbitrary bucket reads.
     """
+
     def __init__(self, signing_secret: str = "modularmenu-storage-test-secret"):
         self._secret = signing_secret.encode("utf-8")
 
@@ -29,7 +30,7 @@ class TenantStorageManager:
         organization_id: UUID,
         category: str,
         filename: str,
-        restaurant_id: Optional[UUID] = None,
+        restaurant_id: UUID | None = None,
     ) -> str:
         """
         Constructs a canonical organization-scoped object key.
@@ -98,5 +99,7 @@ class TenantStorageManager:
         if int(time.time()) > expiry:
             return False
         expected_payload = f"{object_key}:{expiry}"
-        expected_sig = hmac.new(self._secret, expected_payload.encode("utf-8"), hashlib.sha256).hexdigest()
+        expected_sig = hmac.new(
+            self._secret, expected_payload.encode("utf-8"), hashlib.sha256
+        ).hexdigest()
         return hmac.compare_digest(expected_sig, signature)

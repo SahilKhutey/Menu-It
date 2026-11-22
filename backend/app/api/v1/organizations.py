@@ -1,15 +1,15 @@
 """
 ModularMenu — Organization & Tenancy API Endpoints (ARC-07 §4.2).
 """
+
 import uuid
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.authentication import AuthenticatedActor, get_current_actor
 from app.api.dependencies.authorization import require_permission
-from app.api.dependencies.tenant import get_tenant_context
 from app.api.schemas.organizations import (
     InvitationCreateRequest,
     InvitationResponse,
@@ -19,13 +19,13 @@ from app.api.schemas.organizations import (
     OrganizationUpdateRequest,
 )
 from app.core.database import get_db
-from app.modules.identity.models import Organization, RestaurantMember, User
+from app.modules.identity.models import Organization, RestaurantMember
 from app.shared.application.tenant_context import TenantContext
 
 router = APIRouter(prefix="/organizations", tags=["Organizations"])
 
 
-@router.get("", response_model=List[OrganizationResponse])
+@router.get("", response_model=list[OrganizationResponse])
 async def list_user_organizations(
     actor: AuthenticatedActor = Depends(get_current_actor),
     db: AsyncSession = Depends(get_db),
@@ -125,7 +125,7 @@ async def update_organization(
     return org
 
 
-@router.get("/{organization_id}/members", response_model=List[OrganizationMemberResponse])
+@router.get("/{organization_id}/members", response_model=list[OrganizationMemberResponse])
 async def list_organization_members(
     organization_id: uuid.UUID,
     actor: AuthenticatedActor = Depends(get_current_actor),
@@ -141,7 +141,11 @@ async def list_organization_members(
     return result.scalars().all()
 
 
-@router.post("/{organization_id}/invitations", response_model=InvitationResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{organization_id}/invitations",
+    response_model=InvitationResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def invite_member(
     organization_id: uuid.UUID,
     payload: InvitationCreateRequest,
@@ -154,7 +158,8 @@ async def invite_member(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     import datetime
-    expires_at = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=7)
+
+    expires_at = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=7)
     invitation = {
         "id": uuid.uuid4(),
         "organization_id": organization_id,
@@ -162,7 +167,7 @@ async def invite_member(
         "role": payload.role,
         "status": "pending",
         "expires_at": expires_at,
-        "created_at": datetime.datetime.now(datetime.timezone.utc),
+        "created_at": datetime.datetime.now(datetime.UTC),
     }
     return invitation
 
@@ -180,7 +185,9 @@ async def remove_organization_member(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     if user_id == tenant.user_id and tenant.is_owner:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot remove organization owner")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot remove organization owner"
+        )
 
     stmt = select(RestaurantMember).where(
         RestaurantMember.organization_id == organization_id,

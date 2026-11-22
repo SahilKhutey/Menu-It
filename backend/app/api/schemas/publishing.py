@@ -1,15 +1,16 @@
 """
 ModularMenu — Publishing & Versioning API Schemas (ARC-07 §4.8).
 """
+
 from datetime import datetime
-from typing import Any, Dict, Optional
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class PublishRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    change_summary: Optional[str] = Field(None, max_length=500)
+    change_summary: str | None = Field(None, max_length=500)
 
 
 class PublicationResponse(BaseModel):
@@ -34,11 +35,11 @@ class MenuVersionResponse(BaseModel):
     menu_id: UUID
     version_number: int
     sha256_digest: str
-    change_summary: Optional[str] = None
+    change_summary: str | None = None
     created_at: datetime
 
 
 class RollbackRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     target_version_id: UUID
-    reason: Optional[str] = Field(None, max_length=500)
+    reason: str | None = Field(None, max_length=500)

@@ -1,9 +1,10 @@
 """
 Publication Application Service (ARC-10 §10, WP-ARC10-06).
 """
+
 import asyncio
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from app.modules.publishing.application.services.draft_revision_service import DraftRevisionService
@@ -17,12 +18,10 @@ from app.modules.publishing.domain.entities import (
     PublicationSnapshot,
     PublishedVersion,
 )
-from app.modules.publishing.domain.events import MenuPublished, PublicationEvent
+from app.modules.publishing.domain.events import PublicationEvent
 from app.modules.publishing.domain.exceptions import (
     ActivePublicationConflictError,
-    DraftRevisionStaleError,
     IdempotencyKeyConflictError,
-    PublicationDomainError,
     PublicationValidationError,
 )
 from app.modules.publishing.domain.services.canonical_hash import calculate_snapshot_hash
@@ -41,22 +40,22 @@ class PublicationService:
 
     def __init__(
         self,
-        draft_service: Optional[DraftRevisionService] = None,
-        validator: Optional[PublicationValidator] = None,
-        snapshot_builder: Optional[SnapshotBuilder] = None,
+        draft_service: DraftRevisionService | None = None,
+        validator: PublicationValidator | None = None,
+        snapshot_builder: SnapshotBuilder | None = None,
     ):
         self.draft_service = draft_service or DraftRevisionService()
         self.validator = validator or PublicationValidator()
         self.snapshot_builder = snapshot_builder or SnapshotBuilder()
 
         # In-memory stores for unit & domain testing
-        self.publications: Dict[UUID, List[Publication]] = {}  # menu_id -> list of publications
-        self.snapshots: Dict[UUID, PublicationSnapshot] = {}   # snapshot_id -> snapshot
-        self.active_publications: Dict[UUID, ActivePublication] = {}  # menu_id -> active
-        self.activations: Dict[UUID, List[PublicationActivation]] = {}  # menu_id -> list
-        self.operations: Dict[str, PublicationOperation] = {}  # idempotency_key -> operation
-        self.outbox_events: List[PublicationEvent] = []
-        self._menu_locks: Dict[UUID, asyncio.Lock] = {}
+        self.publications: dict[UUID, list[Publication]] = {}  # menu_id -> list of publications
+        self.snapshots: dict[UUID, PublicationSnapshot] = {}  # snapshot_id -> snapshot
+        self.active_publications: dict[UUID, ActivePublication] = {}  # menu_id -> active
+        self.activations: dict[UUID, list[PublicationActivation]] = {}  # menu_id -> list
+        self.operations: dict[str, PublicationOperation] = {}  # idempotency_key -> operation
+        self.outbox_events: list[PublicationEvent] = []
+        self._menu_locks: dict[UUID, asyncio.Lock] = {}
 
     def _get_menu_lock(self, menu_id: UUID) -> asyncio.Lock:
         if menu_id not in self._menu_locks:
@@ -70,15 +69,15 @@ class PublicationService:
         restaurant_id: UUID,
         menu_id: UUID,
         draft_revision: int,
-        candidate_payload: Dict[str, Any],
-        expected_active_publication_id: Optional[UUID] = None,
-        idempotency_key: Optional[str] = None,
-        actor_id: Optional[UUID] = None,
+        candidate_payload: dict[str, Any],
+        expected_active_publication_id: UUID | None = None,
+        idempotency_key: str | None = None,
+        actor_id: UUID | None = None,
         reason: str = "Publish menu update",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         req_hash = calculate_snapshot_hash(candidate_payload)
         operation_id = uuid4()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # 1. Idempotency Check (ARC-10 §11.1)
         if idempotency_key:
@@ -234,20 +233,22 @@ class PublicationService:
                 "idempotent_replay": False,
             }
 
-    def get_active_publication(self, menu_id: UUID) -> Optional[Publication]:
+    def get_active_publication(self, menu_id: UUID) -> Publication | None:
         active_ptr = self.active_publications.get(menu_id)
         if not active_ptr:
             return None
         return self.get_publication_by_id(menu_id, active_ptr.publication_id)
 
-    def get_publication_by_id(self, menu_id: UUID, pub_id: UUID) -> Optional[Publication]:
+    def get_publication_by_id(self, menu_id: UUID, pub_id: UUID) -> Publication | None:
         for p in self.publications.get(menu_id, []):
             if p.id == pub_id or p.publication_id == pub_id:
                 return p
         return None
 
-    def list_publications(self, menu_id: UUID) -> List[Publication]:
-        return sorted(self.publications.get(menu_id, []), key=lambda p: p.version_number, reverse=True)
+    def list_publications(self, menu_id: UUID) -> list[Publication]:
+        return sorted(
+            self.publications.get(menu_id, []), key=lambda p: p.version_number, reverse=True
+        )
 
-    def get_snapshot(self, snapshot_id: UUID) -> Optional[PublicationSnapshot]:
+    def get_snapshot(self, snapshot_id: UUID) -> PublicationSnapshot | None:
         return self.snapshots.get(snapshot_id)

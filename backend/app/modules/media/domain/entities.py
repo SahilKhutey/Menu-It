@@ -1,6 +1,7 @@
 """
 Media Management Domain Entities (ARC-04 §6.14, MOD-14).
 """
+
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -22,7 +23,9 @@ class MediaAsset:
         if self.content_type not in ALLOWED_MIME_TYPES:
             raise ValueError(f"Unsupported media content type: '{self.content_type}'")
         if self.size_bytes > MAX_MEDIA_SIZE_BYTES:
-            raise ValueError(f"Media file size {self.size_bytes} exceeds limit of {MAX_MEDIA_SIZE_BYTES} bytes")
+            raise ValueError(
+                f"Media file size {self.size_bytes} exceeds limit of {MAX_MEDIA_SIZE_BYTES} bytes"
+            )
         if not self.filename or not self.filename.strip():
             raise ValueError("Media filename is required")
 

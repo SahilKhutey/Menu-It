@@ -1,30 +1,29 @@
 import hashlib
 import json
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from datetime import UTC, datetime
+from typing import Any
+
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from app.api.dependencies import get_current_user, get_db, verify_restaurant_access
 from app.modules.identity.models import Restaurant, User
-from app.modules.menus.models import Category, MenuItem, Menu, MenuVersion, Publication
+from app.modules.menus.models import Category, Menu, MenuItem, MenuVersion, Publication
 from app.modules.publishing.application.services.publication_validator import PublicationValidator
 from app.modules.publishing.application.services.snapshot_builder import SnapshotBuilder
-from app.modules.publishing.domain.value_objects import DiagnosticSeverity
 from app.modules.themes.models import RestaurantDesignConfig, Theme
 from app.modules.themes.presets import THEME_PRESETS
 
 router = APIRouter(tags=["Publishing & Snapshots"])
 
 # In-memory stores for audit logs, schedules, and operations
-_IDEMPOTENCY_CACHE: Dict[str, Dict[str, Any]] = {}
-_AUDIT_LOGS: List[Dict[str, Any]] = []
-_SCHEDULES: Dict[uuid.UUID, Dict[str, Any]] = {}
-_OPERATIONS: Dict[uuid.UUID, Dict[str, Any]] = {}
+_IDEMPOTENCY_CACHE: dict[str, dict[str, Any]] = {}
+_AUDIT_LOGS: list[dict[str, Any]] = []
+_SCHEDULES: dict[uuid.UUID, dict[str, Any]] = {}
+_OPERATIONS: dict[uuid.UUID, dict[str, Any]] = {}
 
 _validator = PublicationValidator()
 _snapshot_builder = SnapshotBuilder()
@@ -36,9 +35,9 @@ class PublishResponse(BaseModel):
     checksum: str
     published_at: str
     public_url: str
-    operation_id: Optional[str] = None
-    publication_id: Optional[str] = None
-    active_publication_id: Optional[str] = None
+    operation_id: str | None = None
+    publication_id: str | None = None
+    active_publication_id: str | None = None
 
 
 @router.post("/restaurants/{restaurant_id}/menus/{menu_id}/publish", response_model=PublishResponse)
@@ -47,13 +46,10 @@ async def publish_menu(
     menu_id: uuid.UUID,
     restaurant: Restaurant = Depends(verify_restaurant_access),
     user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     # 1. Fetch Menu
-    menu_stmt = (
-        select(Menu)
-        .where(Menu.id == menu_id, Menu.restaurant_id == restaurant.id)
-    )
+    menu_stmt = select(Menu).where(Menu.id == menu_id, Menu.restaurant_id == restaurant.id)
     menu_res = await db.execute(menu_stmt)
     menu = menu_res.scalars().first()
     if not menu:
@@ -76,12 +72,14 @@ async def publish_menu(
     item_res = await db.execute(item_stmt)
     all_items = item_res.scalars().all()
 
-    items_by_cat: Dict[uuid.UUID, List[MenuItem]] = {}
+    items_by_cat: dict[uuid.UUID, list[MenuItem]] = {}
     for it in all_items:
         items_by_cat.setdefault(it.category_id, []).append(it)
 
     # 2. Fetch Active Theme & Design
-    cfg_stmt = select(RestaurantDesignConfig).where(RestaurantDesignConfig.restaurant_id == restaurant.id)
+    cfg_stmt = select(RestaurantDesignConfig).where(
+        RestaurantDesignConfig.restaurant_id == restaurant.id
+    )
     cfg_res = await db.execute(cfg_stmt)
     design_config = cfg_res.scalars().first()
 
@@ -102,33 +100,37 @@ async def publish_menu(
             continue
         items_data = []
         for it in items_by_cat.get(cat.id, []):
-            items_data.append({
-                "id": str(it.id),
-                "name": it.name,
-                "description": it.description,
-                "base_price": float(it.base_price),
-                "currency_code": it.currency_code,
-                "dietary_type": it.dietary_type,
-                "spice_level": it.spice_level,
-                "image_url": it.image_url,
-                "ingredients": it.ingredients,
-                "allergens": it.allergens,
-                "is_available": it.is_available,
-                "is_featured": it.is_featured,
-                "sort_order": it.sort_order,
-                "variants": []
-            })
+            items_data.append(
+                {
+                    "id": str(it.id),
+                    "name": it.name,
+                    "description": it.description,
+                    "base_price": float(it.base_price),
+                    "currency_code": it.currency_code,
+                    "dietary_type": it.dietary_type,
+                    "spice_level": it.spice_level,
+                    "image_url": it.image_url,
+                    "ingredients": it.ingredients,
+                    "allergens": it.allergens,
+                    "is_available": it.is_available,
+                    "is_featured": it.is_featured,
+                    "sort_order": it.sort_order,
+                    "variants": [],
+                }
+            )
 
-        categories_data.append({
-            "id": str(cat.id),
-            "name": cat.name,
-            "description": cat.description,
-            "image_url": cat.image_url,
-            "sort_order": cat.sort_order,
-            "items": items_data
-        })
+        categories_data.append(
+            {
+                "id": str(cat.id),
+                "name": cat.name,
+                "description": cat.description,
+                "image_url": cat.image_url,
+                "sort_order": cat.sort_order,
+                "items": items_data,
+            }
+        )
 
-    published_timestamp = datetime.now(timezone.utc).isoformat()
+    published_timestamp = datetime.now(UTC).isoformat()
     raw_snapshot = {
         "restaurant": {
             "id": str(restaurant.id),
@@ -136,7 +138,7 @@ async def publish_menu(
             "slug": restaurant.slug,
             "description": restaurant.description,
             "logo_url": restaurant.logo_url,
-            "cover_url": restaurant.cover_url
+            "cover_url": restaurant.cover_url,
         },
         "menu": {
             "id": str(menu.id),
@@ -145,7 +147,9 @@ async def publish_menu(
             "slug": menu.slug,
             "description": menu.description,
             "menu_type": menu.menu_type,
-            "currency": categories_data[0]["items"][0]["currency_code"] if categories_data and categories_data[0]["items"] else "INR"
+            "currency": categories_data[0]["items"][0]["currency_code"]
+            if categories_data and categories_data[0]["items"]
+            else "INR",
         },
         "categories": categories_data,
         "theme": tokens,
@@ -153,11 +157,13 @@ async def publish_menu(
         "presentation": {
             "theme_id": "modern_clean",
             "theme_version": "1.0.0",
-            "layout_id": layout.get("type", "category_first") if isinstance(layout, dict) else "category_first",
+            "layout_id": layout.get("type", "category_first")
+            if isinstance(layout, dict)
+            else "category_first",
             "layout_version": "1.0.0",
-            "renderer_contract_version": "1.0"
+            "renderer_contract_version": "1.0",
         },
-        "published_at": published_timestamp
+        "published_at": published_timestamp,
     }
 
     # 4. Generate SHA-256 Checksum using canonical serializer
@@ -180,15 +186,14 @@ async def publish_menu(
         version_number=next_ver_num,
         snapshot_data=raw_snapshot,
         checksum=checksum,
-        published_by=user.id
+        published_by=user.id,
     )
     db.add(menu_version)
     await db.flush()
 
     # 7. Update or Create Publication pointer
     pub_stmt = select(Publication).where(
-        Publication.restaurant_id == restaurant.id,
-        Publication.menu_id == menu.id
+        Publication.restaurant_id == restaurant.id, Publication.menu_id == menu.id
     )
     pub = (await db.execute(pub_stmt)).scalars().first()
     if not pub:
@@ -196,27 +201,29 @@ async def publish_menu(
             restaurant_id=restaurant.id,
             menu_id=menu.id,
             active_version_id=menu_version.id,
-            status="published"
+            status="published",
         )
         db.add(pub)
     else:
         pub.active_version_id = menu_version.id
-        pub.published_at = datetime.now(timezone.utc)
+        pub.published_at = datetime.now(UTC)
         pub.status = "published"
 
     await db.commit()
 
     op_id = str(uuid.uuid4())
-    _AUDIT_LOGS.append({
-        "id": str(uuid.uuid4()),
-        "menu_id": str(menu.id),
-        "restaurant_id": str(restaurant.id),
-        "actor_id": str(user.id),
-        "action": "menu.publish",
-        "version_number": next_ver_num,
-        "publication_id": str(pub.id),
-        "timestamp": published_timestamp,
-    })
+    _AUDIT_LOGS.append(
+        {
+            "id": str(uuid.uuid4()),
+            "menu_id": str(menu.id),
+            "restaurant_id": str(restaurant.id),
+            "actor_id": str(user.id),
+            "action": "menu.publish",
+            "version_number": next_ver_num,
+            "publication_id": str(pub.id),
+            "timestamp": published_timestamp,
+        }
+    )
 
     return PublishResponse(
         status="published",
@@ -226,16 +233,17 @@ async def publish_menu(
         public_url=f"/r/{restaurant.slug}/{menu.slug}",
         operation_id=op_id,
         publication_id=str(pub.id),
-        active_publication_id=str(pub.id)
+        active_publication_id=str(pub.id),
     )
 
 
 # --- Canonical ARC-07 / ARC-10 Publishing Endpoints ---
 
+
 @router.post("/menus/{menu_id}/publish", response_model=PublishResponse)
 async def publish_menu_direct(
     menu_id: uuid.UUID,
-    payload: Dict[str, Any] = {},
+    payload: dict[str, Any] | None = None,
     idempotency_key: str | None = Header(None, alias="Idempotency-Key"),
     if_match: str | None = Header(None, alias="If-Match"),
     user: User = Depends(get_current_user),
@@ -245,6 +253,7 @@ async def publish_menu_direct(
     Publishes a menu draft directly by menu_id (ARC-07 §4.8, ARC-10 §14).
     Enforces idempotency and optimistic revision locking.
     """
+    payload = payload or {}
     if idempotency_key:
         payload_hash = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
         if idempotency_key in _IDEMPOTENCY_CACHE:
@@ -259,7 +268,7 @@ async def publish_menu_direct(
     # Concurrency check via If-Match or payload.draft_revision
     if if_match and "draft-revision-" in if_match:
         try:
-            rev_str = if_match.replace('"', '').replace("draft-revision-", "")
+            rev_str = if_match.replace('"', "").replace("draft-revision-", "")
             req_rev = int(rev_str)
             # Check against stale revision (e.g. if draft has progressed)
             if req_rev < 1:
@@ -292,13 +301,14 @@ async def publish_menu_direct(
 @router.post("/menus/{menu_id}/validate")
 async def validate_menu_draft(
     menu_id: uuid.UUID,
-    payload: Dict[str, Any] = {},
+    payload: dict[str, Any] | None = None,
     user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Validates current menu draft for publication readiness (ARC-10 §9, §14.1).
     """
+    payload = payload or {}
     menu_res = await db.execute(select(Menu).where(Menu.id == menu_id))
     menu = menu_res.scalars().first()
     if not menu:
@@ -307,9 +317,7 @@ async def validate_menu_draft(
     draft_rev = payload.get("draft_revision", 1)
     candidate = payload if payload else {"menu": {"title": menu.name}}
     report = _validator.validate(
-        menu_id=menu_id,
-        draft_revision=draft_rev,
-        candidate_payload=candidate
+        menu_id=menu_id, draft_revision=draft_rev, candidate_payload=candidate
     )
 
     return {
@@ -319,15 +327,13 @@ async def validate_menu_draft(
         "result": report.result,
         "errors": [d.__dict__ for d in report.errors],
         "warnings": [d.__dict__ for d in report.warnings],
-        "validated_at": report.validated_at.isoformat()
+        "validated_at": report.validated_at.isoformat(),
     }
 
 
 @router.get("/menus/{menu_id}/publication-readiness")
 async def get_publication_readiness(
-    menu_id: uuid.UUID,
-    user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    menu_id: uuid.UUID, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     """
     Retrieves publication readiness report for a menu (ARC-10 §14.1).
@@ -340,7 +346,7 @@ async def get_publication_readiness(
     report = _validator.validate(
         menu_id=menu_id,
         draft_revision=1,
-        candidate_payload={"menu": {"title": menu.name, "currency": "INR"}}
+        candidate_payload={"menu": {"title": menu.name, "currency": "INR"}},
     )
 
     return {
@@ -349,14 +355,18 @@ async def get_publication_readiness(
         "result": report.result,
         "errors_count": len(report.errors),
         "warnings_count": len(report.warnings),
-        "diagnostics": [d.__dict__ for d in report.errors + report.warnings]
+        "diagnostics": [d.__dict__ for d in report.errors + report.warnings],
     }
 
 
 @router.get("/menus/{menu_id}/versions")
 async def list_menu_versions(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     """Lists published versions of a menu."""
-    stmt = select(MenuVersion).where(MenuVersion.menu_id == menu_id).order_by(MenuVersion.version_number.desc())
+    stmt = (
+        select(MenuVersion)
+        .where(MenuVersion.menu_id == menu_id)
+        .order_by(MenuVersion.version_number.desc())
+    )
     result = await db.execute(stmt)
     versions = result.scalars().all()
     return [
@@ -372,7 +382,9 @@ async def list_menu_versions(menu_id: uuid.UUID, db: AsyncSession = Depends(get_
 
 
 @router.get("/menus/{menu_id}/versions/{version_id}")
-async def get_menu_version(menu_id: uuid.UUID, version_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+async def get_menu_version(
+    menu_id: uuid.UUID, version_id: uuid.UUID, db: AsyncSession = Depends(get_db)
+):
     """Retrieves specific immutable menu version."""
     stmt = select(MenuVersion).where(MenuVersion.menu_id == menu_id, MenuVersion.id == version_id)
     result = await db.execute(stmt)
@@ -417,9 +429,7 @@ async def list_menu_publications(menu_id: uuid.UUID, db: AsyncSession = Depends(
 
 @router.get("/menus/{menu_id}/publications/{publication_id}")
 async def get_menu_publication_detail(
-    menu_id: uuid.UUID,
-    publication_id: uuid.UUID,
-    db: AsyncSession = Depends(get_db)
+    menu_id: uuid.UUID, publication_id: uuid.UUID, db: AsyncSession = Depends(get_db)
 ):
     """Retrieves single publication metadata."""
     stmt = (
@@ -449,7 +459,7 @@ async def inspect_publication_snapshot(
     menu_id: uuid.UUID,
     publication_id: uuid.UUID,
     user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Authorized inspection of frozen snapshot payload (ARC-10 §14.1)."""
     stmt = (
@@ -468,7 +478,7 @@ async def inspect_publication_snapshot(
         "version_number": v.version_number,
         "checksum": v.checksum,
         "payload": v.snapshot_data,
-        "created_at": v.published_at.isoformat()
+        "created_at": v.published_at.isoformat(),
     }
 
 
@@ -476,11 +486,12 @@ async def inspect_publication_snapshot(
 async def rollback_menu_publication(
     menu_id: uuid.UUID,
     publication_id: uuid.UUID,
-    payload: Dict[str, Any] = {},
+    payload: dict[str, Any] | None = None,
     user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """Rollback menu to specific publication or version (ARC-10 §12, §14.1)."""
+    payload = payload or {}
     stmt = select(Publication).where(Publication.menu_id == menu_id)
     pub = (await db.execute(stmt)).scalars().first()
     if not pub:
@@ -488,7 +499,9 @@ async def rollback_menu_publication(
 
     target_ver_id = payload.get("target_version_id")
     if target_ver_id:
-        v_stmt = select(MenuVersion).where(MenuVersion.menu_id == menu_id, MenuVersion.id == uuid.UUID(str(target_ver_id)))
+        v_stmt = select(MenuVersion).where(
+            MenuVersion.menu_id == menu_id, MenuVersion.id == uuid.UUID(str(target_ver_id))
+        )
     else:
         # Roll back to the version attached to publication_id
         target_pub_stmt = select(Publication).where(Publication.id == publication_id)
@@ -503,34 +516,33 @@ async def rollback_menu_publication(
 
     prev_ver_id = pub.active_version_id
     pub.active_version_id = ver.id
-    pub.published_at = datetime.now(timezone.utc)
+    pub.published_at = datetime.now(UTC)
     pub.status = "published"
     await db.commit()
 
-    _AUDIT_LOGS.append({
-        "id": str(uuid.uuid4()),
-        "menu_id": str(menu_id),
-        "actor_id": str(user.id),
-        "action": "menu.rollback",
-        "previous_version_id": str(prev_ver_id),
-        "target_version_id": str(ver.id),
-        "target_version_number": ver.version_number,
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    })
+    _AUDIT_LOGS.append(
+        {
+            "id": str(uuid.uuid4()),
+            "menu_id": str(menu_id),
+            "actor_id": str(user.id),
+            "action": "menu.rollback",
+            "previous_version_id": str(prev_ver_id),
+            "target_version_id": str(ver.id),
+            "target_version_number": ver.version_number,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+    )
 
     return {
         "status": "success",
         "message": f"Rolled back to version {ver.version_number}",
         "active_version_id": str(ver.id),
-        "version_number": ver.version_number
+        "version_number": ver.version_number,
     }
 
 
 @router.get("/menus/{menu_id}/active-publication")
-async def get_active_publication_metadata(
-    menu_id: uuid.UUID,
-    db: AsyncSession = Depends(get_db)
-):
+async def get_active_publication_metadata(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     """Retrieves current active publication metadata for menu (ARC-10 §14.1)."""
     stmt = (
         select(Publication, MenuVersion)
@@ -550,7 +562,7 @@ async def get_active_publication_metadata(
         "version_number": v.version_number,
         "checksum": v.checksum,
         "status": "ACTIVE",
-        "published_at": p.published_at.isoformat()
+        "published_at": p.published_at.isoformat(),
     }
 
 
@@ -563,15 +575,13 @@ async def get_publication_operation(menu_id: uuid.UUID, operation_id: uuid.UUID)
         "operation_id": str(operation_id),
         "menu_id": str(menu_id),
         "status": "COMPLETED",
-        "message": "Operation completed successfully"
+        "message": "Operation completed successfully",
     }
 
 
 @router.post("/menus/{menu_id}/publication-schedules")
 async def create_publication_schedule(
-    menu_id: uuid.UUID,
-    payload: Dict[str, Any],
-    user: User = Depends(get_current_user)
+    menu_id: uuid.UUID, payload: dict[str, Any], user: User = Depends(get_current_user)
 ):
     """Schedules a future publication activation (P1, ARC-10 §16.1)."""
     sched_id = uuid.uuid4()
@@ -579,10 +589,10 @@ async def create_publication_schedule(
         "id": str(sched_id),
         "menu_id": str(menu_id),
         "draft_revision": payload.get("draft_revision", 1),
-        "scheduled_at": payload.get("scheduled_at", datetime.now(timezone.utc).isoformat()),
+        "scheduled_at": payload.get("scheduled_at", datetime.now(UTC).isoformat()),
         "timezone_name": payload.get("timezone_name", "UTC"),
         "status": "SCHEDULED",
-        "created_by": str(user.id)
+        "created_by": str(user.id),
     }
     _SCHEDULES[sched_id] = sched
     return sched
@@ -598,10 +608,7 @@ async def cancel_publication_schedule(menu_id: uuid.UUID, schedule_id: uuid.UUID
 
 
 @router.get("/menus/{menu_id}/publication-audit")
-async def get_publication_audit_history(
-    menu_id: uuid.UUID,
-    user: User = Depends(get_current_user)
-):
+async def get_publication_audit_history(menu_id: uuid.UUID, user: User = Depends(get_current_user)):
     """Reviews publishing audit history (ARC-10 §15.3)."""
     records = [r for r in _AUDIT_LOGS if r.get("menu_id") == str(menu_id)]
     return records
@@ -629,7 +636,7 @@ async def get_publication(publication_id: uuid.UUID, db: AsyncSession = Depends(
 @router.post("/publications/{publication_id}/rollback")
 async def rollback_publication(
     publication_id: uuid.UUID,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     db: AsyncSession = Depends(get_db),
 ):
     """Rolls back active publication to an earlier published version (ARC-07 §4.8)."""
@@ -648,7 +655,7 @@ async def rollback_publication(
         raise HTTPException(status_code=404, detail="Target menu version not found")
 
     pub.active_version_id = ver.id
-    pub.published_at = datetime.now(timezone.utc)
+    pub.published_at = datetime.now(UTC)
     await db.commit()
 
     return {"status": "success", "message": f"Rolled back to version {ver.version_number}"}

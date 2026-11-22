@@ -1,9 +1,10 @@
 """
 ModularMenu — Media API Schemas (ARC-07 §4.9).
 """
+
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -26,7 +27,7 @@ class UploadIntentResponse(BaseModel):
 class UploadCompleteRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     media_id: UUID
-    etag: Optional[str] = None
+    etag: str | None = None
 
 
 class MediaAssetResponse(BaseModel):
@@ -38,5 +39,5 @@ class MediaAssetResponse(BaseModel):
     byte_size: int
     storage_path: str
     public_url: str
-    created_at: Optional[datetime] = None
+    created_at: datetime | None = None
     created_at: datetime

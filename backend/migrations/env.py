@@ -1,17 +1,19 @@
 import asyncio
 from logging.config import fileConfig
+
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
-from alembic import context
 
 from app.core.config import settings
 from app.core.database import Base
+from app.infrastructure.database.models import *
+
 # Import all models so metadata includes them
 from app.modules.identity.models import *
 from app.modules.menus.models import *
 from app.modules.themes.models import *
-from app.infrastructure.database.models import *
 
 config = context.config
 

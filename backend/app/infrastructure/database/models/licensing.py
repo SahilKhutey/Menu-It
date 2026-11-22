@@ -2,8 +2,8 @@
 ModularMenu — Commercial & Licensing Persistence Models (ARC-06 §3.2).
 Platform subscription plans, organization subscriptions, and appliance license entitlements.
 """
-from datetime import datetime, timezone
-from typing import Optional
+
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint
@@ -26,9 +26,7 @@ class SubscriptionPlanModel(Base, UUIDPrimaryKey, Timestamped):
 
 class SubscriptionModel(Base, UUIDPrimaryKey, Timestamped):
     __tablename__ = "subscriptions"
-    __table_args__ = (
-        UniqueConstraint("organization_id", name="uq_subscriptions_org"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", name="uq_subscriptions_org"),)
 
     organization_id: Mapped[UUID] = mapped_column(
         GUID(), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False, index=True
@@ -50,4 +48,4 @@ class LicenseModel(Base, UUIDPrimaryKey, Timestamped):
     license_key: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
     edition: Mapped[str] = mapped_column(String(50), default="saas", nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -2,7 +2,8 @@
 ModularMenu — Tenant Scoped Repository & Database Base (ARC-05 §7, §15.1, ARC05-D08).
 Enforces that all repository queries and persistence actions require an authorized tenant scope.
 """
-from typing import Any, Generic, List, Optional, TypeVar
+
+from typing import Generic, TypeVar
 from uuid import UUID
 
 from app.shared.application.tenant_context import TenantContext
@@ -19,10 +20,11 @@ class TenantScopedRepository(Generic[T]):
     Base repository enforcing organization-scoped queries and entity mutations.
     Guarantees no query can be executed without an explicit, validated tenant scope.
     """
-    def __init__(self, entity_store: Optional[dict[UUID, T]] = None):
+
+    def __init__(self, entity_store: dict[UUID, T] | None = None):
         self._store: dict[UUID, T] = entity_store if entity_store is not None else {}
 
-    def get_by_id(self, context: TenantContext, entity_id: UUID) -> Optional[T]:
+    def get_by_id(self, context: TenantContext, entity_id: UUID) -> T | None:
         """Retrieves entity strictly within caller's organization scope."""
         entity = self._store.get(entity_id)
         if entity is None:
@@ -40,10 +42,10 @@ class TenantScopedRepository(Generic[T]):
     def list_all(
         self,
         context: TenantContext,
-        restaurant_id: Optional[UUID] = None,
-    ) -> List[T]:
+        restaurant_id: UUID | None = None,
+    ) -> list[T]:
         """Lists entities belonging strictly to the authorized tenant."""
-        results: List[T] = []
+        results: list[T] = []
         for entity in self._store.values():
             if getattr(entity, "organization_id", None) != context.organization_id:
                 continue

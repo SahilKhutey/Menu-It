@@ -1,6 +1,6 @@
-import os
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -8,11 +8,7 @@ DEFAULT_SQLITE_PATH = (BASE_DIR / "modularmenu.db").as_posix()
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Core Application
     PROJECT_NAME: str = "ModularMenu"
@@ -40,18 +36,18 @@ class Settings(BaseSettings):
     # Storage
     STORAGE_PROVIDER: Literal["local", "s3"] = "local"
     STORAGE_LOCAL_PATH: str = "./uploads"
-    S3_BUCKET: Optional[str] = None
+    S3_BUCKET: str | None = None
     S3_REGION: str = "ap-south-1"
-    S3_ENDPOINT_URL: Optional[str] = None
-    S3_ACCESS_KEY: Optional[str] = None
-    S3_SECRET_KEY: Optional[str] = None
+    S3_ENDPOINT_URL: str | None = None
+    S3_ACCESS_KEY: str | None = None
+    S3_SECRET_KEY: str | None = None
 
     # Rate Limiting (ARC-07 §9.1)
     PUBLIC_RATE_LIMIT_PER_MINUTE: int = 120
     AUTHENTICATED_RATE_LIMIT_PER_MINUTE: int = 600
 
     # Customer Hosted Licensing
-    LICENSE_KEY: Optional[str] = None
+    LICENSE_KEY: str | None = None
     LICENSE_GRACE_PERIOD_DAYS: int = 30
 
 

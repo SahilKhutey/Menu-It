@@ -2,8 +2,9 @@
 ModularMenu — Studio Editor & Preview API Endpoints (ARC-07 §4.7).
 Enforces draft validation and preview generation without altering published snapshots.
 """
+
 import uuid
-from typing import Any, Dict
+
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -3,9 +3,11 @@ ModularMenu — Customization Application Service (ARC-08 §17.2, §13).
 Handles draft persistence, validation, optimistic concurrency, preview generation,
 and immutable revision history within authorized tenant scope.
 """
+
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
+
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -60,9 +62,9 @@ class CustomizationService:
         db: AsyncSession,
         organization_id: uuid.UUID,
         menu_id: uuid.UUID,
-        payload: Dict[str, Any],
-        expected_revision: Optional[int] = None,
-        actor_id: Optional[uuid.UUID] = None,
+        payload: dict[str, Any],
+        expected_revision: int | None = None,
+        actor_id: uuid.UUID | None = None,
     ) -> MenuCustomization:
         """Saves validated customization draft with optimistic concurrency check."""
         record = await self.get_or_create_customization(db, organization_id, menu_id)
@@ -82,7 +84,7 @@ class CustomizationService:
         payload_with_meta = dict(payload)
         payload_with_meta["metadata"] = {
             "revision": record.revision,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
         record.configuration = payload_with_meta
 
@@ -100,7 +102,7 @@ class CustomizationService:
         await db.refresh(record)
         return record
 
-    def validate_document(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_document(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Validates customization without persistence."""
         validator.validate(payload)
         return {"valid": True, "errors": [], "warnings": []}
@@ -110,8 +112,8 @@ class CustomizationService:
         db: AsyncSession,
         organization_id: uuid.UUID,
         menu_id: uuid.UUID,
-        payload: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Generates ephemeral preview using the deterministic resolver."""
         if payload is not None:
             validator.validate(payload)
@@ -134,7 +136,7 @@ class CustomizationService:
         menu_id: uuid.UUID,
         theme_id: str = "theme-minimal",
         layout_id: str = "layout-grid",
-        actor_id: Optional[uuid.UUID] = None,
+        actor_id: uuid.UUID | None = None,
     ) -> MenuCustomization:
         """Resets draft configuration back to clean theme/layout defaults."""
         record = await self.get_or_create_customization(db, organization_id, menu_id)
@@ -143,7 +145,7 @@ class CustomizationService:
         record.revision += 1
         default_config["metadata"] = {
             "revision": record.revision,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
         record.configuration = default_config
 
@@ -162,7 +164,7 @@ class CustomizationService:
 
     async def list_revisions(
         self, db: AsyncSession, organization_id: uuid.UUID, menu_id: uuid.UUID
-    ) -> List[CustomizationRevision]:
+    ) -> list[CustomizationRevision]:
         """Retrieves historical customization revisions in descending order."""
         stmt = (
             select(CustomizationRevision)
@@ -196,7 +198,7 @@ class CustomizationService:
         organization_id: uuid.UUID,
         menu_id: uuid.UUID,
         revision_num: int,
-        actor_id: Optional[uuid.UUID] = None,
+        actor_id: uuid.UUID | None = None,
     ) -> MenuCustomization:
         """Restores a previous revision as a brand new draft revision."""
         rev = await self.get_revision(db, organization_id, menu_id, revision_num)
@@ -207,7 +209,7 @@ class CustomizationService:
         restored_config["metadata"] = {
             "revision": record.revision,
             "restored_from": revision_num,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
         record.configuration = restored_config
 

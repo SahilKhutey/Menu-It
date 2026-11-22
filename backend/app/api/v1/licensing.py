@@ -1,10 +1,11 @@
 """
 ModularMenu — Licensing & Subscription API Endpoints (ARC-07 §4.10).
 """
+
 import datetime
-from decimal import Decimal
 import uuid
-from typing import List
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,7 +21,7 @@ from app.shared.application.tenant_context import TenantContext
 router = APIRouter(tags=["Licensing & Subscriptions"])
 
 
-@router.get("/subscription-plans", response_model=List[SubscriptionPlanResponse])
+@router.get("/subscription-plans", response_model=list[SubscriptionPlanResponse])
 async def list_subscription_plans(db: AsyncSession = Depends(get_db)):
     """Lists publicly available subscription plans."""
     return [
@@ -67,7 +68,7 @@ async def get_organization_subscription(
     if tenant.organization_id != organization_id and not tenant.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     return SubscriptionResponse(
         id=uuid.uuid4(),
         organization_id=organization_id,
@@ -87,7 +88,7 @@ async def get_organization_license(
     if tenant.organization_id != organization_id and not tenant.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     return LicenseResponse(
         id=uuid.uuid4(),
         organization_id=organization_id,

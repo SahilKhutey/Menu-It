@@ -2,9 +2,9 @@
 Render Input Builder Service (ARC-09 §4, WP-ARC09-01).
 Constructs canonical RenderInput and RenderPlan models from raw snapshots or draft models.
 """
-from datetime import datetime, timezone
+
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from app.modules.rendering.domain.render_input import (
     RenderCategory,
@@ -27,7 +27,9 @@ class RenderInputBuilder:
     def format_price(amount: Decimal, currency_code: str = "INR") -> str:
         """Formats monetary amount according to currency standards."""
         if currency_code.upper() == "INR":
-            return f"₹{amount:,.2f}".rstrip("0").rstrip(".") if amount % 1 == 0 else f"₹{amount:,.2f}"
+            return (
+                f"₹{amount:,.2f}".rstrip("0").rstrip(".") if amount % 1 == 0 else f"₹{amount:,.2f}"
+            )
         elif currency_code.upper() == "USD":
             return f"${amount:,.2f}"
         elif currency_code.upper() == "EUR":
@@ -39,7 +41,7 @@ class RenderInputBuilder:
     @classmethod
     def build_from_snapshot(
         cls,
-        snapshot_data: Dict[str, Any],
+        snapshot_data: dict[str, Any],
         version_number: int,
         checksum: str,
         published_at: str,
@@ -73,16 +75,16 @@ class RenderInputBuilder:
         )
 
         # Categories & Items
-        categories: List[RenderCategory] = []
+        categories: list[RenderCategory] = []
         for cat_raw in snapshot_data.get("categories", []):
-            items: List[RenderItem] = []
+            items: list[RenderItem] = []
             for item_raw in cat_raw.get("items", []):
                 base_price = Decimal(str(item_raw.get("base_price", item_raw.get("price", 0))))
                 currency_code = item_raw.get("currency_code", restaurant.currency)
                 formatted_price = cls.format_price(base_price, currency_code)
 
                 # Badges derivation
-                badges: List[str] = list(item_raw.get("badges", []))
+                badges: list[str] = list(item_raw.get("badges", []))
                 dietary = item_raw.get("dietary_type")
                 if dietary and dietary.capitalize() not in badges:
                     badges.append(dietary.capitalize())
@@ -140,8 +142,12 @@ class RenderInputBuilder:
         theme_raw = snapshot_data.get("theme", {})
         tokens = theme_raw.get("tokens", theme_raw) if isinstance(theme_raw, dict) else {}
         theme = RenderTheme(
-            id=theme_raw.get("id", "preset-classic-slate") if isinstance(theme_raw, dict) else "preset-classic-slate",
-            name=theme_raw.get("name", "Classic Slate") if isinstance(theme_raw, dict) else "Classic Slate",
+            id=theme_raw.get("id", "preset-classic-slate")
+            if isinstance(theme_raw, dict)
+            else "preset-classic-slate",
+            name=theme_raw.get("name", "Classic Slate")
+            if isinstance(theme_raw, dict)
+            else "Classic Slate",
             mode=theme_raw.get("mode", "light") if isinstance(theme_raw, dict) else "light",
             tokens=tokens,
         )

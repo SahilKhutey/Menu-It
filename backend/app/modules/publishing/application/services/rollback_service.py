@@ -1,8 +1,9 @@
 """
 Publication Rollback Engine (ARC-10 §12, WP-ARC10-08).
 """
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from app.modules.publishing.application.services.publication_service import PublicationService
@@ -12,7 +13,6 @@ from app.modules.publishing.domain.exceptions import (
     ActivePublicationConflictError,
     PublicationNotFoundError,
     RendererIncompatibleError,
-    SnapshotIntegrityError,
 )
 from app.modules.publishing.domain.value_objects import (
     ActivationReason,
@@ -35,12 +35,12 @@ class RollbackService:
         restaurant_id: UUID,
         menu_id: UUID,
         target_publication_id: UUID,
-        expected_active_publication_id: Optional[UUID] = None,
-        actor_id: Optional[UUID] = None,
+        expected_active_publication_id: UUID | None = None,
+        actor_id: UUID | None = None,
         reason: str = "Rollback to previous publication version",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         async with self.pub_service._get_menu_lock(menu_id):
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             current_active = self.pub_service.active_publications.get(menu_id)
 
             # 1. Expected active version verification (concurrency conflict prevention)
@@ -54,17 +54,26 @@ class RollbackService:
             # 2. Target publication exists and belongs to menu
             target_pub = self.pub_service.get_publication_by_id(menu_id, target_publication_id)
             if not target_pub:
-                raise PublicationNotFoundError(f"Target publication {target_publication_id} not found for menu {menu_id}")
+                raise PublicationNotFoundError(
+                    f"Target publication {target_publication_id} not found for menu {menu_id}"
+                )
 
             if target_pub.organization_id != organization_id:
-                raise PublicationNotFoundError("Target publication does not belong to the requested organization")
+                raise PublicationNotFoundError(
+                    "Target publication does not belong to the requested organization"
+                )
 
             # 3. Snapshot exists and check compatibility
             snapshot = self.pub_service.get_snapshot(target_pub.snapshot_id)
             if snapshot:
                 # Check renderer compatibility
-                if snapshot.payload.get("presentation", {}).get("renderer_contract_version") == "0.9":
-                    raise RendererIncompatibleError("Target snapshot uses deprecated and unsupported renderer contract 0.9")
+                if (
+                    snapshot.payload.get("presentation", {}).get("renderer_contract_version")
+                    == "0.9"
+                ):
+                    raise RendererIncompatibleError(
+                        "Target snapshot uses deprecated and unsupported renderer contract 0.9"
+                    )
                 self.pub_service.snapshot_builder.verify_integrity(snapshot)
 
             # 5. Atomically update active publication pointer (ARC-10 §12.1)

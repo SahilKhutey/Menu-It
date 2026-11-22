@@ -2,13 +2,15 @@
 ModularMenu — Customization Persistence Models (ARC-08 §14, ARC-06 §3.2).
 Provides relational tenancy ownership, optimistic revision tracking, and immutable revision history.
 """
+
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
-from sqlalchemy import DateTime, ForeignKey, Integer, String, UniqueConstraint, func
+from datetime import UTC, datetime
+from typing import Any
+
+from sqlalchemy import DateTime, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.database import Base, GUID, PortableJSON, TimestampMixin
+from app.core.database import GUID, Base, PortableJSON, TimestampMixin
 
 
 class MenuCustomization(Base, TimestampMixin):
@@ -25,10 +27,13 @@ class MenuCustomization(Base, TimestampMixin):
         GUID(), ForeignKey("menus.id", ondelete="CASCADE"), nullable=False, unique=True, index=True
     )
     revision: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    configuration: Mapped[Dict[str, Any]] = mapped_column(PortableJSON(), nullable=False)
+    configuration: Mapped[dict[str, Any]] = mapped_column(PortableJSON(), nullable=False)
 
-    revisions: Mapped[List["CustomizationRevision"]] = relationship(
-        "CustomizationRevision", back_populates="customization", cascade="all, delete-orphan", lazy="raise"
+    revisions: Mapped[list["CustomizationRevision"]] = relationship(
+        "CustomizationRevision",
+        back_populates="customization",
+        cascade="all, delete-orphan",
+        lazy="raise",
     )
 
 
@@ -45,11 +50,11 @@ class CustomizationRevision(Base):
     organization_id: Mapped[uuid.UUID] = mapped_column(GUID(), nullable=False, index=True)
     menu_id: Mapped[uuid.UUID] = mapped_column(GUID(), nullable=False, index=True)
     revision: Mapped[int] = mapped_column(Integer, nullable=False)
-    configuration: Mapped[Dict[str, Any]] = mapped_column(PortableJSON(), nullable=False)
-    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(GUID(), nullable=True)
+    configuration: Mapped[dict[str, Any]] = mapped_column(PortableJSON(), nullable=False)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(GUID(), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 

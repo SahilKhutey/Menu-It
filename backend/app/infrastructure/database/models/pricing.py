@@ -3,8 +3,8 @@ ModularMenu — Pricing, Variations & Localization Models (ARC-06 §3.2, §4.3).
 Fixed-precision monetary representation (integer minor units / NUMERIC),
 serving variants, add-ons, and multilingual translations.
 """
-from datetime import datetime, timezone
-from typing import Optional
+
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import (
@@ -52,10 +52,10 @@ class ItemPriceModel(Base, UUIDPrimaryKey):
     item_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
     amount_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
     currency: Mapped[str] = mapped_column(String(3), default="INR", nullable=False)
-    price_label: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
+    price_label: Mapped[str | None] = mapped_column(String(80), nullable=True)
     is_default: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
 
 
@@ -82,7 +82,9 @@ class ItemVariantModel(Base, UUIDPrimaryKey):
 class AddonModel(Base, UUIDPrimaryKey):
     __tablename__ = "addons"
     __table_args__ = (
-        UniqueConstraint("organization_id", "restaurant_id", "id", name="uq_addons_org_restaurant_id"),
+        UniqueConstraint(
+            "organization_id", "restaurant_id", "id", name="uq_addons_org_restaurant_id"
+        ),
         CheckConstraint("amount_minor >= 0", name="ck_addons_amount"),
     )
 
@@ -132,6 +134,8 @@ class MenuItemTranslationModel(Base, UUIDPrimaryKey):
     organization_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
     restaurant_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
     item_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
-    locale: Mapped[str] = mapped_column(String(10), nullable=False)  # e.g. "hi-IN", "mr-IN", "es-ES"
+    locale: Mapped[str] = mapped_column(
+        String(10), nullable=False
+    )  # e.g. "hi-IN", "mr-IN", "es-ES"
     name: Mapped[str] = mapped_column(String(180), nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)

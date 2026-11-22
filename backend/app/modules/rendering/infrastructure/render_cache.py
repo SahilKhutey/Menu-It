@@ -1,8 +1,9 @@
 """
 Render Cache Infrastructure and HTTP Header Policies (ARC-09 §9, WP-ARC09-08).
 """
+
 import hashlib
-from typing import Dict
+
 from app.modules.rendering.domain.render_mode import RenderMode
 
 
@@ -22,7 +23,7 @@ class RenderCachePolicy:
         return f'"{clean}"'
 
     @staticmethod
-    def get_cache_headers(mode: RenderMode, checksum: str) -> Dict[str, str]:
+    def get_cache_headers(mode: RenderMode, checksum: str) -> dict[str, str]:
         """Returns standard HTTP caching headers based on render mode."""
         if mode == RenderMode.PUBLIC_PUBLISHED:
             return {

@@ -1,9 +1,11 @@
 import uuid
-from typing import Any, Dict, List
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_db, verify_restaurant_access
 from app.modules.identity.models import Restaurant
 from app.modules.themes.models import RestaurantDesignConfig, Theme
@@ -14,14 +16,15 @@ router = APIRouter(tags=["Themes & Design"])
 
 class DesignConfigUpdate(BaseModel):
     theme_key: str
-    layout_config: Dict[str, Any] = {}
-    custom_tokens: Dict[str, Any] = {}
+    layout_config: dict[str, Any] = {}
+    custom_tokens: dict[str, Any] = {}
 
 
-@router.get("/themes", response_model=List[Dict[str, Any]])
+@router.get("/themes", response_model=list[dict[str, Any]])
 async def list_available_themes(db: AsyncSession = Depends(get_db)):
     """Lists platform theme presets (ARC-08 §6)."""
     from app.modules.customization.registries import theme_registry
+
     catalogue = theme_registry.list_all()
     if catalogue:
         for t in catalogue:
@@ -34,6 +37,7 @@ async def list_available_themes(db: AsyncSession = Depends(get_db)):
 async def get_theme_definition(theme_id: str):
     """Retrieves theme preset definition by ID or slug."""
     from app.modules.customization.registries import theme_registry
+
     theme = theme_registry.get(theme_id)
     if not theme and not theme_id.startswith("theme-"):
         theme = theme_registry.get(f"theme-{theme_id}")
@@ -47,21 +51,25 @@ async def get_theme_definition(theme_id: str):
 async def get_restaurant_design(
     restaurant_id: uuid.UUID,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(RestaurantDesignConfig).where(RestaurantDesignConfig.restaurant_id == restaurant.id)
+    stmt = select(RestaurantDesignConfig).where(
+        RestaurantDesignConfig.restaurant_id == restaurant.id
+    )
     result = await db.execute(stmt)
     config = result.scalars().first()
 
     if not config:
         # Default to 'contemporary' preset
-        default_preset = next((p for p in THEME_PRESETS if p["theme_key"] == "contemporary"), THEME_PRESETS[0])
+        default_preset = next(
+            (p for p in THEME_PRESETS if p["theme_key"] == "contemporary"), THEME_PRESETS[0]
+        )
         return {
             "restaurant_id": restaurant.id,
             "theme_key": default_preset["theme_key"],
             "tokens": default_preset["tokens"],
             "layout_config": {"type": "category_first", "card_style": "compact"},
-            "custom_tokens": {}
+            "custom_tokens": {},
         }
 
     # Fetch theme details
@@ -76,7 +84,7 @@ async def get_restaurant_design(
         "theme_key": theme_key,
         "tokens": {**base_tokens, **config.custom_tokens},
         "layout_config": config.layout_config,
-        "custom_tokens": config.custom_tokens
+        "custom_tokens": config.custom_tokens,
     }
 
 
@@ -85,7 +93,7 @@ async def update_restaurant_design(
     restaurant_id: uuid.UUID,
     req: DesignConfigUpdate,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     # Find matching theme in DB or preset
     preset = next((p for p in THEME_PRESETS if p["theme_key"] == req.theme_key), None)
@@ -101,12 +109,14 @@ async def update_restaurant_design(
             name=preset["name"],
             theme_key=preset["theme_key"],
             tokens=preset["tokens"],
-            is_system_preset=True
+            is_system_preset=True,
         )
         db.add(theme)
         await db.flush()
 
-    cfg_stmt = select(RestaurantDesignConfig).where(RestaurantDesignConfig.restaurant_id == restaurant.id)
+    cfg_stmt = select(RestaurantDesignConfig).where(
+        RestaurantDesignConfig.restaurant_id == restaurant.id
+    )
     cfg_res = await db.execute(cfg_stmt)
     config = cfg_res.scalars().first()
 
@@ -115,7 +125,7 @@ async def update_restaurant_design(
             restaurant_id=restaurant.id,
             theme_id=theme.id,
             layout_config=req.layout_config,
-            custom_tokens=req.custom_tokens
+            custom_tokens=req.custom_tokens,
         )
         db.add(config)
     else:
@@ -132,6 +142,7 @@ async def update_restaurant_design(
 async def list_supported_layouts():
     """Lists supported layout presets (ARC-08 §7, ARC-07 §4.6)."""
     from app.modules.customization.registries import layout_registry
+
     return layout_registry.list_all()
 
 
@@ -139,6 +150,7 @@ async def list_supported_layouts():
 async def get_layout_definition(layout_id: str):
     """Retrieves layout definition."""
     from app.modules.customization.registries import layout_registry
+
     layout = layout_registry.get(layout_id)
     if not layout and not layout_id.startswith("layout-"):
         layout = layout_registry.get(f"layout-{layout_id}")
@@ -151,6 +163,7 @@ async def get_layout_definition(layout_id: str):
 async def list_registered_components():
     """Lists registered UI components from the component registry (ARC-08 §8, ARC-07 §4.6)."""
     from app.modules.customization.registries import component_registry
+
     return component_registry.list_all()
 
 
@@ -158,8 +171,8 @@ async def list_registered_components():
 async def get_component_definition(component_id: str):
     """Retrieves component definition and property schema."""
     from app.modules.customization.registries import component_registry
+
     comp = component_registry.get(component_id)
     if not comp:
         raise HTTPException(status_code=404, detail=f"Component '{component_id}' not found.")
     return comp
-

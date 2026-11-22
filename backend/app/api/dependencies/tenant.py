@@ -3,8 +3,9 @@ ModularMenu — Server-Derived Tenant Context Dependency (ARC-07 §6.3, ARC-05 �
 Resolves and validates immutable TenantContext from server session and active memberships.
 Rejects client-forged tenant IDs and enforces fail-closed semantics.
 """
-from typing import Optional
+
 from uuid import UUID
+
 from fastapi import Depends, Header, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +18,7 @@ from app.shared.application.tenant_context import TenantContext
 async def get_tenant_context(
     request: Request,
     actor: AuthenticatedActor = Depends(get_current_actor),
-    x_organization_id: Optional[str] = Header(None, alias="X-Organization-ID"),
+    x_organization_id: str | None = Header(None, alias="X-Organization-ID"),
     db: AsyncSession = Depends(get_db),
 ) -> TenantContext:
     """
@@ -29,7 +30,7 @@ async def get_tenant_context(
         org_id_str = str(request.path_params["organization_id"])
 
     # Fallback to default user organization if omitted
-    target_org_id: Optional[UUID] = None
+    target_org_id: UUID | None = None
     if org_id_str:
         try:
             target_org_id = UUID(org_id_str)
@@ -54,6 +55,7 @@ async def get_tenant_context(
 
     # 2. Query Active Membership from identity model
     from app.modules.identity.models import RestaurantMember
+
     query = select(RestaurantMember).where(
         RestaurantMember.user_id == actor.user_id,
     )

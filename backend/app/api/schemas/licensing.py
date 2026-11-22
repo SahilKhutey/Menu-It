@@ -1,10 +1,11 @@
 """
 ModularMenu — Licensing & Subscription Schemas (ARC-07 §4.10).
 """
+
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -17,7 +18,7 @@ class SubscriptionPlanResponse(BaseModel):
     currency: str
     billing_interval: str
     max_restaurants: int
-    features: List[str]
+    features: list[str]
 
 
 class SubscriptionResponse(BaseModel):
@@ -36,4 +37,4 @@ class LicenseResponse(BaseModel):
     license_type: str
     status: str
     max_branches: int
-    expires_at: Optional[datetime] = None
+    expires_at: datetime | None = None

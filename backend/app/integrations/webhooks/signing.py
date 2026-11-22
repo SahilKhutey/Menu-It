@@ -2,17 +2,17 @@
 ModularMenu — Webhook Signing and Verification (ARC-07 §12.3).
 Uses HMAC-SHA256 with constant-time comparison and replay protection.
 """
+
 import hashlib
 import hmac
 import time
-from typing import Tuple
 
 
 def sign_payload(secret: str, timestamp: int, payload_bytes: bytes) -> str:
     """
     Computes hex HMAC-SHA256 signature over `{timestamp}.{payload_bytes}`.
     """
-    canonical_data = f"{timestamp}.".encode("utf-8") + payload_bytes
+    canonical_data = f"{timestamp}.".encode() + payload_bytes
     return hmac.new(secret.encode("utf-8"), canonical_data, hashlib.sha256).hexdigest()
 
 
@@ -22,7 +22,7 @@ def verify_signature(
     timestamp: int,
     payload_bytes: bytes,
     tolerance_seconds: int = 300,
-) -> Tuple[bool, str]:
+) -> tuple[bool, str]:
     """
     Validates webhook signature against timestamp and payload using constant-time comparison.
     Rejects timestamps outside tolerance window (replay attack mitigation).

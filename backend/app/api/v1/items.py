@@ -1,8 +1,9 @@
 """
 ModularMenu — Food Item & Availability API Endpoints (ARC-07 §4.4, §4.5).
 """
+
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -96,7 +97,7 @@ async def update_item_availability(
     return item
 
 
-@router.get("/{item_id}/prices", response_model=List[ItemPriceResponse])
+@router.get("/{item_id}/prices", response_model=list[ItemPriceResponse])
 async def list_item_prices(
     item_id: uuid.UUID,
     tenant: TenantContext = Depends(require_permission("menu.read")),
@@ -109,6 +110,7 @@ async def list_item_prices(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Food item not found")
 
     import datetime
+
     return [
         ItemPriceResponse(
             id=uuid.uuid4(),
@@ -120,12 +122,14 @@ async def list_item_prices(
             amount=item.base_price,
             currency=item.currency_code,
             is_default=True,
-            created_at=datetime.datetime.now(datetime.timezone.utc),
+            created_at=datetime.datetime.now(datetime.UTC),
         )
     ]
 
 
-@router.post("/{item_id}/prices", response_model=ItemPriceResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{item_id}/prices", response_model=ItemPriceResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_item_price(
     item_id: uuid.UUID,
     payload: ItemPriceCreateRequest,
@@ -142,6 +146,7 @@ async def create_item_price(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Food item not found")
 
     import datetime
+
     return ItemPriceResponse(
         id=uuid.uuid4(),
         organization_id=tenant.organization_id,
@@ -152,7 +157,7 @@ async def create_item_price(
         amount=payload.amount,
         currency=payload.currency,
         is_default=payload.is_default,
-        created_at=datetime.datetime.now(datetime.timezone.utc),
+        created_at=datetime.datetime.now(datetime.UTC),
     )
 
 

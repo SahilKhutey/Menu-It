@@ -1,12 +1,13 @@
 """
 Publishing & Versioning Domain Entities (ARC-04 §6.13, ARC-10 §4.1).
 """
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+
 import hashlib
 import json
-from typing import Any, Dict, List, Optional
-from uuid import UUID, uuid4
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from typing import Any
+from uuid import UUID
 
 from app.modules.publishing.domain.value_objects import (
     ActivationReason,
@@ -50,16 +51,16 @@ class Publication:
     active_version_id: UUID | None = None
     versions: list[PublishedVersion] = field(default_factory=list)
     # ARC-10 extended fields with defaults for backward compatibility:
-    id: Optional[UUID] = None
-    organization_id: Optional[UUID] = None
+    id: UUID | None = None
+    organization_id: UUID | None = None
     version_number: int = 1
-    snapshot_id: Optional[UUID] = None
+    snapshot_id: UUID | None = None
     snapshot_hash: str = ""
     source_draft_revision: int = 1
     status: PublicationStatus = PublicationStatus.ACTIVE
-    created_by: Optional[UUID] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    activated_at: Optional[datetime] = None
+    created_by: UUID | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    activated_at: datetime | None = None
     activation_reason: ActivationReason = ActivationReason.PUBLISH
 
     def __post_init__(self):
@@ -91,11 +92,11 @@ class DraftRevision:
     organization_id: UUID
     menu_id: UUID
     revision_number: int
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     content_hash: str
-    parent_revision_id: Optional[UUID] = None
-    created_by: Optional[UUID] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    parent_revision_id: UUID | None = None
+    created_by: UUID | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -104,7 +105,7 @@ class MenuDraft:
     organization_id: UUID
     menu_id: UUID
     current_revision: int = 1
-    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass(frozen=True)
@@ -113,9 +114,9 @@ class PublicationSnapshot:
     organization_id: UUID
     menu_id: UUID
     schema_version: str
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     content_hash: str
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -123,7 +124,7 @@ class ActivePublication:
     organization_id: UUID
     menu_id: UUID
     publication_id: UUID
-    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass(frozen=True)
@@ -132,11 +133,11 @@ class PublicationActivation:
     organization_id: UUID
     menu_id: UUID
     publication_id: UUID
-    previous_publication_id: Optional[UUID]
+    previous_publication_id: UUID | None
     operation_id: UUID
     activation_reason: ActivationReason
-    actor_id: Optional[UUID]
-    activated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    actor_id: UUID | None
+    activated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -149,10 +150,10 @@ class PublicationOperation:
     idempotency_key: str
     request_hash: str
     status: OperationStatus
-    result_publication_id: Optional[UUID] = None
-    error_code: Optional[str] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    completed_at: Optional[datetime] = None
+    result_publication_id: UUID | None = None
+    error_code: str | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -162,8 +163,8 @@ class PublicationValidationRecord:
     menu_id: UUID
     draft_revision: int
     result: str
-    diagnostics: List[Dict[str, Any]]
-    validated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    diagnostics: list[dict[str, Any]]
+    validated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -172,12 +173,12 @@ class ScheduledPublicationRecord:
     organization_id: UUID
     menu_id: UUID
     draft_revision: int
-    expected_active_publication_id: Optional[UUID]
+    expected_active_publication_id: UUID | None
     scheduled_at: datetime
     timezone_name: str
     status: str
     created_by: UUID
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass(frozen=True)
@@ -185,7 +186,7 @@ class PublicationAuditRecord:
     id: UUID
     organization_id: UUID
     menu_id: UUID
-    actor_id: Optional[UUID]
+    actor_id: UUID | None
     action: str
-    metadata: Dict[str, Any]
-    occurred_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    metadata: dict[str, Any]
+    occurred_at: datetime = field(default_factory=lambda: datetime.now(UTC))

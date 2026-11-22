@@ -3,6 +3,7 @@ ModularMenu — Unified Infrastructure Database Models Catalog (ARC-06 §3, §4)
 Contains all declarative models across identity, tenancy, menus, pricing, presentation,
 publishing, media, licensing, and operations.
 """
+
 from app.infrastructure.database.models.identity import (
     PasswordResetTokenModel,
     UserModel,

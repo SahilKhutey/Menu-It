@@ -1,6 +1,7 @@
 """
 Layout Domain Entities (ARC-04 §6.9, MOD-09).
 """
+
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -16,7 +17,9 @@ class LayoutFamily(str, Enum):
 class LayoutDefinition:
     layout_id: str
     family: LayoutFamily
-    supported_slots: list[str] = field(default_factory=lambda: ["header", "categories", "items", "footer"])
+    supported_slots: list[str] = field(
+        default_factory=lambda: ["header", "categories", "items", "footer"]
+    )
     schema_version: int = 1
 
     def __post_init__(self) -> None:

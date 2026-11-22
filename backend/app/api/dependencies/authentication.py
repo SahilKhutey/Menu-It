@@ -2,10 +2,11 @@
 ModularMenu — API Authentication Dependencies (ARC-07 §6.1, §6.2).
 Supports first-party cookie sessions and external Bearer tokens without information leakage.
 """
+
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
-from fastapi import Cookie, Depends, Header, HTTPException, Request, Security, status
+
+from fastapi import Cookie, Depends, HTTPException, Request, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,15 +28,15 @@ class AuthenticatedActor:
 
 async def get_current_actor(
     request: Request,
-    credentials: Optional[HTTPAuthorizationCredentials] = Security(security),
-    session_id: Optional[str] = Cookie(None),
+    credentials: HTTPAuthorizationCredentials | None = Security(security),
+    session_id: str | None = Cookie(None),
     db: AsyncSession = Depends(get_db),
 ) -> AuthenticatedActor:
     """
     Resolves the authenticated actor from either Authorization Bearer token
     or server-side session cookie (ARC-07 §6.1).
     """
-    token_str: Optional[str] = None
+    token_str: str | None = None
     if credentials:
         token_str = credentials.credentials
     elif session_id:
@@ -81,7 +82,7 @@ async def get_current_actor(
 
 
 async def get_current_user_legacy(
-    credentials: Optional[HTTPAuthorizationCredentials] = Security(security),
+    credentials: HTTPAuthorizationCredentials | None = Security(security),
     db: AsyncSession = Depends(get_db),
 ) -> User:
     """Backward-compatible dependency returning the SQLAlchemy User model."""

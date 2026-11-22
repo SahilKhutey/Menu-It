@@ -2,10 +2,11 @@
 ModularMenu — OpenAPI Specification Exporter (ARC-07 §18.2, §25.1).
 Generates canonical openapi.json and openapi.yaml artifacts.
 """
+
 import json
-import os
 import sys
 from pathlib import Path
+
 import yaml
 
 # Ensure backend root is on sys.path

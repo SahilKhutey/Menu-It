@@ -2,8 +2,9 @@
 Standardized Domain Events Catalogue (ARC-04 §10, EVT-001 to EVT-018).
 Pure Python dataclasses capturing completed business facts.
 """
+
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 from uuid import UUID, uuid4
@@ -12,8 +13,9 @@ from uuid import UUID, uuid4
 @dataclass(frozen=True)
 class DomainEvent:
     """Base domain event carrying metadata, correlation context, and timestamp."""
+
     event_id: UUID = field(default_factory=uuid4)
-    occurred_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    occurred_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     correlation_id: str | None = None
     causation_id: str | None = None
     schema_version: int = 1

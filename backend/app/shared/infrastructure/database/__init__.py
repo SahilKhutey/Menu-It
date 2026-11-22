@@ -1,10 +1,11 @@
 """
 Shared database infrastructure package (declarative base, naming, session, unit of work, immutability).
 """
+
 from app.shared.infrastructure.database.base import (
+    POSTGRES_NAMING_CONVENTIONS,
     Base,
     ImmutableTimestamped,
-    POSTGRES_NAMING_CONVENTIONS,
     RestaurantScoped,
     TenantScoped,
     Timestamped,
@@ -14,7 +15,6 @@ from app.shared.infrastructure.database.immutability import (
     ImmutableRecordMutationException,
     register_immutability_guard,
 )
-from app.shared.infrastructure.database.naming import POSTGRES_NAMING_CONVENTIONS
 from app.shared.infrastructure.database.session import (
     AsyncSessionFactory,
     engine,

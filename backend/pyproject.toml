@@ -1,6 +1,11 @@
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+exclude = [
+    "migrations",
+    ".venv",
+    "tests",
+]
 
 [tool.ruff.lint]
 select = [
@@ -16,7 +21,16 @@ select = [
 ignore = [
     "E501", # line too long (handled by formatter)
     "B008", # do not perform function calls in argument defaults (FastAPI Depends)
+    "B904", # within except clause, raise ... from
+    "UP046", # Generic class uses Generic subclass instead of type parameters
+    "UP042", # Class inherits from both str and Enum
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
+"app/seed.py" = ["T201"]
+"app/scripts/*" = ["T201", "E402"]
+"migrations/*" = ["ALL"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]

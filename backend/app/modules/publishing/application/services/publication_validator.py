@@ -1,8 +1,9 @@
 """
 Publication Validation Engine (ARC-10 §9, WP-ARC10-04).
 """
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from app.modules.publishing.domain.value_objects import (
@@ -26,10 +27,10 @@ class PublicationValidator:
         *,
         menu_id: UUID,
         draft_revision: int,
-        candidate_payload: Dict[str, Any],
+        candidate_payload: dict[str, Any],
     ) -> ValidationReport:
-        errors: List[Diagnostic] = []
-        warnings: List[Diagnostic] = []
+        errors: list[Diagnostic] = []
+        warnings: list[Diagnostic] = []
 
         # 1. Content Validation
         menu_data = candidate_payload.get("menu", {})
@@ -204,5 +205,5 @@ class PublicationValidator:
             result=result_status,
             errors=tuple(errors),
             warnings=tuple(warnings),
-            validated_at=datetime.now(timezone.utc),
+            validated_at=datetime.now(UTC),
         )

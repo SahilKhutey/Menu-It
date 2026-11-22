@@ -2,8 +2,11 @@
 ModularMenu — PostgreSQL Row-Level Security (RLS) Generator & Policy Engine (ARC-05 §8).
 Enforces database-level tenant isolation, DDL generation, and policy verification.
 """
+
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any
+
 import yaml
 
 from app.shared.domain.tenant_exceptions import (
@@ -30,7 +33,7 @@ def generate_force_rls_sql(table_name: str) -> str:
 def generate_policy_sql(
     table_name: str,
     tenant_col: str = "organization_id",
-    policy_name: Optional[str] = None,
+    policy_name: str | None = None,
     config_key: str = DEFAULT_CONFIG_KEY,
 ) -> str:
     """
@@ -50,9 +53,9 @@ WITH CHECK ({predicate});"""
 def generate_full_table_rls_ddl(
     table_name: str,
     tenant_col: str = "organization_id",
-    policy_name: Optional[str] = None,
+    policy_name: str | None = None,
     config_key: str = DEFAULT_CONFIG_KEY,
-) -> List[str]:
+) -> list[str]:
     """Generates complete DDL batch to enable, force, and create policy for a table."""
     return [
         generate_enable_rls_sql(table_name),
@@ -61,7 +64,7 @@ def generate_full_table_rls_ddl(
     ]
 
 
-def load_rls_coverage_manifest(manifest_path: Optional[Path] = None) -> Dict[str, Any]:
+def load_rls_coverage_manifest(manifest_path: Path | None = None) -> dict[str, Any]:
     """Loads and validates backend/architecture/rls_coverage.yaml."""
     if manifest_path is None:
         # Check backend/architecture/rls_coverage.yaml
@@ -70,7 +73,7 @@ def load_rls_coverage_manifest(manifest_path: Optional[Path] = None) -> Dict[str
             / "architecture"
             / "rls_coverage.yaml"
         )
-    with open(manifest_path, "r", encoding="utf-8") as f:
+    with open(manifest_path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -79,10 +82,11 @@ class MockRLSSimulator:
     Simulates PostgreSQL Row-Level Security behaviors in testing and non-PG environments.
     Validates fail-closed behavior, transaction locality, and cross-tenant filtering.
     """
-    def __init__(self) -> None:
-        self._current_org_id: Optional[str] = None
 
-    def set_config(self, org_id: Optional[str]) -> None:
+    def __init__(self) -> None:
+        self._current_org_id: str | None = None
+
+    def set_config(self, org_id: str | None) -> None:
         self._current_org_id = org_id.strip() if (org_id and org_id.strip()) else None
 
     def reset_config(self) -> None:
@@ -90,9 +94,9 @@ class MockRLSSimulator:
 
     def filter_rows(
         self,
-        rows: Sequence[Dict[str, Any]],
+        rows: Sequence[dict[str, Any]],
         tenant_key: str = "organization_id",
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Filters rows mimicking PostgreSQL RLS USING clause:
         If app.current_organization_id is not set or empty -> returns 0 rows (fails closed).
@@ -101,14 +105,11 @@ class MockRLSSimulator:
         if not self._current_org_id:
             return []  # Fail-closed
 
-        return [
-            row for row in rows
-            if str(row.get(tenant_key)) == self._current_org_id
-        ]
+        return [row for row in rows if str(row.get(tenant_key)) == self._current_org_id]
 
     def validate_write(
         self,
-        row: Dict[str, Any],
+        row: dict[str, Any],
         tenant_key: str = "organization_id",
     ) -> None:
         """

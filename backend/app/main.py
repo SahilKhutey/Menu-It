@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException, status
-from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
+
 from app.api.router import api_router
 from app.bootstrap import lifespan
 from app.core.config import settings
@@ -19,7 +19,7 @@ def create_application() -> FastAPI:
         description="ModularMenu: Multi-Tenant Configurable Restaurant Menu Platform API",
         lifespan=lifespan,
         docs_url="/docs",
-        redoc_url="/redoc"
+        redoc_url="/redoc",
     )
 
     # Register Request Correlation ID Middleware (ARC-03 §6.1)
@@ -52,7 +52,7 @@ def create_application() -> FastAPI:
             "service": settings.PROJECT_NAME,
             "version": settings.VERSION,
             "deployment_mode": settings.DEPLOYMENT_MODE,
-            "environment": settings.ENVIRONMENT
+            "environment": settings.ENVIRONMENT,
         }
 
     # Process Liveness Probe (ARC-03 §11.3)
@@ -70,16 +70,16 @@ def create_application() -> FastAPI:
                 "status": "ready",
                 "service": settings.PROJECT_NAME,
                 "database": "connected",
-                "redis": "optional_unconfigured"
+                "redis": "optional_unconfigured",
             }
-        except Exception as err:
+        except Exception:
             return JSONResponse(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 content={
                     "status": "unready",
                     "service": settings.PROJECT_NAME,
-                    "detail": "Database connection verification failed"
-                }
+                    "detail": "Database connection verification failed",
+                },
             )
 
     return application

@@ -2,7 +2,7 @@
 ModularMenu — SQLAlchemy Unit of Work with Tenant Context Binding (ARC-06 §8.7, ARC06-D18).
 Coordinates atomic database transactions and binds tenant context to the transaction.
 """
-from typing import Optional
+
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.infrastructure.database.tenant_session import (
@@ -18,14 +18,15 @@ class SqlAlchemyUnitOfWork:
     Automatically applies transaction-scoped PostgreSQL RLS tenant context
     and cleans up session state upon exit.
     """
+
     def __init__(
         self,
         session_factory: async_sessionmaker[AsyncSession],
-        tenant_context: Optional[TenantContext] = None,
+        tenant_context: TenantContext | None = None,
     ) -> None:
         self.session_factory = session_factory
         self.tenant_context = tenant_context
-        self.session: Optional[AsyncSession] = None
+        self.session: AsyncSession | None = None
         self.transaction = None
         self.committed: bool = False
         self.rolled_back: bool = False

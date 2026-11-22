@@ -3,8 +3,10 @@ ModularMenu — Tenant Job Context & Asynchronous Worker Isolation (ARC-05 §13,
 Provides secure execution envelopes for asynchronous and background tasks,
 guaranteeing transaction-scoped tenant isolation and prevention of context leakage.
 """
+
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional, TypeVar
+from typing import TypeVar
 from uuid import UUID
 
 from app.shared.domain.tenant_exceptions import (
@@ -18,16 +20,19 @@ T = TypeVar("T")
 @dataclass(frozen=True)
 class TenantJobContext:
     """Authoritative execution envelope for tenant-scoped asynchronous jobs."""
+
     organization_id: UUID
-    restaurant_id: Optional[UUID]
-    initiating_user_id: Optional[UUID]
+    restaurant_id: UUID | None
+    initiating_user_id: UUID | None
     correlation_id: str
     job_id: str
     purpose: str
 
     def __post_init__(self) -> None:
         if not self.organization_id:
-            raise InvalidTenantContextException("Worker job envelope requires a valid organization_id")
+            raise InvalidTenantContextException(
+                "Worker job envelope requires a valid organization_id"
+            )
         if not self.job_id:
             raise InvalidTenantContextException("Worker job envelope requires a job_id")
         if not self.purpose:
@@ -39,11 +44,12 @@ class TenantWorkerRunner:
     Executes worker tasks with strict tenant context setup and teardown,
     preventing state leakage between consecutive jobs on worker processes.
     """
+
     def __init__(self) -> None:
-        self._active_tenant: Optional[UUID] = None
+        self._active_tenant: UUID | None = None
 
     @property
-    def active_tenant(self) -> Optional[UUID]:
+    def active_tenant(self) -> UUID | None:
         return self._active_tenant
 
     def run_job(

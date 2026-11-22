@@ -2,14 +2,14 @@
 Render Input Validator Service (ARC-09 §11, WP-ARC09-11).
 Validates structural, semantic, and business rules for menu rendering payloads.
 """
+
 from decimal import Decimal
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from app.modules.rendering.domain.exceptions import (
     RenderComponentNotFoundError,
     RenderInputValidationError,
-    RenderLayoutCompatibilityError,
     RenderPriceInvalidError,
-    RenderThemeCompatibilityError,
 )
 from app.modules.rendering.schemas.render_input import (
     RenderValidationIssue,
@@ -52,8 +52,8 @@ class RenderInputValidator:
     """Validates render input readiness, detecting errors and warnings."""
 
     @classmethod
-    def validate_payload(cls, data: Dict[str, Any]) -> RenderValidationResponse:
-        issues: List[RenderValidationIssue] = []
+    def validate_payload(cls, data: dict[str, Any]) -> RenderValidationResponse:
+        issues: list[RenderValidationIssue] = []
 
         # 1. Validate Restaurant
         restaurant = data.get("restaurant")
@@ -211,13 +211,17 @@ class RenderInputValidator:
         )
 
     @classmethod
-    def assert_valid(cls, data: Dict[str, Any]) -> None:
+    def assert_valid(cls, data: dict[str, Any]) -> None:
         """Raises domain exceptions if any fatal error is detected in data."""
         res = cls.validate_payload(data)
         if not res.is_valid:
             first_err = res.errors[0]
             if first_err.code == "NEGATIVE_PRICE":
-                raise RenderPriceInvalidError("item", first_err.message, "Negative price prohibited")
+                raise RenderPriceInvalidError(
+                    "item", first_err.message, "Negative price prohibited"
+                )
             if first_err.code == "UNREGISTERED_COMPONENT":
                 raise RenderComponentNotFoundError(first_err.message)
-            raise RenderInputValidationError(first_err.message, {"errors": [e.model_dump() for e in res.errors]})
+            raise RenderInputValidationError(
+                first_err.message, {"errors": [e.model_dump() for e in res.errors]}
+            )

@@ -2,7 +2,8 @@
 ModularMenu — Tenant-Aware Cache Architecture (ARC-05 §11, ARC05-D14).
 Enforces tenant-prefixed cache namespaces and targeted cache invalidation.
 """
-from typing import Any, Dict, Optional, Set
+
+from typing import Any
 from uuid import UUID
 
 from app.shared.application.tenant_context import TenantContext
@@ -14,16 +15,17 @@ class TenantCacheManager:
     In-memory and key-prefix cache provider ensuring zero cross-tenant key collisions
     or leakage, regardless of whether Redis or in-process caching is active.
     """
+
     def __init__(self) -> None:
-        self._store: Dict[str, Any] = {}
-        self._tenant_keys: Dict[UUID, Set[str]] = {}
+        self._store: dict[str, Any] = {}
+        self._tenant_keys: dict[UUID, set[str]] = {}
 
     @staticmethod
     def build_cache_key(
         organization_id: UUID,
         resource: str,
-        restaurant_id: Optional[UUID] = None,
-        item_id: Optional[str] = None,
+        restaurant_id: UUID | None = None,
+        item_id: str | None = None,
     ) -> str:
         """
         Builds a canonical tenant-scoped cache key.
@@ -61,7 +63,7 @@ class TenantCacheManager:
         self,
         context: TenantContext,
         key: str,
-    ) -> Optional[Any]:
+    ) -> Any | None:
         """
         Retrieves a cache entry, verifying that the requested key belongs to caller's tenant.
         """
@@ -82,7 +84,9 @@ class TenantCacheManager:
     def invalidate_restaurant(self, organization_id: UUID, restaurant_id: UUID) -> int:
         """Evicts all cache keys for a specific restaurant within a tenant."""
         prefix = f"tenant:{organization_id}:restaurant:{restaurant_id}:"
-        keys_to_remove = [k for k in self._tenant_keys.get(organization_id, set()) if k.startswith(prefix)]
+        keys_to_remove = [
+            k for k in self._tenant_keys.get(organization_id, set()) if k.startswith(prefix)
+        ]
         for k in keys_to_remove:
             self._store.pop(k, None)
             self._tenant_keys[organization_id].discard(k)

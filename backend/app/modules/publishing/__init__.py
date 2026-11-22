@@ -1,6 +1,7 @@
 """
 ModularMenu Publishing & Versioning Module (ARC-04 MOD-13, ARC-10).
 """
+
 from app.modules.publishing.application.services.draft_revision_service import DraftRevisionService
 from app.modules.publishing.application.services.outbox_processor import OutboxProcessor
 from app.modules.publishing.application.services.publication_service import PublicationService

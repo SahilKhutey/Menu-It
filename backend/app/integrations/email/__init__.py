@@ -1,3 +1,8 @@
-from app.integrations.email.service import EmailMessage, EmailProvider, EmailService, ConsoleEmailProvider
+from app.integrations.email.service import (
+    ConsoleEmailProvider,
+    EmailMessage,
+    EmailProvider,
+    EmailService,
+)
 
 __all__ = ["EmailMessage", "EmailProvider", "EmailService", "ConsoleEmailProvider"]

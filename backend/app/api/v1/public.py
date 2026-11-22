@@ -1,8 +1,10 @@
 import io
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+
 import qrcode
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_db
 from app.core.config import settings
 from app.modules.identity.models import Restaurant
@@ -38,7 +40,7 @@ async def get_public_menu(slug: str, db: AsyncSession = Depends(get_db)):
         "version_number": menu_version.version_number,
         "checksum": menu_version.checksum,
         "published_at": menu_version.published_at.isoformat(),
-        "data": menu_version.snapshot_data
+        "data": menu_version.snapshot_data,
     }
 
 
@@ -51,7 +53,7 @@ async def get_restaurant_qr_code(slug: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Restaurant not found")
 
     public_menu_url = f"{settings.PUBLIC_BASE_URL}/r/{slug}"
-    
+
     # 2. Generate QR code in memory
     qr = qrcode.QRCode(
         version=1,
@@ -72,11 +74,14 @@ async def get_restaurant_qr_code(slug: str, db: AsyncSession = Depends(get_db)):
 
 # --- Canonical ARC-07 Public Menu Endpoints (ARC-07 §4.11, §16.4) ---
 
+
 @router.get("/restaurants/{restaurant_slug}/profile")
 @router.get("/profile/{restaurant_slug}")
 async def get_public_restaurant_profile(restaurant_slug: str, db: AsyncSession = Depends(get_db)):
     """Public restaurant profile (ARC-07 §4.11)."""
-    rest_stmt = select(Restaurant).where(Restaurant.slug == restaurant_slug, Restaurant.status == "active")
+    rest_stmt = select(Restaurant).where(
+        Restaurant.slug == restaurant_slug, Restaurant.status == "active"
+    )
     restaurant = (await db.execute(rest_stmt)).scalars().first()
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
@@ -93,7 +98,9 @@ async def get_public_restaurant_profile(restaurant_slug: str, db: AsyncSession =
 @router.get("/restaurants/{restaurant_slug}/menus")
 async def list_public_menus(restaurant_slug: str, db: AsyncSession = Depends(get_db)):
     """Lists published menus available for public dining guests."""
-    rest_stmt = select(Restaurant).where(Restaurant.slug == restaurant_slug, Restaurant.status == "active")
+    rest_stmt = select(Restaurant).where(
+        Restaurant.slug == restaurant_slug, Restaurant.status == "active"
+    )
     restaurant = (await db.execute(rest_stmt)).scalars().first()
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
@@ -119,7 +126,9 @@ async def get_public_menu_snapshot(
     db: AsyncSession = Depends(get_db),
 ):
     """Retrieves published, immutable menu snapshot with HTTP cache headers (ARC-07 §4.11, §16.4)."""
-    rest_stmt = select(Restaurant).where(Restaurant.slug == restaurant_slug, Restaurant.status == "active")
+    rest_stmt = select(Restaurant).where(
+        Restaurant.slug == restaurant_slug, Restaurant.status == "active"
+    )
     restaurant = (await db.execute(rest_stmt)).scalars().first()
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
@@ -168,7 +177,9 @@ async def get_public_menu_metadata(
     db: AsyncSession = Depends(get_db),
 ):
     """Retrieves publication metadata without downloading the full dish payload."""
-    rest_stmt = select(Restaurant).where(Restaurant.slug == restaurant_slug, Restaurant.status == "active")
+    rest_stmt = select(Restaurant).where(
+        Restaurant.slug == restaurant_slug, Restaurant.status == "active"
+    )
     restaurant = (await db.execute(rest_stmt)).scalars().first()
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurant not found")
@@ -200,4 +211,3 @@ async def get_public_menu_metadata(
         "published_at": ver.published_at.isoformat(),
         "status": pub.status,
     }
-

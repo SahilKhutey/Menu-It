@@ -3,8 +3,9 @@ ModularMenu — Tenant Context Resolver (ARC-05 §4.2, §4.3).
 Authoritative, server-side resolution of TenantContext from authenticated user sessions
 and validated organization memberships.
 """
+
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Mapping, Optional, Sequence
 from uuid import UUID
 
 from app.shared.application.tenant_context import TenantContext
@@ -19,17 +20,19 @@ from app.shared.domain.tenant_exceptions import (
 @dataclass(frozen=True)
 class MembershipRecord:
     """Read model of an organization membership."""
+
     membership_id: UUID
     user_id: UUID
     organization_id: UUID
     role: str
     is_active: bool
-    allowed_restaurant_ids: Optional[frozenset[UUID]] = None
+    allowed_restaurant_ids: frozenset[UUID] | None = None
 
 
 @dataclass(frozen=True)
 class OrganizationStatus:
     """Read model of organization status."""
+
     organization_id: UUID
     status: str  # 'active', 'suspended', 'offboarded'
 
@@ -39,6 +42,7 @@ class TenantResolver:
     Authoritative server-side resolver that guarantees client-supplied tenant IDs
     are treated strictly as selectors, never as proof of access.
     """
+
     def __init__(
         self,
         membership_provider: Mapping[tuple[UUID, UUID], MembershipRecord] | None = None,
@@ -55,8 +59,8 @@ class TenantResolver:
 
     def resolve(
         self,
-        user_id: Optional[UUID],
-        target_organization_id: Optional[UUID],
+        user_id: UUID | None,
+        target_organization_id: UUID | None,
         request_id: str = "",
         authentication_method: str = "bearer_jwt",
         allow_suspended: bool = False,

@@ -1,9 +1,10 @@
 """
 ModularMenu — Authentication API Schemas (ARC-07 §4.1).
 """
+
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
