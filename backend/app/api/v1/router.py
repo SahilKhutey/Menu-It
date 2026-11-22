@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from app.api.v1 import (
     auth,
     categories,
+    customization,
     editor,
     items,
     licensing,
@@ -31,6 +32,7 @@ v1_router.include_router(categories.router)
 v1_router.include_router(items.router)
 v1_router.include_router(pricing.router)
 v1_router.include_router(themes.router)
+v1_router.include_router(customization.router)
 v1_router.include_router(editor.router)
 v1_router.include_router(publishing.router)
 v1_router.include_router(media.router)

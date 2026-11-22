@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "compatibility": {
+    "themes": {
+      "theme-luxury": {
+        "supported_layouts": ["layout-grid", "layout-image-cards", "layout-editorial", "layout-list"],
+        "deprecated": false
+      },
+      "theme-minimal": {
+        "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+        "deprecated": false
+      },
+      "theme-rustic": {
+        "supported_layouts": ["layout-grid", "layout-list", "layout-image-cards", "layout-editorial"],
+        "deprecated": false
+      },
+      "theme-contemporary": {
+        "supported_layouts": ["layout-grid", "layout-list", "layout-image-cards", "layout-editorial"],
+        "deprecated": false
+      },
+      "theme-vibrant": {
+        "supported_layouts": ["layout-grid", "layout-image-cards", "layout-editorial", "layout-list"],
+        "deprecated": false
+      },
+      "theme-editorial": {
+        "supported_layouts": ["layout-editorial", "layout-image-cards", "layout-grid", "layout-list"],
+        "deprecated": false
+      }
+    },
+    "layouts": {
+      "layout-list": {
+        "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+        "min_columns": 1,
+        "max_columns": 2
+      },
+      "layout-grid": {
+        "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+        "min_columns": 1,
+        "max_columns": 4
+      },
+      "layout-image-cards": {
+        "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+        "min_columns": 1,
+        "max_columns": 3
+      },
+      "layout-editorial": {
+        "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+        "min_columns": 1,
+        "max_columns": 2
+      }
+    }
+  }
+}

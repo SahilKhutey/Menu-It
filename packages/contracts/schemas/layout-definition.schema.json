@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.in/schemas/layout-definition.schema.json",
+  "title": "LayoutDefinition",
+  "description": "Layout Registry Definition Schema (ARC-08 §7).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "version",
+    "schema_version",
+    "description",
+    "supported_slots",
+    "allowed_components",
+    "default_settings",
+    "responsive"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^layout-[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "description": { "type": "string", "maxLength": 500 },
+    "supported_slots": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "allowed_components": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "default_settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "content_width": { "type": "string", "enum": ["compact", "normal", "wide", "full"] },
+        "category_navigation": { "type": "string", "enum": ["sticky", "inline", "tabs", "sidebar"] },
+        "item_density": { "type": "string", "enum": ["compact", "comfortable", "spacious"] },
+        "image_ratio": { "type": "string", "enum": ["1:1", "4:3", "16:9", "hidden"] }
+      }
+    },
+    "responsive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mobile", "tablet", "desktop"],
+      "properties": {
+        "mobile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["columns"],
+          "properties": {
+            "columns": { "type": "integer", "enum": [1] },
+            "navigation": { "type": "string", "enum": ["horizontal-scroll", "dropdown", "tabs"] }
+          }
+        },
+        "tablet": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["columns"],
+          "properties": {
+            "columns": { "type": "integer", "enum": [1, 2] },
+            "navigation": { "type": "string", "enum": ["horizontal-scroll", "inline", "tabs"] }
+          }
+        },
+        "desktop": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["columns"],
+          "properties": {
+            "columns": { "type": "integer", "enum": [1, 2, 3, 4] },
+            "navigation": { "type": "string", "enum": ["inline", "sidebar", "sticky"] }
+          }
+        }
+      }
+    }
+  }
+}

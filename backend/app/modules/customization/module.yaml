@@ -1,0 +1,31 @@
+module:
+  id: MOD-08-CUSTOMIZATION
+  name: Theme & Customization Engine
+  status: approved
+  ownership:
+    aggregates:
+      - MenuCustomization
+      - CustomizationRevision
+    entities:
+      - ThemePreset
+      - LayoutDefinition
+      - ComponentRegistry
+  contracts:
+    provides:
+      - CustomizationService
+      - CustomizationValidator
+      - ThemeResolver
+    consumes:
+      - menus
+      - organizations
+  dependencies:
+    allowed:
+      - menus
+      - organizations
+    prohibited:
+      - publishing
+      - analytics
+  testing:
+    unit_required: true
+    contract_required: true
+    integration_required: true

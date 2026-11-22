@@ -1,0 +1,227 @@
+{
+  "schema_version": "1.0.0",
+  "components": [
+    {
+      "id": "restaurant-header",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Restaurant Header",
+      "category": "structure",
+      "description": "Displays restaurant branding, logo, and cover image.",
+      "default_props": { "show_logo": true, "show_cover": true, "logo_alignment": "center", "logo_size": "medium" },
+      "props_schema": {
+        "show_logo": { "type": "boolean" },
+        "show_cover": { "type": "boolean" },
+        "logo_alignment": { "type": "string", "enum": ["left", "center", "right"] },
+        "logo_size": { "type": "string", "enum": ["small", "medium", "large"] }
+      },
+      "supported_slots": ["header"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "menu-title",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Menu Title",
+      "category": "structure",
+      "description": "Displays menu name, operational timing, and description.",
+      "default_props": { "alignment": "center", "show_description": true, "typography_style": "display" },
+      "props_schema": {
+        "alignment": { "type": "string", "enum": ["left", "center", "right"] },
+        "show_description": { "type": "boolean" },
+        "typography_style": { "type": "string", "enum": ["heading", "display"] }
+      },
+      "supported_slots": ["header"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "category-navigation",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Category Navigation",
+      "category": "navigation",
+      "description": "Interactive jump navigation for menu categories.",
+      "default_props": { "style": "pills", "position": "sticky", "show_icons": false },
+      "props_schema": {
+        "style": { "type": "string", "enum": ["pills", "tabs", "underline", "minimal"] },
+        "position": { "type": "string", "enum": ["sticky", "static"] },
+        "show_icons": { "type": "boolean" }
+      },
+      "supported_slots": ["navigation"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "category-heading",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Category Heading",
+      "category": "structure",
+      "description": "Section title and description introducing a group of items.",
+      "default_props": { "alignment": "left", "show_description": true, "divider": true },
+      "props_schema": {
+        "alignment": { "type": "string", "enum": ["left", "center"] },
+        "show_description": { "type": "boolean" },
+        "divider": { "type": "boolean" }
+      },
+      "supported_slots": ["category.header"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "menu-item-card",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Menu Item Card",
+      "category": "content",
+      "description": "Primary container displaying food item details, price, and badges.",
+      "default_props": { "card_style": "elevated", "image_visible": true, "image_ratio": "4:3", "alignment": "left", "dense": false },
+      "props_schema": {
+        "card_style": { "type": "string", "enum": ["flat", "elevated", "bordered", "minimal"] },
+        "image_visible": { "type": "boolean" },
+        "image_ratio": { "type": "string", "enum": ["1:1", "4:3", "16:9", "hidden"] },
+        "alignment": { "type": "string", "enum": ["left", "center"] },
+        "dense": { "type": "boolean" }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "menu-item-image",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Item Image",
+      "category": "content",
+      "description": "Responsive dish photography container.",
+      "default_props": { "fit": "cover", "zoomable": true, "radius": "medium" },
+      "props_schema": {
+        "fit": { "type": "string", "enum": ["cover", "contain"] },
+        "zoomable": { "type": "boolean" },
+        "radius": { "type": "string", "enum": ["none", "small", "medium", "large"] }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "menu-item-price",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Item Price",
+      "category": "content",
+      "description": "Price presentation with currency symbol and portion labels.",
+      "default_props": { "emphasis": "strong", "show_currency": true, "position": "inline" },
+      "props_schema": {
+        "emphasis": { "type": "string", "enum": ["normal", "medium", "strong"] },
+        "show_currency": { "type": "boolean" },
+        "position": { "type": "string", "enum": ["inline", "bottom", "badge"] }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "menu-item-description",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Item Description",
+      "category": "content",
+      "description": "Culinary description, preparation notes, and portion sizes.",
+      "default_props": { "line_clamp": 3, "visible": true },
+      "props_schema": {
+        "line_clamp": { "type": "integer", "enum": [1, 2, 3, 4, 0] },
+        "visible": { "type": "boolean" }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "dietary-label",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Dietary Badge",
+      "category": "metadata",
+      "description": "FSSAI-compliant green/red veg/non-veg dot badges and vegan/egg/jain indicators.",
+      "default_props": { "badge_style": "fssai-dot", "show_text": false, "size": "medium" },
+      "props_schema": {
+        "badge_style": { "type": "string", "enum": ["fssai-dot", "pill", "icon", "text"] },
+        "show_text": { "type": "boolean" },
+        "size": { "type": "string", "enum": ["small", "medium", "large"] }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "allergen-label",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Allergen Warning",
+      "category": "metadata",
+      "description": "Food safety allergen badges (nuts, dairy, gluten, shellfish).",
+      "default_props": { "display_mode": "compact-icons", "visible": true },
+      "props_schema": {
+        "display_mode": { "type": "string", "enum": ["compact-icons", "text-list", "tooltip"] },
+        "visible": { "type": "boolean" }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "availability-indicator",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Availability State",
+      "category": "metadata",
+      "description": "Real-time out-of-stock and 86-item indicator overlay.",
+      "default_props": { "dim_item": true, "badge_text": "Sold Out", "style": "overlay" },
+      "props_schema": {
+        "dim_item": { "type": "boolean" },
+        "badge_text": { "type": "string", "maxLength": 30 },
+        "style": { "type": "string", "enum": ["overlay", "badge", "strike"] }
+      },
+      "supported_slots": ["category.items"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "menu-footer",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Menu Footer",
+      "category": "structure",
+      "description": "Statutory FSSAI disclosures, tax notices, and copyright.",
+      "default_props": { "show_fssai": true, "show_tax_notice": true, "alignment": "center" },
+      "props_schema": {
+        "show_fssai": { "type": "boolean" },
+        "show_tax_notice": { "type": "boolean" },
+        "alignment": { "type": "string", "enum": ["left", "center"] }
+      },
+      "supported_slots": ["footer"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    },
+    {
+      "id": "contact-information",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "name": "Contact & Location",
+      "category": "metadata",
+      "description": "Restaurant phone number, address, opening hours, and Wi-Fi info.",
+      "default_props": { "show_phone": true, "show_address": true, "show_timings": true },
+      "props_schema": {
+        "show_phone": { "type": "boolean" },
+        "show_address": { "type": "boolean" },
+        "show_timings": { "type": "boolean" }
+      },
+      "supported_slots": ["footer"],
+      "supported_layouts": ["layout-list", "layout-grid", "layout-image-cards", "layout-editorial"],
+      "status": "active"
+    }
+  ]
+}
