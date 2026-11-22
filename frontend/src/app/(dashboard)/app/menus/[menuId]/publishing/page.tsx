@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   getPublicationReadiness,
   listPublications,
@@ -27,7 +27,7 @@ export default function PublishingPage({ params }: { params: { menuId: string } 
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [rollbackTarget, setRollbackTarget] = useState<PublicationSummary | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [validationData, pubList] = await Promise.all([
@@ -41,11 +41,11 @@ export default function PublishingPage({ params }: { params: { menuId: string } 
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [menuId]);
 
   useEffect(() => {
     loadData();
-  }, [menuId]);
+  }, [loadData]);
 
   const activePub = publications.find((p) => p.status === "ACTIVE");
   const isReady = report?.result === "PASSED" || report?.result === "WARNING";

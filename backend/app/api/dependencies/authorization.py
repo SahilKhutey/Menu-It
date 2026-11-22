@@ -2,13 +2,14 @@
 ModularMenu — API Authorization Dependencies (ARC-07 §6.4, §6.5).
 Evaluates fine-grained permissions against the server-derived TenantContext.
 """
-from typing import Callable
+
+from collections.abc import Callable
+
 from fastapi import Depends, HTTPException, status
 
 from app.api.dependencies.tenant import get_tenant_context
 from app.shared.application.authorization import DEFAULT_ROLE_PERMISSIONS
 from app.shared.application.tenant_context import TenantContext
-from app.shared.domain.permissions import Permission
 
 
 def require_permission(permission_str: str) -> Callable:
@@ -16,6 +17,7 @@ def require_permission(permission_str: str) -> Callable:
     Factory creating a FastAPI dependency that verifies whether the authenticated
     actor holds the specified permission within their active TenantContext.
     """
+
     async def permission_checker(
         tenant: TenantContext = Depends(get_tenant_context),
     ) -> TenantContext:

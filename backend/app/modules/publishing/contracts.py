@@ -1,18 +1,17 @@
 """
 Public Contracts for Publishing Module (ARC-04 §8, ARC-10 §10, MOD-13).
 """
-from typing import Any, Dict, List, Optional, Protocol
+
+from typing import Any, Protocol
 from uuid import UUID
 
 
 class PublishedSnapshotReader(Protocol):
-    def get_active_snapshot(self, menu_id: UUID) -> dict[str, Any] | None:
-        ...
+    def get_active_snapshot(self, menu_id: UUID) -> dict[str, Any] | None: ...
 
 
 class DraftRevisionReader(Protocol):
-    def get_revision(self, menu_id: UUID, revision_number: int) -> dict[str, Any] | None:
-        ...
+    def get_revision(self, menu_id: UUID, revision_number: int) -> dict[str, Any] | None: ...
 
 
 class PublicationManagementService(Protocol):
@@ -23,13 +22,12 @@ class PublicationManagementService(Protocol):
         restaurant_id: UUID,
         menu_id: UUID,
         draft_revision: int,
-        candidate_payload: Dict[str, Any],
-        expected_active_publication_id: Optional[UUID] = None,
-        idempotency_key: Optional[str] = None,
-        actor_id: Optional[UUID] = None,
+        candidate_payload: dict[str, Any],
+        expected_active_publication_id: UUID | None = None,
+        idempotency_key: str | None = None,
+        actor_id: UUID | None = None,
         reason: str = "Publish menu update",
-    ) -> Dict[str, Any]:
-        ...
+    ) -> dict[str, Any]: ...
 
     async def rollback(
         self,
@@ -38,8 +36,7 @@ class PublicationManagementService(Protocol):
         restaurant_id: UUID,
         menu_id: UUID,
         target_publication_id: UUID,
-        expected_active_publication_id: Optional[UUID] = None,
-        actor_id: Optional[UUID] = None,
+        expected_active_publication_id: UUID | None = None,
+        actor_id: UUID | None = None,
         reason: str = "Rollback",
-    ) -> Dict[str, Any]:
-        ...
+    ) -> dict[str, Any]: ...

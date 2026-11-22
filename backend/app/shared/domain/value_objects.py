@@ -2,9 +2,10 @@
 Pure Domain Value Objects (ARC-04 §7.2, WP-ARC04-03).
 Independent of frameworks, databases, and HTTP layers.
 """
+
+import re
 from dataclasses import dataclass
 from decimal import Decimal
-import re
 
 
 @dataclass(frozen=True)
@@ -13,6 +14,7 @@ class Money:
     Validated monetary value object.
     Enforces non-negative finite Decimal and 3-letter ISO-4217 currency code.
     """
+
     amount: Decimal
     currency: str = "INR"
 
@@ -32,6 +34,7 @@ class EmailAddress:
     """
     Validated and normalized email address value object.
     """
+
     value: str
 
     def __post_init__(self) -> None:
@@ -48,6 +51,7 @@ class RestaurantSlug:
     """
     Validated URL-safe slug for restaurant identifiers.
     """
+
     value: str
 
     def __post_init__(self) -> None:
@@ -62,6 +66,7 @@ class MenuSlug:
     """
     Validated URL-safe slug for menu identifiers.
     """
+
     value: str
 
     def __post_init__(self) -> None:
@@ -76,6 +81,7 @@ class DisplayOrder:
     """
     Deterministic zero-indexed ordering value object.
     """
+
     value: int
 
     def __post_init__(self) -> None:

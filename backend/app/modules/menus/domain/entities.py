@@ -1,6 +1,7 @@
 """
 Menu Domain Entities (ARC-04 §6.4, MOD-04).
 """
+
 from dataclasses import dataclass
 from enum import Enum
 from uuid import UUID

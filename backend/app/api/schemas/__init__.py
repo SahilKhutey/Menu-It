@@ -1,16 +1,57 @@
 """
 ModularMenu — API Schemas Catalog (ARC-07 §5.2, §14.3).
 """
-from app.api.schemas.common import SuccessEnvelope, PaginatedEnvelope, ResponseMeta, PaginationMeta
-from app.api.schemas.auth import RegisterRequest, LoginRequest, LoginResponse, UserProfileResponse
-from app.api.schemas.organizations import OrganizationCreateRequest, OrganizationUpdateRequest, OrganizationResponse
-from app.api.schemas.restaurants import RestaurantCreateRequest, RestaurantUpdateRequest, RestaurantResponse, DesignConfigRequest, DesignConfigResponse
-from app.api.schemas.menus import MenuCreateRequest, MenuUpdateRequest, MenuResponse, ReorderRequest
-from app.api.schemas.categories import CategoryCreateRequest, CategoryUpdateRequest, CategoryResponse
-from app.api.schemas.items import ItemCreateRequest, ItemUpdateRequest, ItemResponse, AvailabilityUpdateRequest, ItemPriceCreateRequest, ItemPriceResponse
-from app.api.schemas.themes import ThemeResponse, LayoutResponse, ComponentResponse
-from app.api.schemas.editor import EditorStateSaveRequest, EditorStateResponse, PreviewResponse, ValidationReportResponse
-from app.api.schemas.publishing import PublishRequest, PublicationResponse, MenuVersionResponse, RollbackRequest
-from app.api.schemas.media import UploadIntentRequest, UploadIntentResponse, UploadCompleteRequest, MediaAssetResponse
-from app.api.schemas.public import PublicRestaurantResponse, PublicMenuSnapshotResponse
-from app.api.schemas.licensing import SubscriptionPlanResponse, SubscriptionResponse, LicenseResponse
+
+from app.api.schemas.auth import LoginRequest, LoginResponse, RegisterRequest, UserProfileResponse
+from app.api.schemas.categories import (
+    CategoryCreateRequest,
+    CategoryResponse,
+    CategoryUpdateRequest,
+)
+from app.api.schemas.common import PaginatedEnvelope, PaginationMeta, ResponseMeta, SuccessEnvelope
+from app.api.schemas.editor import (
+    EditorStateResponse,
+    EditorStateSaveRequest,
+    PreviewResponse,
+    ValidationReportResponse,
+)
+from app.api.schemas.items import (
+    AvailabilityUpdateRequest,
+    ItemCreateRequest,
+    ItemPriceCreateRequest,
+    ItemPriceResponse,
+    ItemResponse,
+    ItemUpdateRequest,
+)
+from app.api.schemas.licensing import (
+    LicenseResponse,
+    SubscriptionPlanResponse,
+    SubscriptionResponse,
+)
+from app.api.schemas.media import (
+    MediaAssetResponse,
+    UploadCompleteRequest,
+    UploadIntentRequest,
+    UploadIntentResponse,
+)
+from app.api.schemas.menus import MenuCreateRequest, MenuResponse, MenuUpdateRequest, ReorderRequest
+from app.api.schemas.organizations import (
+    OrganizationCreateRequest,
+    OrganizationResponse,
+    OrganizationUpdateRequest,
+)
+from app.api.schemas.public import PublicMenuSnapshotResponse, PublicRestaurantResponse
+from app.api.schemas.publishing import (
+    MenuVersionResponse,
+    PublicationResponse,
+    PublishRequest,
+    RollbackRequest,
+)
+from app.api.schemas.restaurants import (
+    DesignConfigRequest,
+    DesignConfigResponse,
+    RestaurantCreateRequest,
+    RestaurantResponse,
+    RestaurantUpdateRequest,
+)
+from app.api.schemas.themes import ComponentResponse, LayoutResponse, ThemeResponse

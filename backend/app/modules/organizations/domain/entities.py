@@ -1,8 +1,9 @@
 """
 Organization Domain Entities (ARC-04 §6.2, MOD-02).
 """
+
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 
@@ -44,11 +45,11 @@ class Invitation:
     organization_id: UUID
     email: str
     role: str = "member"
-    expires_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     is_accepted: bool = False
 
     def assert_can_accept(self) -> None:
         if self.is_accepted:
             raise ValueError("Invitation is already accepted")
-        if datetime.now(timezone.utc) > self.expires_at:
+        if datetime.now(UTC) > self.expires_at:
             raise ValueError("Invitation has expired")

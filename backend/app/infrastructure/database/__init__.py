@@ -1,6 +1,7 @@
 """
 Infrastructure database adapters (RLS, roles, transaction-local tenant session).
 """
+
 from app.infrastructure.database.rls import (
     MockRLSSimulator,
     generate_enable_rls_sql,

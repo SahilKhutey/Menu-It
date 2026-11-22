@@ -2,10 +2,11 @@
 ModularMenu — Media & Object Storage API Endpoints (ARC-07 §4.9).
 Provides presigned upload intents, metadata tracking, and scoped storage access.
 """
+
 import datetime
 import uuid
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.authorization import require_permission
@@ -21,7 +22,9 @@ from app.shared.application.tenant_context import TenantContext
 router = APIRouter(prefix="/media", tags=["Media Assets"])
 
 
-@router.post("/upload-intents", response_model=UploadIntentResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload-intents", response_model=UploadIntentResponse, status_code=status.HTTP_201_CREATED
+)
 async def request_upload_intent(
     payload: UploadIntentRequest,
     tenant: TenantContext = Depends(require_permission("media.upload")),
@@ -31,7 +34,7 @@ async def request_upload_intent(
     """
     media_id = uuid.uuid4()
     storage_path = f"media/organizations/{tenant.organization_id}/{media_id}/{payload.file_name}"
-    expires_at = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=15)
+    expires_at = datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=15)
 
     return UploadIntentResponse(
         media_id=media_id,
@@ -50,7 +53,7 @@ async def complete_upload(
     db: AsyncSession = Depends(get_db),
 ):
     """Confirms successful object upload and registers media metadata."""
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     return MediaAssetResponse(
         id=media_id,
         organization_id=tenant.organization_id,
@@ -63,14 +66,14 @@ async def complete_upload(
     )
 
 
-@router.get("", response_model=List[MediaAssetResponse])
+@router.get("", response_model=list[MediaAssetResponse])
 async def list_media_assets(
     limit: int = Query(20, ge=1, le=100),
     tenant: TenantContext = Depends(require_permission("media.read_private")),
     db: AsyncSession = Depends(get_db),
 ):
     """Lists media assets belonging to the tenant."""
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     return [
         MediaAssetResponse(
             id=uuid.uuid4(),
@@ -92,7 +95,7 @@ async def get_media_asset(
     db: AsyncSession = Depends(get_db),
 ):
     """Retrieves media asset metadata."""
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     return MediaAssetResponse(
         id=media_id,
         organization_id=tenant.organization_id,

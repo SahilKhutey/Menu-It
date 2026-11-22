@@ -1,8 +1,9 @@
 """
 Analytics & Integrations Domain Entities (ARC-04 §6.16, MOD-16).
 """
+
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
@@ -13,7 +14,7 @@ class UsageEvent:
     restaurant_id: UUID
     event_type: str
     metadata: dict[str, Any] = field(default_factory=dict)
-    recorded_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    recorded_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass

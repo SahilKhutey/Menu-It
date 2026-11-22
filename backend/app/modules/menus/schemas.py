@@ -1,7 +1,8 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -43,35 +44,35 @@ SpiceLevel = Literal["none", "mild", "medium", "hot", "extra_hot"]
 
 class MenuItemBase(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     base_price: Decimal = Field(default=Decimal("0.00"), ge=0)
     currency_code: str = "INR"
     dietary_type: DietaryType = "vegetarian"
     spice_level: SpiceLevel = "none"
-    image_url: Optional[str] = None
-    ingredients: List[str] = []
-    allergens: List[str] = []
+    image_url: str | None = None
+    ingredients: list[str] = []
+    allergens: list[str] = []
     is_available: bool = True
     is_featured: bool = False
     sort_order: int = 0
 
 
 class MenuItemCreate(MenuItemBase):
-    variants: List[ItemVariantCreate] = []
+    variants: list[ItemVariantCreate] = []
 
 
 class MenuItemUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    base_price: Optional[float] = None
-    dietary_type: Optional[DietaryType] = None
-    spice_level: Optional[SpiceLevel] = None
-    image_url: Optional[str] = None
-    ingredients: Optional[List[str]] = None
-    allergens: Optional[List[str]] = None
-    is_available: Optional[bool] = None
-    is_featured: Optional[bool] = None
-    sort_order: Optional[int] = None
+    name: str | None = None
+    description: str | None = None
+    base_price: float | None = None
+    dietary_type: DietaryType | None = None
+    spice_level: SpiceLevel | None = None
+    image_url: str | None = None
+    ingredients: list[str] | None = None
+    allergens: list[str] | None = None
+    is_available: bool | None = None
+    is_featured: bool | None = None
+    sort_order: int | None = None
 
 
 class MenuItemOut(MenuItemBase):
@@ -79,19 +80,19 @@ class MenuItemOut(MenuItemBase):
 
     id: uuid.UUID
     category_id: uuid.UUID
-    variants: List[ItemVariantOut] = []
+    variants: list[ItemVariantOut] = []
 
 
 # Category Schemas
 class CategoryBase(BaseModel):
     name: str
-    slug: Optional[str] = None
-    description: Optional[str] = None
-    image_url: Optional[str] = None
+    slug: str | None = None
+    description: str | None = None
+    image_url: str | None = None
     sort_order: int = 0
-    display_order: Optional[int] = None
+    display_order: int | None = None
     is_visible: bool = True
-    parent_id: Optional[uuid.UUID] = None
+    parent_id: uuid.UUID | None = None
 
 
 class CategoryCreate(CategoryBase):
@@ -99,11 +100,11 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    image_url: Optional[str] = None
-    sort_order: Optional[int] = None
-    is_visible: Optional[bool] = None
+    name: str | None = None
+    description: str | None = None
+    image_url: str | None = None
+    sort_order: int | None = None
+    is_visible: bool | None = None
 
 
 class CategoryOut(CategoryBase):
@@ -111,14 +112,14 @@ class CategoryOut(CategoryBase):
 
     id: uuid.UUID
     menu_id: uuid.UUID
-    items: List[MenuItemOut] = []
+    items: list[MenuItemOut] = []
 
 
 # Menu Schemas
 class MenuBase(BaseModel):
     name: str
     slug: str
-    description: Optional[str] = None
+    description: str | None = None
     menu_type: str = "all_day"
     status: str = "active"
     sort_order: int = 0
@@ -129,11 +130,11 @@ class MenuCreate(MenuBase):
 
 
 class MenuUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    menu_type: Optional[str] = None
-    status: Optional[str] = None
-    sort_order: Optional[int] = None
+    name: str | None = None
+    description: str | None = None
+    menu_type: str | None = None
+    status: str | None = None
+    sort_order: int | None = None
 
 
 class MenuOut(MenuBase):
@@ -147,11 +148,11 @@ class MenuOut(MenuBase):
 
 # Publishing & Snapshot Schemas
 class PublishedMenuSnapshot(BaseModel):
-    restaurant: Dict[str, Any]
-    menu: Dict[str, Any]
-    categories: List[Dict[str, Any]]
-    theme: Dict[str, Any]
-    layout: Dict[str, Any]
+    restaurant: dict[str, Any]
+    menu: dict[str, Any]
+    categories: list[dict[str, Any]]
+    theme: dict[str, Any]
+    layout: dict[str, Any]
     published_at: str
     version_number: int
     checksum: str

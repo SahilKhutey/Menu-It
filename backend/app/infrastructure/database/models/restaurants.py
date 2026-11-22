@@ -2,11 +2,18 @@
 ModularMenu — Restaurant & Branch Persistence Models (ARC-06 §3.2, §4.3).
 Subordinate branch entity, branch member scoping, settings, and custom domain routing.
 """
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+
+from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, ForeignKeyConstraint, String, UniqueConstraint
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    ForeignKey,
+    ForeignKeyConstraint,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import GUID, PortableJSON
@@ -18,7 +25,9 @@ class RestaurantModel(Base, UUIDPrimaryKey, Timestamped):
     __table_args__ = (
         UniqueConstraint("organization_id", "id", name="uq_restaurants_org_id_id"),
         UniqueConstraint("organization_id", "slug", name="uq_restaurants_org_slug"),
-        CheckConstraint("status IN ('active', 'inactive', 'suspended')", name="ck_restaurants_status"),
+        CheckConstraint(
+            "status IN ('active', 'inactive', 'suspended')", name="ck_restaurants_status"
+        ),
         CheckConstraint("length(default_currency) = 3", name="ck_restaurants_currency"),
     )
 
@@ -67,7 +76,7 @@ class RestaurantSettingsModel(Base, UUIDPrimaryKey, Timestamped):
 
     organization_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
     restaurant_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
-    settings: Mapped[Dict[str, Any]] = mapped_column(PortableJSON(), default=dict, nullable=False)
+    settings: Mapped[dict[str, Any]] = mapped_column(PortableJSON(), default=dict, nullable=False)
 
 
 class RestaurantDomainModel(Base, UUIDPrimaryKey, Timestamped):

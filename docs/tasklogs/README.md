@@ -19,6 +19,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **ARC-08** | Theme & Customization Architecture | WP-ARC08-01 to WP-ARC08-13 | 378 Tests (104 Customization) | **Approved & Implemented** | **[Tasklog-ARC08](tasklog-arc08-customization.md)** |
 | **ARC-09** | Menu Rendering Architecture | WP-ARC09-01 to WP-ARC09-15 | 498 Tests (120 Rendering) | **Approved & Implemented** | **[Tasklog-ARC09](tasklog-arc09-rendering.md)** |
 | **ARC-10** | Publishing & Versioning Architecture | WP-ARC10-01 to WP-ARC10-15 | 618 Tests (120 Publishing) | **Approved & Implemented** | **[Tasklog-ARC10](tasklog-arc10-publishing.md)** |
+| **CI/CD Ops** | CI Quality Gates & Jobs Remediation | Ruff, ESLint, Lockfile, CI Workflows | 618 Platform Tests (100% Pass) | **Approved & Verified** | **[Tasklog-CI-Jobs](tasklog-ci-cd-jobs-analysis-and-fix.md)** |
 
 ---
 

@@ -2,6 +2,7 @@
 ModularMenu — API v1 Master Router Registration (ARC-07 §14.2).
 Aggregates all domain API routers under /api/v1 prefix.
 """
+
 from fastapi import APIRouter
 
 from app.api.v1 import (

@@ -1,8 +1,9 @@
 """
 Draft Revision Management Service (ARC-10 §6, WP-ARC10-03).
 """
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from app.modules.publishing.domain.entities import DraftRevision, MenuDraft
@@ -16,8 +17,8 @@ from app.modules.publishing.domain.services.canonical_hash import calculate_snap
 class DraftRevisionService:
     def __init__(self):
         # In-memory storage for repository / test harness decoupling
-        self._drafts: Dict[UUID, MenuDraft] = {}
-        self._revisions: Dict[UUID, List[DraftRevision]] = {}
+        self._drafts: dict[UUID, MenuDraft] = {}
+        self._revisions: dict[UUID, list[DraftRevision]] = {}
 
     def get_or_create_draft(self, organization_id: UUID, menu_id: UUID) -> MenuDraft:
         if menu_id not in self._drafts:
@@ -29,18 +30,18 @@ class DraftRevisionService:
             )
         return self._drafts[menu_id]
 
-    def get_latest_revision(self, menu_id: UUID) -> Optional[DraftRevision]:
+    def get_latest_revision(self, menu_id: UUID) -> DraftRevision | None:
         revs = self._revisions.get(menu_id, [])
         return revs[-1] if revs else None
 
-    def get_revision(self, menu_id: UUID, revision_number: int) -> Optional[DraftRevision]:
+    def get_revision(self, menu_id: UUID, revision_number: int) -> DraftRevision | None:
         revs = self._revisions.get(menu_id, [])
         for r in revs:
             if r.revision_number == revision_number:
                 return r
         return None
 
-    def list_revisions(self, menu_id: UUID) -> List[DraftRevision]:
+    def list_revisions(self, menu_id: UUID) -> list[DraftRevision]:
         return list(self._revisions.get(menu_id, []))
 
     def save_revision(
@@ -48,9 +49,9 @@ class DraftRevisionService:
         *,
         organization_id: UUID,
         menu_id: UUID,
-        payload: Dict[str, Any],
-        expected_revision: Optional[int] = None,
-        created_by: Optional[UUID] = None,
+        payload: dict[str, Any],
+        expected_revision: int | None = None,
+        created_by: UUID | None = None,
     ) -> DraftRevision:
         draft = self.get_or_create_draft(organization_id, menu_id)
 
@@ -73,17 +74,19 @@ class DraftRevisionService:
             content_hash=content_hash,
             parent_revision_id=latest.id if latest else None,
             created_by=created_by,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
 
         draft.current_revision = next_revision_number
-        draft.updated_at = datetime.now(timezone.utc)
+        draft.updated_at = datetime.now(UTC)
         self._revisions.setdefault(menu_id, []).append(new_rev)
         return new_rev
 
     def mutate_saved_revision(self, revision_id: UUID) -> None:
         """Enforces ARC10-I01 & ARC10-I15 immutability check."""
-        raise ImmutableRecordMutationError("Saved draft revisions are strictly immutable and cannot be updated")
+        raise ImmutableRecordMutationError(
+            "Saved draft revisions are strictly immutable and cannot be updated"
+        )
 
     def delete_saved_revision(self, revision_id: UUID) -> None:
         """Enforces immutability: deletion forbidden."""

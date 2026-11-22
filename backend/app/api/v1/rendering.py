@@ -3,24 +3,24 @@ ModularMenu — Menu Rendering API Endpoints (ARC-09 §13, WP-ARC09-13).
 Provides public published rendering delivery, authorized draft previews, and render validation.
 Maintains strict separation: API routes mediate database persistence while rendering engine remains pure.
 """
-from datetime import datetime, timezone
-from decimal import Decimal
-from typing import Dict, List, Optional, Tuple
+
 import uuid
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
+from datetime import UTC, datetime
+from decimal import Decimal
+
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import get_current_user, get_db, verify_restaurant_access
+from app.api.dependencies import get_db, verify_restaurant_access
 from app.core.errors import ResourceNotFoundError
-from app.modules.identity.models import Restaurant, User
-from app.modules.menus.models import Category, MenuItem, Menu, MenuVersion, Publication
+from app.modules.identity.models import Restaurant
+from app.modules.menus.models import Category, Menu, MenuItem, MenuVersion, Publication
 from app.modules.rendering.application.services.render_input_builder import RenderInputBuilder
 from app.modules.rendering.application.services.render_input_validator import RenderInputValidator
-from app.modules.rendering.domain.exceptions import RenderError, RenderSnapshotNotFoundError
+from app.modules.rendering.domain.exceptions import RenderSnapshotNotFoundError
 from app.modules.rendering.domain.render_input import RenderLayout
 from app.modules.rendering.domain.render_mode import RenderMode
-from app.modules.rendering.infrastructure.render_cache import RenderCachePolicy
 from app.modules.rendering.schemas.preview_render import (
     DraftPreviewMetadataOut,
     DraftPreviewResponse,
@@ -51,7 +51,7 @@ async def resolve_public_menu(
     db: AsyncSession,
     restaurant_slug: str,
     menu_slug: str,
-) -> Tuple[PublicMenuRenderResponse, str, str]:
+) -> tuple[PublicMenuRenderResponse, str, str]:
     """Resolves active published snapshot and produces PublicMenuRenderResponse."""
     # 1. Resolve active restaurant
     rest_stmt = select(Restaurant).where(
@@ -190,7 +190,7 @@ async def resolve_draft_preview(
     db: AsyncSession,
     restaurant: Restaurant,
     menu_id: uuid.UUID,
-) -> Tuple[DraftPreviewResponse, Dict[str, str]]:
+) -> tuple[DraftPreviewResponse, dict[str, str]]:
     """Generates an authorized draft preview for restaurant operators."""
     # 1. Fetch Menu
     menu_stmt = select(Menu).where(Menu.id == menu_id, Menu.restaurant_id == restaurant.id)
@@ -213,12 +213,14 @@ async def resolve_draft_preview(
         .order_by(MenuItem.sort_order.asc())
     )
     all_items = (await db.execute(item_stmt)).scalars().all()
-    items_by_cat: Dict[uuid.UUID, List[MenuItem]] = {}
+    items_by_cat: dict[uuid.UUID, list[MenuItem]] = {}
     for it in all_items:
         items_by_cat.setdefault(it.category_id, []).append(it)
 
     # 4. Fetch Active Theme & Design Config
-    cfg_stmt = select(RestaurantDesignConfig).where(RestaurantDesignConfig.restaurant_id == restaurant.id)
+    cfg_stmt = select(RestaurantDesignConfig).where(
+        RestaurantDesignConfig.restaurant_id == restaurant.id
+    )
     design_config = (await db.execute(cfg_stmt)).scalars().first()
 
     tokens = THEME_PRESETS[0]["tokens"]
@@ -236,16 +238,18 @@ async def resolve_draft_preview(
             theme_name = theme_record.name
 
     # 5. Assemble Categories and Items
-    categories_out: List[PublicCategoryOut] = []
-    warnings: List[DraftPreviewWarning] = []
+    categories_out: list[PublicCategoryOut] = []
+    warnings: list[DraftPreviewWarning] = []
 
     currency_code = getattr(restaurant, "currency", "INR")
 
     for cat in categories:
-        items_out: List[PublicItemOut] = []
+        items_out: list[PublicItemOut] = []
         for it in items_by_cat.get(cat.id, []):
             price_val = float(it.base_price)
-            formatted_price = RenderInputBuilder.format_price(Decimal(str(price_val)), it.currency_code or currency_code)
+            formatted_price = RenderInputBuilder.format_price(
+                Decimal(str(price_val)), it.currency_code or currency_code
+            )
 
             badges = []
             if it.dietary_type:
@@ -332,7 +336,7 @@ async def resolve_draft_preview(
     )
     plan = RenderInputBuilder.build_render_plan(render_layout)
 
-    now_str = datetime.now(timezone.utc).isoformat()
+    now_str = datetime.now(UTC).isoformat()
     response_dto = DraftPreviewResponse(
         status="preview",
         restaurant=PublicRestaurantOut(
@@ -397,6 +401,7 @@ async def resolve_draft_preview(
 
 # --- Endpoints ---
 
+
 @router.get(
     "/public/restaurants/{restaurant_slug}/menus/{menu_slug}/render",
     response_model=PublicMenuRenderResponse,
@@ -423,11 +428,16 @@ async def get_public_rendered_menu(
 
     # Check Conditional If-None-Match
     if_none_match = request.headers.get("if-none-match")
-    if if_none_match and (if_none_match == etag or if_none_match == f'W/{etag}' or if_none_match == "*"):
+    if if_none_match and (
+        if_none_match == etag or if_none_match == f"W/{etag}" or if_none_match == "*"
+    ):
         response.status_code = status.HTTP_304_NOT_MODIFIED
         response.headers["ETag"] = etag
         response.headers["Cache-Control"] = cache_control
-        return Response(status_code=status.HTTP_304_NOT_MODIFIED, headers={"ETag": etag, "Cache-Control": cache_control})
+        return Response(
+            status_code=status.HTTP_304_NOT_MODIFIED,
+            headers={"ETag": etag, "Cache-Control": cache_control},
+        )
 
     response.headers["ETag"] = etag
     response.headers["Cache-Control"] = cache_control
@@ -472,7 +482,7 @@ async def get_draft_preview(
 async def validate_menu_rendering(
     restaurant_id: uuid.UUID,
     menu_id: uuid.UUID,
-    payload: Optional[RenderValidationRequest] = None,
+    payload: RenderValidationRequest | None = None,
     restaurant: Restaurant = Depends(verify_restaurant_access),
     db: AsyncSession = Depends(get_db),
 ):

@@ -2,34 +2,40 @@
 ModularMenu — Customization API Endpoints (ARC-08 §13, §14).
 Provides draft customization lifecycle, validation, deterministic preview, and revision restoration.
 """
+
 import uuid
-from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, Header, HTTPException, Response, status
+from typing import Any
+
+from fastapi import APIRouter, Depends, Header, HTTPException, Response
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
-from app.shared.application.tenant_context import TenantContext
 from app.api.dependencies.authorization import require_permission
+from app.core.database import get_db
+from app.modules.customization.services import customization_service
 from app.modules.identity.models import Restaurant
 from app.modules.menus.models import Menu
-from app.modules.customization.services import customization_service
+from app.shared.application.tenant_context import TenantContext
 
 router = APIRouter(tags=["Customization"])
 
 
 # --- Pydantic Schemas for API Requests/Responses ---
 
+
 class CustomizationUpdateResponse(BaseModel):
     menu_id: uuid.UUID
     revision: int
     status: str = "draft"
-    configuration: Dict[str, Any]
-    validation: Dict[str, Any] = Field(default_factory=lambda: {"valid": True, "errors": [], "warnings": []})
+    configuration: dict[str, Any]
+    validation: dict[str, Any] = Field(
+        default_factory=lambda: {"valid": True, "errors": [], "warnings": []}
+    )
 
 
 # --- Customization Draft Endpoints ---
+
 
 @router.get("/menus/{menu_id}/customization")
 async def get_menu_customization(
@@ -49,7 +55,9 @@ async def get_menu_customization(
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found.")
 
-    record = await customization_service.get_or_create_customization(db, tenant.organization_id, menu_id)
+    record = await customization_service.get_or_create_customization(
+        db, tenant.organization_id, menu_id
+    )
     response.headers["ETag"] = f'"revision-{record.revision}"'
     return {
         "menu_id": menu_id,
@@ -63,9 +71,9 @@ async def get_menu_customization(
 @router.put("/menus/{menu_id}/customization", response_model=CustomizationUpdateResponse)
 async def update_menu_customization(
     menu_id: uuid.UUID,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     response: Response,
-    if_match: Optional[str] = Header(None, alias="If-Match"),
+    if_match: str | None = Header(None, alias="If-Match"),
     tenant: TenantContext = Depends(require_permission("menu.customization.update")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -80,7 +88,7 @@ async def update_menu_customization(
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found.")
 
-    expected_rev: Optional[int] = None
+    expected_rev: int | None = None
     if if_match:
         clean_match = if_match.strip('"').replace("revision-", "")
         try:
@@ -108,7 +116,7 @@ async def update_menu_customization(
 @router.post("/menus/{menu_id}/customization/validate")
 async def validate_customization_endpoint(
     menu_id: uuid.UUID,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     tenant: TenantContext = Depends(require_permission("menu.customization.validate")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -129,7 +137,7 @@ async def validate_customization_endpoint(
 @router.post("/menus/{menu_id}/customization/preview")
 async def preview_customization_endpoint(
     menu_id: uuid.UUID,
-    payload: Optional[Dict[str, Any]] = None,
+    payload: dict[str, Any] | None = None,
     tenant: TenantContext = Depends(require_permission("menu.preview")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -156,7 +164,7 @@ async def preview_customization_endpoint(
 @router.post("/menus/{menu_id}/customization/reset")
 async def reset_customization_endpoint(
     menu_id: uuid.UUID,
-    payload: Optional[Dict[str, str]] = None,
+    payload: dict[str, str] | None = None,
     tenant: TenantContext = Depends(require_permission("menu.customization.update")),
     db: AsyncSession = Depends(get_db),
 ):
@@ -234,7 +242,9 @@ async def get_customization_revision(
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found.")
 
-    rev = await customization_service.get_revision(db, tenant.organization_id, menu_id, revision_num)
+    rev = await customization_service.get_revision(
+        db, tenant.organization_id, menu_id, revision_num
+    )
     return {
         "id": rev.id,
         "menu_id": rev.menu_id,

@@ -1,8 +1,10 @@
 """
 Category Domain Entities (ARC-04 §6.5, MOD-05).
 """
+
 from dataclasses import dataclass
 from uuid import UUID
+
 from app.shared.domain.value_objects import DisplayOrder
 
 

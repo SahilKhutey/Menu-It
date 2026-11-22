@@ -2,9 +2,10 @@
 ModularMenu — Public Menu Delivery Schemas (ARC-07 §4.11).
 Strictly separates public consumption from internal tenant data.
 """
+
 from datetime import datetime
-from typing import Any, Dict, List, Optional
-from uuid import UUID
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -14,15 +15,15 @@ class PublicRestaurantResponse(BaseModel):
     slug: str
     currency: str
     time_zone: str
-    theme_preset: Optional[str] = "minimal"
-    theme_tokens: Dict[str, Any] = {}
-    fssai_license: Optional[str] = None
+    theme_preset: str | None = "minimal"
+    theme_tokens: dict[str, Any] = {}
+    fssai_license: str | None = None
 
 
 class PublicMenuSummary(BaseModel):
     name: str
     slug: str
-    description: Optional[str] = None
+    description: str | None = None
     is_active: bool = True
 
 
@@ -35,7 +36,7 @@ class PublicMenuSnapshotResponse(BaseModel):
     version_number: int
     published_at: datetime
     sha256_digest: str
-    theme_tokens: Dict[str, Any]
+    theme_tokens: dict[str, Any]
     layout_preset: str
-    categories: List[Dict[str, Any]]
-    items: List[Dict[str, Any]]
+    categories: list[dict[str, Any]]
+    items: list[dict[str, Any]]

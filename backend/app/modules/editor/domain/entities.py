@@ -1,6 +1,7 @@
 """
 Visual Menu Editor Domain Entities (ARC-04 §6.12, MOD-12).
 """
+
 from dataclasses import dataclass, field
 from typing import Any
 from uuid import UUID

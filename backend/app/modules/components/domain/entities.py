@@ -1,6 +1,7 @@
 """
 Component Registry Domain Entities (ARC-04 §6.10, MOD-10).
 """
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -28,4 +29,6 @@ class ComponentDefinition:
         allowed_props = self.schema.get("properties", {})
         for prop in properties:
             if prop not in allowed_props:
-                raise ValueError(f"Property '{prop}' is not supported by component '{self.component_id}'")
+                raise ValueError(
+                    f"Property '{prop}' is not supported by component '{self.component_id}'"
+                )

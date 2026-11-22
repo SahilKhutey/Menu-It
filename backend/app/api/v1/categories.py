@@ -1,14 +1,14 @@
 """
 ModularMenu — Category Management API Endpoints (ARC-07 §4.4).
 """
+
 import uuid
-from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.authorization import require_permission
-from app.api.dependencies.tenant import get_tenant_context
 from app.api.schemas.categories import CategoryResponse, CategoryUpdateRequest
 from app.api.schemas.items import ItemCreateRequest, ItemResponse
 from app.core.database import get_db
@@ -54,7 +54,7 @@ async def delete_category(
     return None
 
 
-@router.get("/{category_id}/items", response_model=List[ItemResponse])
+@router.get("/{category_id}/items", response_model=list[ItemResponse])
 async def list_category_items(
     category_id: uuid.UUID,
     tenant: TenantContext = Depends(require_permission("menu.read")),
@@ -70,7 +70,9 @@ async def list_category_items(
     return result.scalars().all()
 
 
-@router.post("/{category_id}/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{category_id}/items", response_model=ItemResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_category_item(
     category_id: uuid.UUID,
     payload: ItemCreateRequest,

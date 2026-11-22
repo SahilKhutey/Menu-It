@@ -1,6 +1,6 @@
-from typing import Any, Dict, List
+from typing import Any
 
-THEME_PRESETS: List[Dict[str, Any]] = [
+THEME_PRESETS: list[dict[str, Any]] = [
     {
         "name": "Luxury",
         "theme_key": "luxury",
@@ -18,22 +18,22 @@ THEME_PRESETS: List[Dict[str, Any]] = [
                 "border": "#2D3139",
                 "dietaryVeg": "#22C55E",
                 "dietaryNonVeg": "#EF4444",
-                "dietaryEgg": "#F59E0B"
+                "dietaryEgg": "#F59E0B",
             },
             "typography": {
                 "fontHeading": "Cinzel",
                 "fontBody": "Plus Jakarta Sans",
                 "fontPrice": "Cinzel",
                 "baseSize": 16,
-                "scaleRatio": 1.25
+                "scaleRatio": 1.25,
             },
             "layout": {
                 "borderRadius": "sm",
                 "cardStyle": "elevated",
                 "itemSpacing": "comfortable",
-                "imageAspectRatio": "portrait"
-            }
-        }
+                "imageAspectRatio": "portrait",
+            },
+        },
     },
     {
         "name": "Minimal",
@@ -52,22 +52,22 @@ THEME_PRESETS: List[Dict[str, Any]] = [
                 "border": "#E4E4E7",
                 "dietaryVeg": "#16A34A",
                 "dietaryNonVeg": "#DC2626",
-                "dietaryEgg": "#D97706"
+                "dietaryEgg": "#D97706",
             },
             "typography": {
                 "fontHeading": "Inter",
                 "fontBody": "Inter",
                 "fontPrice": "Inter",
                 "baseSize": 16,
-                "scaleRatio": 1.2
+                "scaleRatio": 1.2,
             },
             "layout": {
                 "borderRadius": "none",
                 "cardStyle": "bordered",
                 "itemSpacing": "compact",
-                "imageAspectRatio": "square"
-            }
-        }
+                "imageAspectRatio": "square",
+            },
+        },
     },
     {
         "name": "Rustic",
@@ -86,22 +86,22 @@ THEME_PRESETS: List[Dict[str, Any]] = [
                 "border": "#E7E0D3",
                 "dietaryVeg": "#15803D",
                 "dietaryNonVeg": "#B91C1C",
-                "dietaryEgg": "#B45309"
+                "dietaryEgg": "#B45309",
             },
             "typography": {
                 "fontHeading": "Merriweather",
                 "fontBody": "Lora",
                 "fontPrice": "Merriweather",
                 "baseSize": 16,
-                "scaleRatio": 1.25
+                "scaleRatio": 1.25,
             },
             "layout": {
                 "borderRadius": "md",
                 "cardStyle": "elevated",
                 "itemSpacing": "comfortable",
-                "imageAspectRatio": "portrait"
-            }
-        }
+                "imageAspectRatio": "portrait",
+            },
+        },
     },
     {
         "name": "Vibrant",
@@ -120,22 +120,22 @@ THEME_PRESETS: List[Dict[str, Any]] = [
                 "border": "#FDE68A",
                 "dietaryVeg": "#16A34A",
                 "dietaryNonVeg": "#E11D48",
-                "dietaryEgg": "#F59E0B"
+                "dietaryEgg": "#F59E0B",
             },
             "typography": {
                 "fontHeading": "Outfit",
                 "fontBody": "Plus Jakarta Sans",
                 "fontPrice": "Outfit",
                 "baseSize": 16,
-                "scaleRatio": 1.25
+                "scaleRatio": 1.25,
             },
             "layout": {
                 "borderRadius": "lg",
                 "cardStyle": "elevated",
                 "itemSpacing": "spacious",
-                "imageAspectRatio": "video"
-            }
-        }
+                "imageAspectRatio": "video",
+            },
+        },
     },
     {
         "name": "Contemporary",
@@ -154,22 +154,22 @@ THEME_PRESETS: List[Dict[str, Any]] = [
                 "border": "#E2E8F0",
                 "dietaryVeg": "#16A34A",
                 "dietaryNonVeg": "#DC2626",
-                "dietaryEgg": "#D97706"
+                "dietaryEgg": "#D97706",
             },
             "typography": {
                 "fontHeading": "Cabinet Grotesk",
                 "fontBody": "Inter",
                 "fontPrice": "Cabinet Grotesk",
                 "baseSize": 16,
-                "scaleRatio": 1.2
+                "scaleRatio": 1.2,
             },
             "layout": {
                 "borderRadius": "md",
                 "cardStyle": "bordered",
                 "itemSpacing": "comfortable",
-                "imageAspectRatio": "square"
-            }
-        }
+                "imageAspectRatio": "square",
+            },
+        },
     },
     {
         "name": "Editorial",
@@ -188,21 +188,21 @@ THEME_PRESETS: List[Dict[str, Any]] = [
                 "border": "#E5E5E5",
                 "dietaryVeg": "#16A34A",
                 "dietaryNonVeg": "#DC2626",
-                "dietaryEgg": "#CA8A04"
+                "dietaryEgg": "#CA8A04",
             },
             "typography": {
                 "fontHeading": "Playfair Display",
                 "fontBody": "Source Serif 4",
                 "fontPrice": "Playfair Display",
                 "baseSize": 16,
-                "scaleRatio": 1.333
+                "scaleRatio": 1.333,
             },
             "layout": {
                 "borderRadius": "none",
                 "cardStyle": "flat",
                 "itemSpacing": "spacious",
-                "imageAspectRatio": "video"
-            }
-        }
-    }
+                "imageAspectRatio": "video",
+            },
+        },
+    },
 ]

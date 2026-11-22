@@ -1,9 +1,10 @@
 """
 ARC-10 Domain Events for Publishing & Versioning.
 """
+
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 from uuid import UUID
 
 
@@ -14,7 +15,7 @@ class PublicationEvent:
     aggregate_type: str
     aggregate_id: UUID
     event_type: str
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     occurred_at: datetime
     published_at: datetime | None = None
     attempts: int = 0

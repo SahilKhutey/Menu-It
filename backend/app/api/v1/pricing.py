@@ -1,9 +1,11 @@
 """
 ModularMenu — Pricing Entity Modification & Deletion API Endpoints (ARC-07 §4.5).
 """
+
 import uuid
 from decimal import Decimal
-from fastapi import APIRouter, Depends, HTTPException, status
+
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,6 +31,7 @@ async def update_price(
 ):
     """Updates an existing portion price."""
     import datetime
+
     return ItemPriceResponse(
         id=price_id,
         organization_id=tenant.organization_id,
@@ -39,7 +42,7 @@ async def update_price(
         amount=payload.amount,
         currency="INR",
         is_default=False,
-        created_at=datetime.datetime.now(datetime.timezone.utc),
+        created_at=datetime.datetime.now(datetime.UTC),
     )
 
 

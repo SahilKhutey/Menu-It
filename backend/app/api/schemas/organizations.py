@@ -1,9 +1,10 @@
 """
 ModularMenu — Organization & Tenancy API Schemas (ARC-07 §4.2).
 """
+
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
@@ -17,8 +18,8 @@ class OrganizationCreateRequest(BaseModel):
 
 class OrganizationUpdateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    name: Optional[str] = Field(None, min_length=1, max_length=180)
-    default_currency: Optional[str] = Field(None, min_length=3, max_length=3)
+    name: str | None = Field(None, min_length=1, max_length=180)
+    default_currency: str | None = Field(None, min_length=3, max_length=3)
 
 
 class OrganizationResponse(BaseModel):
@@ -29,8 +30,8 @@ class OrganizationResponse(BaseModel):
     status: str
     country_code: str = "IN"
     default_currency: str = "INR"
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class OrganizationMemberResponse(BaseModel):
@@ -46,7 +47,9 @@ class OrganizationMemberResponse(BaseModel):
 class InvitationCreateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     email: EmailStr
-    role: str = Field(default="restaurant_manager", pattern=r"^(admin|restaurant_manager|menu_editor|viewer)$")
+    role: str = Field(
+        default="restaurant_manager", pattern=r"^(admin|restaurant_manager|menu_editor|viewer)$"
+    )
 
 
 class InvitationResponse(BaseModel):

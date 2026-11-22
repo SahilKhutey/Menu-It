@@ -1,6 +1,7 @@
 """
 Food Item Domain Entities (ARC-04 §6.6, MOD-06).
 """
+
 from dataclasses import dataclass, field
 from enum import Enum
 from uuid import UUID

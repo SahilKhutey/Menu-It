@@ -1,5 +1,6 @@
 import time
 import uuid
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
@@ -10,6 +11,7 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
     ARC-03 §6.1 & §14.3: Request Correlation ID Middleware.
     Ensures every request has a traceable X-Request-ID for end-to-end observability.
     """
+
     async def dispatch(self, request: Request, call_next) -> Response:
         request_id = request.headers.get("X-Request-ID") or f"req_{uuid.uuid4().hex[:12]}"
         request.state.request_id = request_id

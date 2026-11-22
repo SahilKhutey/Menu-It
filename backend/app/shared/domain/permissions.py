@@ -2,6 +2,7 @@
 ModularMenu — Domain Permission Vocabulary (ARC-05 §5.5).
 Defines fine-grained permission identifiers governing multi-tenant access control.
 """
+
 from enum import StrEnum
 
 

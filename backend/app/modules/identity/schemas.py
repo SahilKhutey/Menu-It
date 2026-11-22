@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import List, Optional
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
@@ -53,17 +53,17 @@ class RestaurantCreate(BaseModel):
     organization_id: uuid.UUID
     name: str
     slug: str
-    description: Optional[str] = None
-    logo_url: Optional[str] = None
-    cover_url: Optional[str] = None
+    description: str | None = None
+    logo_url: str | None = None
+    cover_url: str | None = None
 
 
 class RestaurantUpdate(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    logo_url: Optional[str] = None
-    cover_url: Optional[str] = None
-    status: Optional[str] = None
+    name: str | None = None
+    description: str | None = None
+    logo_url: str | None = None
+    cover_url: str | None = None
+    status: str | None = None
 
 
 class RestaurantOut(BaseModel):
@@ -73,8 +73,8 @@ class RestaurantOut(BaseModel):
     organization_id: uuid.UUID
     name: str
     slug: str
-    description: Optional[str] = None
-    logo_url: Optional[str] = None
-    cover_url: Optional[str] = None
+    description: str | None = None
+    logo_url: str | None = None
+    cover_url: str | None = None
     status: str
     created_at: datetime

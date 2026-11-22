@@ -2,7 +2,9 @@
 Application Use Cases (ARC-03 §5.1 & §5.2).
 Orchestrates domain entities, repositories, and transaction units of work.
 """
+
 import uuid
+
 from app.shared.application.commands import CreateMenuCommand, MenuResult
 from app.shared.application.interfaces import MenuRepository, UnitOfWork
 from app.shared.domain.entities import MenuEntity
@@ -11,6 +13,7 @@ from app.shared.domain.exceptions import BusinessRuleViolationException
 
 class CreateMenuUseCase:
     """Use case coordinating Menu aggregate creation and atomic persistence."""
+
     def __init__(self, menu_repository: MenuRepository, unit_of_work: UnitOfWork):
         self.menu_repo = menu_repository
         self.uow = unit_of_work
@@ -21,7 +24,7 @@ class CreateMenuUseCase:
         if existing:
             raise BusinessRuleViolationException(
                 "DuplicateMenuSlug",
-                f"A menu with slug '{command.slug}' already exists for this restaurant."
+                f"A menu with slug '{command.slug}' already exists for this restaurant.",
             )
 
         # 2. Instantiate aggregate root (triggers domain invariant validations)
@@ -32,7 +35,7 @@ class CreateMenuUseCase:
             slug=command.slug,
             description=command.description,
             menu_type=command.menu_type,
-            status="active"
+            status="active",
         )
 
         # 3. Coordinate atomic transaction persistence
@@ -47,5 +50,5 @@ class CreateMenuUseCase:
             name=menu_entity.name,
             slug=menu_entity.slug,
             menu_type=menu_entity.menu_type,
-            description=menu_entity.description
+            description=menu_entity.description,
         )

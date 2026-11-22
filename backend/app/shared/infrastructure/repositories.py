@@ -2,10 +2,12 @@
 SQLAlchemy Infrastructure Repositories (ARC-03 §7.2 & §7.3).
 Implements application layer interfaces using SQLAlchemy 2.0 Async.
 """
-from typing import List, Optional
+
 import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.modules.menus.models import Menu as MenuModel
 from app.shared.application.interfaces import MenuRepository, UnitOfWork
 from app.shared.domain.entities import MenuEntity
@@ -13,10 +15,11 @@ from app.shared.domain.entities import MenuEntity
 
 class SqlAlchemyMenuRepository(MenuRepository):
     """SQLAlchemy implementation of the MenuRepository contract."""
+
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_id(self, menu_id: uuid.UUID) -> Optional[MenuEntity]:
+    async def get_by_id(self, menu_id: uuid.UUID) -> MenuEntity | None:
         stmt = select(MenuModel).where(MenuModel.id == menu_id)
         result = await self.session.execute(stmt)
         model = result.scalars().first()
@@ -24,10 +27,9 @@ class SqlAlchemyMenuRepository(MenuRepository):
             return None
         return self._to_entity(model)
 
-    async def get_by_slug(self, restaurant_id: uuid.UUID, slug: str) -> Optional[MenuEntity]:
+    async def get_by_slug(self, restaurant_id: uuid.UUID, slug: str) -> MenuEntity | None:
         stmt = select(MenuModel).where(
-            MenuModel.restaurant_id == restaurant_id,
-            MenuModel.slug == slug
+            MenuModel.restaurant_id == restaurant_id, MenuModel.slug == slug
         )
         result = await self.session.execute(stmt)
         model = result.scalars().first()
@@ -35,7 +37,7 @@ class SqlAlchemyMenuRepository(MenuRepository):
             return None
         return self._to_entity(model)
 
-    async def list_for_restaurant(self, restaurant_id: uuid.UUID) -> List[MenuEntity]:
+    async def list_for_restaurant(self, restaurant_id: uuid.UUID) -> list[MenuEntity]:
         stmt = (
             select(MenuModel)
             .where(MenuModel.restaurant_id == restaurant_id)
@@ -54,7 +56,7 @@ class SqlAlchemyMenuRepository(MenuRepository):
             description=entity.description,
             menu_type=entity.menu_type,
             status=entity.status,
-            sort_order=1
+            sort_order=1,
         )
         self.session.add(model)
         return entity
@@ -75,12 +77,13 @@ class SqlAlchemyMenuRepository(MenuRepository):
             description=model.description,
             menu_type=model.menu_type,
             status=model.status,
-            created_at=model.created_at
+            created_at=model.created_at,
         )
 
 
 class SqlAlchemyUnitOfWork(UnitOfWork):
     """SQLAlchemy transaction coordinator managing atomic session boundaries."""
+
     def __init__(self, session: AsyncSession):
         self.session = session
 

@@ -2,7 +2,7 @@
 ModularMenu — OpenAPI Specification Validator (ARC-07 §18.2, §25.1).
 Validates endpoint coverage, response schemas, and RFC 7807 problem details error contracts.
 """
-import json
+
 import sys
 from pathlib import Path
 

@@ -2,8 +2,10 @@
 Identity Domain Entities (ARC-04 §6.1, MOD-01).
 Pure Python models with authentication invariants.
 """
+
 from dataclasses import dataclass
-from uuid import UUID, uuid4
+from uuid import UUID
+
 from app.shared.domain.value_objects import EmailAddress
 
 

@@ -7,9 +7,9 @@ Idempotently populates platform-global reference data:
 - Subscription plans (MOD-16)
 Guarantees idempotency and never overwrites customer or tenant data.
 """
+
 import asyncio
 import uuid
-from typing import Any, Dict, List
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -68,7 +68,11 @@ BUILTIN_LAYOUTS = [
     {
         "layout_key": "grid-compact",
         "schema_version": 1,
-        "config": {"type": "grid", "columns": {"mobile": 1, "tablet": 2, "desktop": 3}, "card_spacing": 16},
+        "config": {
+            "type": "grid",
+            "columns": {"mobile": 1, "tablet": 2, "desktop": 3},
+            "card_spacing": 16,
+        },
     },
     {
         "layout_key": "list-detailed",
@@ -132,7 +136,7 @@ BUILTIN_PLANS = [
 ]
 
 
-async def seed_reference_data(session: AsyncSession) -> Dict[str, int]:
+async def seed_reference_data(session: AsyncSession) -> dict[str, int]:
     """
     Idempotent reference data seeding.
     Inserts missing records without modifying existing tenant or platform data.
@@ -172,7 +176,9 @@ async def seed_reference_data(session: AsyncSession) -> Dict[str, int]:
 
     # 3. Components
     for c_data in BUILTIN_COMPONENTS:
-        stmt = select(ComponentDefinitionModel).where(ComponentDefinitionModel.component_key == c_data["component_key"])
+        stmt = select(ComponentDefinitionModel).where(
+            ComponentDefinitionModel.component_key == c_data["component_key"]
+        )
         existing = (await session.execute(stmt)).scalar_one_or_none()
         if not existing:
             comp = ComponentDefinitionModel(

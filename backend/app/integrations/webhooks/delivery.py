@@ -1,12 +1,12 @@
 """
 ModularMenu — Outbound Webhook Delivery Service (ARC-07 §12.4).
 """
+
 import datetime
 import json
 import time
-import uuid
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import UUID
 
 from app.integrations.webhooks.signing import sign_payload
@@ -18,15 +18,15 @@ class WebhookEvent:
     event_type: str
     organization_id: UUID
     created_at: datetime.datetime
-    data: Dict[str, Any]
+    data: dict[str, Any]
 
 
 class WebhookDeliveryService:
     def __init__(self, signing_secret: str = "whsec_test_secret_123"):
         self.signing_secret = signing_secret
-        self.delivered_events: list[Dict[str, Any]] = []
+        self.delivered_events: list[dict[str, Any]] = []
 
-    def prepare_envelope(self, event: WebhookEvent) -> Dict[str, Any]:
+    def prepare_envelope(self, event: WebhookEvent) -> dict[str, Any]:
         """Serializes domain event into standard webhook envelope (ARC-07 §12.2)."""
         return {
             "id": str(event.id),
@@ -36,7 +36,7 @@ class WebhookDeliveryService:
             "data": event.data,
         }
 
-    async def deliver(self, destination_url: str, event: WebhookEvent) -> Dict[str, Any]:
+    async def deliver(self, destination_url: str, event: WebhookEvent) -> dict[str, Any]:
         """Prepares signed headers and delivers webhook payload."""
         envelope = self.prepare_envelope(event)
         payload_bytes = json.dumps(envelope, sort_keys=True).encode("utf-8")
@@ -54,7 +54,7 @@ class WebhookDeliveryService:
             "event_id": str(event.id),
             "headers": headers,
             "envelope": envelope,
-            "delivered_at": datetime.datetime.now(datetime.timezone.utc),
+            "delivered_at": datetime.datetime.now(datetime.UTC),
             "status": "delivered",
         }
         self.delivered_events.append(record)

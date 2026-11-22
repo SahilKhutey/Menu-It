@@ -2,7 +2,9 @@
 ModularMenu — Database Session Configuration (ARC-06 §8.5, §12.4).
 Provides pooled async sessions, statement timeouts, and connection recycling.
 """
-from typing import AsyncGenerator
+
+from collections.abc import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -17,13 +19,15 @@ engine_kwargs = {
 }
 
 if "sqlite" not in settings.DATABASE_URL:
-    engine_kwargs.update({
-        "pool_size": settings.DB_POOL_SIZE,
-        "max_overflow": settings.DB_MAX_OVERFLOW,
-        "pool_timeout": 30,
-        "pool_recycle": 1800,
-        "pool_pre_ping": True,
-    })
+    engine_kwargs.update(
+        {
+            "pool_size": settings.DB_POOL_SIZE,
+            "max_overflow": settings.DB_MAX_OVERFLOW,
+            "pool_timeout": 30,
+            "pool_recycle": 1800,
+            "pool_pre_ping": True,
+        }
+    )
 
 engine = create_async_engine(settings.DATABASE_URL, **engine_kwargs)
 

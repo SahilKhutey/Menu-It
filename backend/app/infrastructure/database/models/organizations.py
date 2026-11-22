@@ -2,8 +2,8 @@
 ModularMenu — Organization & Tenancy Models (ARC-06 §3.2, §4.3).
 Primary tenant boundary entities, memberships, and pending invitations.
 """
-from datetime import datetime, timezone
-from typing import Optional
+
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, UniqueConstraint
@@ -49,15 +49,13 @@ class OrganizationMemberModel(Base):
     role: Mapped[str] = mapped_column(String(40), default="member", nullable=False)
     status: Mapped[str] = mapped_column(String(30), default="active", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
 
 
 class OrganizationInvitationModel(Base, UUIDPrimaryKey):
     __tablename__ = "organization_invitations"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "email", name="uq_org_invitation_email"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", "email", name="uq_org_invitation_email"),)
 
     organization_id: Mapped[UUID] = mapped_column(
         GUID(), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False, index=True
@@ -66,7 +64,7 @@ class OrganizationInvitationModel(Base, UUIDPrimaryKey):
     role: Mapped[str] = mapped_column(String(40), default="editor", nullable=False)
     token_hash: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     status: Mapped[str] = mapped_column(String(30), default="pending", nullable=False)

@@ -2,8 +2,10 @@
 ModularMenu — API Dependencies Package (ARC-07 §14.1).
 Exports authentication, authorization, tenant context, pagination, and database session providers.
 """
+
 import uuid
-from typing import Callable, List, Optional
+from collections.abc import Callable
+
 from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
@@ -11,7 +13,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.authentication import AuthenticatedActor, get_current_actor
 from app.api.dependencies.authorization import require_permission
-from app.api.dependencies.pagination import CursorPaginationMeta, PaginatedResponse, PaginationParams
+from app.api.dependencies.pagination import (
+    CursorPaginationMeta,
+    PaginatedResponse,
+    PaginationParams,
+)
 from app.api.dependencies.tenant import get_tenant_context
 from app.core.database import get_db
 from app.core.security import decode_access_token
@@ -22,7 +28,7 @@ security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Security(security),
+    credentials: HTTPAuthorizationCredentials | None = Security(security),
     db: AsyncSession = Depends(get_db),
 ) -> User:
     if not credentials:
@@ -70,7 +76,9 @@ async def verify_restaurant_access(
         result = await db.execute(select(Restaurant).where(Restaurant.id == restaurant_id))
         restaurant = result.scalars().first()
         if not restaurant:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Restaurant not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Restaurant not found"
+            )
         set_current_restaurant_id(restaurant.id)
         return restaurant
 
@@ -97,7 +105,7 @@ async def verify_restaurant_access(
     return restaurant
 
 
-def require_role(allowed_roles: List[str]) -> Callable:
+def require_role(allowed_roles: list[str]) -> Callable:
     async def role_checker(
         restaurant_id: uuid.UUID,
         user: User = Depends(get_current_user),

@@ -1,16 +1,17 @@
 import uuid
-from typing import Any, Dict, List
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+
 from app.api.dependencies import get_db, verify_restaurant_access
 from app.modules.identity.models import Restaurant
-from app.modules.menus.models import Category, MenuItem, Menu
+from app.modules.menus.models import Category, Menu, MenuItem
 from app.modules.menus.schemas import (
     CategoryCreate,
     CategoryOut,
-    CategoryUpdate,
     MenuCreate,
     MenuItemCreate,
     MenuItemOut,
@@ -23,13 +24,13 @@ router = APIRouter(tags=["Menus & Items"])
 
 
 # --- Menus Endpoints ---
-@router.get("/restaurants/{restaurant_id}/menus", response_model=List[MenuOut])
+@router.get("/restaurants/{restaurant_id}/menus", response_model=list[MenuOut])
 async def list_menus(
     restaurant_id: uuid.UUID,
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     stmt = (
         select(Menu)
@@ -42,18 +43,24 @@ async def list_menus(
     return result.scalars().all()
 
 
-@router.post("/restaurants/{restaurant_id}/menus", response_model=MenuOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/restaurants/{restaurant_id}/menus",
+    response_model=MenuOut,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_menu(
     restaurant_id: uuid.UUID,
     req: MenuCreate,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     existing = await db.execute(
         select(Menu).where(Menu.restaurant_id == restaurant.id, Menu.slug == req.slug)
     )
     if existing.scalars().first():
-        raise HTTPException(status_code=400, detail="A menu with this slug already exists for this restaurant.")
+        raise HTTPException(
+            status_code=400, detail="A menu with this slug already exists for this restaurant."
+        )
 
     menu = Menu(
         restaurant_id=restaurant.id,
@@ -62,7 +69,7 @@ async def create_menu(
         description=req.description,
         menu_type=req.menu_type,
         status=req.status,
-        sort_order=req.sort_order
+        sort_order=req.sort_order,
     )
     db.add(menu)
     await db.commit()
@@ -76,7 +83,7 @@ async def update_menu(
     menu_id: uuid.UUID,
     req: MenuUpdate,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     stmt = select(Menu).where(Menu.id == menu_id, Menu.restaurant_id == restaurant.id)
     result = await db.execute(stmt)
@@ -93,12 +100,14 @@ async def update_menu(
 
 
 # --- Categories Endpoints ---
-@router.get("/restaurants/{restaurant_id}/menus/{menu_id}/categories", response_model=List[CategoryOut])
+@router.get(
+    "/restaurants/{restaurant_id}/menus/{menu_id}/categories", response_model=list[CategoryOut]
+)
 async def list_categories(
     restaurant_id: uuid.UUID,
     menu_id: uuid.UUID,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     stmt = (
         select(Category)
@@ -114,12 +123,12 @@ async def list_categories(
         .order_by(MenuItem.sort_order.asc())
     )
     items = (await db.execute(item_stmt)).scalars().all()
-    items_by_cat: Dict[uuid.UUID, List[MenuItem]] = {}
+    items_by_cat: dict[uuid.UUID, list[MenuItem]] = {}
     for it in items:
         it.variants = []
         items_by_cat.setdefault(it.category_id, []).append(it)
 
-    result_cats: List[CategoryOut] = []
+    result_cats: list[CategoryOut] = []
     for cat in categories:
         cat_items = [
             MenuItemOut(
@@ -137,7 +146,7 @@ async def list_categories(
                 is_available=it.is_available,
                 is_featured=it.is_featured,
                 sort_order=it.sort_order,
-                variants=[]
+                variants=[],
             )
             for it in items_by_cat.get(cat.id, [])
         ]
@@ -151,23 +160,29 @@ async def list_categories(
                 sort_order=cat.sort_order,
                 is_visible=cat.is_visible,
                 parent_id=cat.parent_id,
-                items=cat_items
+                items=cat_items,
             )
         )
 
     return result_cats
 
 
-@router.post("/restaurants/{restaurant_id}/menus/{menu_id}/categories", response_model=CategoryOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/restaurants/{restaurant_id}/menus/{menu_id}/categories",
+    response_model=CategoryOut,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_category(
     restaurant_id: uuid.UUID,
     menu_id: uuid.UUID,
     req: CategoryCreate,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     # Verify menu belongs to restaurant
-    menu_check = await db.execute(select(Menu).where(Menu.id == menu_id, Menu.restaurant_id == restaurant.id))
+    menu_check = await db.execute(
+        select(Menu).where(Menu.id == menu_id, Menu.restaurant_id == restaurant.id)
+    )
     if not menu_check.scalars().first():
         raise HTTPException(status_code=404, detail="Menu not found for this restaurant.")
 
@@ -179,7 +194,7 @@ async def create_category(
         image_url=req.image_url,
         sort_order=req.sort_order,
         is_visible=req.is_visible,
-        parent_id=req.parent_id
+        parent_id=req.parent_id,
     )
     db.add(cat)
     await db.commit()
@@ -192,18 +207,22 @@ async def create_category(
         sort_order=cat.sort_order,
         is_visible=cat.is_visible,
         parent_id=cat.parent_id,
-        items=[]
+        items=[],
     )
 
 
 # --- Food Items Endpoints ---
-@router.post("/restaurants/{restaurant_id}/categories/{category_id}/items", response_model=MenuItemOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/restaurants/{restaurant_id}/categories/{category_id}/items",
+    response_model=MenuItemOut,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_item(
     restaurant_id: uuid.UUID,
     category_id: uuid.UUID,
     req: MenuItemCreate,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     cat_check = await db.execute(
         select(Category).where(Category.id == category_id, Category.restaurant_id == restaurant.id)
@@ -225,7 +244,7 @@ async def create_item(
         allergens=req.allergens,
         is_available=req.is_available,
         is_featured=req.is_featured,
-        sort_order=req.sort_order
+        sort_order=req.sort_order,
     )
     db.add(item)
     await db.commit()
@@ -244,7 +263,7 @@ async def create_item(
         is_available=item.is_available,
         is_featured=item.is_featured,
         sort_order=item.sort_order,
-        variants=[]
+        variants=[],
     )
 
 
@@ -253,7 +272,7 @@ async def get_item(
     restaurant_id: uuid.UUID,
     item_id: uuid.UUID,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     stmt = (
         select(MenuItem)
@@ -280,7 +299,7 @@ async def get_item(
         is_available=item.is_available,
         is_featured=item.is_featured,
         sort_order=item.sort_order,
-        variants=[]
+        variants=[],
     )
 
 
@@ -290,7 +309,7 @@ async def update_item(
     item_id: uuid.UUID,
     req: MenuItemUpdate,
     restaurant: Restaurant = Depends(verify_restaurant_access),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     stmt = (
         select(MenuItem)
@@ -321,11 +340,12 @@ async def update_item(
         is_available=item.is_available,
         is_featured=item.is_featured,
         sort_order=item.sort_order,
-        variants=[]
+        variants=[],
     )
 
 
 # --- Canonical ARC-07 Menu Endpoints (ARC-07 §3.1, §4.4) ---
+
 
 @router.get("/menus/{menu_id}", response_model=MenuOut)
 async def get_menu_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
@@ -339,9 +359,7 @@ async def get_menu_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db))
 
 @router.patch("/menus/{menu_id}", response_model=MenuOut)
 async def update_menu_by_id(
-    menu_id: uuid.UUID,
-    req: MenuUpdate,
-    db: AsyncSession = Depends(get_db)
+    menu_id: uuid.UUID, req: MenuUpdate, db: AsyncSession = Depends(get_db)
 ):
     """Updates menu metadata directly by menu_id (ARC-07 §4.4)."""
     result = await db.execute(select(Menu).where(Menu.id == menu_id))
@@ -368,7 +386,7 @@ async def delete_menu_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_d
     return None
 
 
-@router.get("/menus/{menu_id}/categories", response_model=List[CategoryOut])
+@router.get("/menus/{menu_id}/categories", response_model=list[CategoryOut])
 async def list_menu_categories_by_id(menu_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     """Lists categories under a menu (ARC-07 §4.4)."""
     stmt = (
@@ -381,11 +399,11 @@ async def list_menu_categories_by_id(menu_id: uuid.UUID, db: AsyncSession = Depe
     return result.scalars().all()
 
 
-@router.post("/menus/{menu_id}/categories", response_model=CategoryOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/menus/{menu_id}/categories", response_model=CategoryOut, status_code=status.HTTP_201_CREATED
+)
 async def create_menu_category_by_id(
-    menu_id: uuid.UUID,
-    req: CategoryCreate,
-    db: AsyncSession = Depends(get_db)
+    menu_id: uuid.UUID, req: CategoryCreate, db: AsyncSession = Depends(get_db)
 ):
     """Creates category under a menu (ARC-07 §4.4)."""
     res = await db.execute(select(Menu).where(Menu.id == menu_id))
@@ -399,7 +417,7 @@ async def create_menu_category_by_id(
         name=req.name,
         description=req.description,
         sort_order=req.display_order if req.display_order is not None else req.sort_order,
-        is_visible=req.is_visible
+        is_visible=req.is_visible,
     )
     db.add(category)
     await db.commit()
@@ -415,15 +433,13 @@ async def create_menu_category_by_id(
         display_order=category.sort_order,
         is_visible=category.is_visible,
         parent_id=category.parent_id,
-        items=[]
+        items=[],
     )
 
 
 @router.post("/menus/{menu_id}/categories/reorder")
 async def reorder_menu_categories(
-    menu_id: uuid.UUID,
-    payload: Dict[str, Any],
-    db: AsyncSession = Depends(get_db)
+    menu_id: uuid.UUID, payload: dict[str, Any], db: AsyncSession = Depends(get_db)
 ):
     """Reorders categories within a menu (ARC-07 §4.4)."""
     items = payload.get("items") or payload.get("category_orders") or []

@@ -1,10 +1,12 @@
 """
 ModularMenu — Themes, Layouts & Components API Schemas (ARC-07 §4.6).
 """
+
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, Field
+
+from pydantic import BaseModel, ConfigDict
 
 
 class ThemeResponse(BaseModel):
@@ -12,9 +14,9 @@ class ThemeResponse(BaseModel):
     id: UUID
     name: str
     slug: str
-    description: Optional[str] = None
+    description: str | None = None
     is_system_preset: bool
-    tokens: Dict[str, Any]
+    tokens: dict[str, Any]
     created_at: datetime
 
 
@@ -23,8 +25,8 @@ class LayoutResponse(BaseModel):
     id: UUID
     name: str
     slug: str
-    description: Optional[str] = None
-    supported_slots: List[str]
+    description: str | None = None
+    supported_slots: list[str]
     is_system_preset: bool
 
 
@@ -34,5 +36,5 @@ class ComponentResponse(BaseModel):
     component_key: str
     name: str
     category: str
-    props_schema: Dict[str, Any]
+    props_schema: dict[str, Any]
     is_deprecated: bool = False
