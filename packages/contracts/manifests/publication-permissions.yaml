@@ -1,0 +1,51 @@
+version: "1.0"
+domain: publishing
+permissions:
+  menu.validate:
+    description: "Validate menu publication readiness"
+    roles:
+      - PlatformOwner
+      - RestaurantOwner
+      - RestaurantManager
+      - MenuEditor
+  menu.publish:
+    description: "Create and activate an immutable publication version"
+    roles:
+      - RestaurantOwner
+      - RestaurantManager
+  menu.rollback:
+    description: "Reactivate an earlier historical publication"
+    roles:
+      - RestaurantOwner
+      - RestaurantManager
+  menu.publication.read:
+    description: "View publication history and version metadata"
+    roles:
+      - PlatformOwner
+      - RestaurantOwner
+      - RestaurantManager
+      - MenuEditor
+  menu.snapshot.read:
+    description: "Inspect full snapshot JSON payload"
+    roles:
+      - PlatformOwner
+      - RestaurantOwner
+  menu.schedule:
+    description: "Schedule a future publication activation"
+    roles:
+      - RestaurantOwner
+      - RestaurantManager
+  menu.schedule.cancel:
+    description: "Cancel a pending scheduled publication"
+    roles:
+      - RestaurantOwner
+      - RestaurantManager
+  menu.approve:
+    description: "Approve a publication candidate revision"
+    roles:
+      - RestaurantOwner
+  menu.publication.audit.read:
+    description: "Review publication security and lifecycle audit records"
+    roles:
+      - PlatformOwner
+      - RestaurantOwner

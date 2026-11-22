@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/rollback-request.schema.json",
+  "title": "RollbackRequest",
+  "type": "object",
+  "required": ["target_publication_id"],
+  "properties": {
+    "target_publication_id": { "type": "string", "format": "uuid" },
+    "expected_active_publication_id": { "type": ["string", "null"], "format": "uuid" },
+    "reason": { "type": "string", "maxLength": 500 }
+  },
+  "additionalProperties": false
+}

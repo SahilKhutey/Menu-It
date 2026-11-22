@@ -276,16 +276,19 @@ docker compose logs -f
 
 The repository enforces strict automated quality gates prior to any pull request merge:
 
-### 1. Pytest Test Suites (199 Tests Passing — 100% Pass Rate)
+### 1. Pytest Test Suites (618 Tests Passing — 100% Pass Rate)
 ```bash
 pytest tests/ -v
-# ======================== 199 passed in 9.68s ========================
+# ======================== 618 passed in 60.63s ========================
 ```
 - **Architecture Boundaries (`tests/architecture/`):** Uses Python AST parsing to guarantee domain models never import the API layer or HTTP frameworks, verifies zero circular dependencies between all 16 modules, and mandates `lazy="raise"` on all SQLAlchemy relationships.
 - **Security & Tenancy (`tests/security/`):** 50 multi-tenant test scenarios (`ARC05-T001` to `ARC05-T050`) verifying that Tenant A is rejected with `HTTP 403 Forbidden` when attempting to access Tenant B's catalog or design settings, verifying transaction-local PostgreSQL RLS context, and preventing IDOR attacks.
 - **Database & Persistence Integrity (`tests/database/`):** 55 test scenarios (`ARC06-T001` to `ARC06-T055`) proving composite foreign key enforcement, default price uniqueness via partial indexes, JSONB configuration validation, and optimistic concurrency locking.
 - **Contract & Standards (`tests/contract/`, `tests/unit/`):** Enforces RFC 7807 problem details error envelopes, OpenAPI 3.1 specification validity, and exact Python `Decimal` currency representation.
 - **Snapshot Immutability (`tests/integration/`):** Proves that published snapshots are write-once, read-many (WORM) with SHA-256 digests and ORM mutation guards rejecting `UPDATE` and `DELETE`.
+- **Customization Engine (`tests/customization/`):** 104 test scenarios (`ARC08-T001` to `ARC08-T104`) verifying theme token resolution, responsive layouts, component slots, and dual-editor parity.
+- **Menu Rendering Engine (`tests/rendering/`):** 120 test scenarios (`ARC09-T001` to `ARC09-T120`) verifying pure presentation engine composition, ETag HTTP 304 caching, and First Load JS budget (< 120 kB).
+- **Publishing & Versioning Engine (`tests/publishing/`):** 120 test scenarios (`ARC10-T001` to `ARC10-T120`) verifying draft revisioning, validation readiness, atomic activation, non-destructive rollback, and transactional outbox events.
 
 ### 2. Formal End-to-End Product Validation Script
 Execute the formal multi-step validation scenario:
@@ -299,7 +302,7 @@ python scripts/validate_arc02_e2e.py
 ## 📚 Engineering Chronicles: Devlogs & Tasklogs
 
 Detailed milestone execution and developer journals are documented in dedicated archives:
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** 7 comprehensive engineering chronicles:
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** 11 comprehensive engineering chronicles:
   - [Devlog-001: Project Initialization & Blueprint Baseline](docs/devlogs/devlog-001-project-initialization-and-blueprint.md)
   - [Devlog-002: ARC-01 System Architecture Overview](docs/devlogs/devlog-002-arc01-system-architecture-overview.md)
   - [Devlog-003: ARC-02 Principles, Standards & Constraints](docs/devlogs/devlog-003-arc02-architectural-principles-and-standards.md)
@@ -307,6 +310,10 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Devlog-005: ARC-04 Modular Domain Architecture](docs/devlogs/devlog-005-arc04-modular-domain-architecture.md)
   - [Devlog-006: ARC-05 Multi-Tenant Architecture](docs/devlogs/devlog-006-arc05-multi-tenant-architecture.md)
   - [Devlog-007: ARC-06 Data Architecture & Persistence](docs/devlogs/devlog-007-arc06-data-architecture-and-persistence.md)
+  - [Devlog-008: ARC-07 API & Integration Architecture](docs/devlogs/devlog-008-arc07-api-and-integration-architecture.md)
+  - [Devlog-009: ARC-08 Theme & Customization Architecture](docs/devlogs/devlog-009-arc08-theme-and-customization-architecture.md)
+  - [Devlog-010: ARC-09 Menu Rendering Architecture](docs/devlogs/devlog-010-arc09-menu-rendering-architecture.md)
+  - [Devlog-011: ARC-10 Publishing & Versioning Architecture](docs/devlogs/devlog-011-arc10-publishing-versioning-architecture.md)
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Task verification logs and work package breakdowns:
   - [Tasklog-ARC01: System Overview Tasks](docs/tasklogs/tasklog-arc01-overview.md)
   - [Tasklog-ARC02: Engineering Standards (WP-01 to WP-10)](docs/tasklogs/tasklog-arc02-principles.md)
@@ -317,12 +324,13 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Tasklog-ARC07: API & Integration Architecture (WP-01 to WP-12)](docs/tasklogs/tasklog-arc07-api.md)
   - [Tasklog-ARC08: Theme & Customization Architecture (WP-01 to WP-13)](docs/tasklogs/tasklog-arc08-customization.md)
   - [Tasklog-ARC09: Menu Rendering Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc09-rendering.md)
+  - [Tasklog-ARC10: Publishing & Versioning Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc10-publishing.md)
 
 ---
 
 ## 📜 Architectural Decision Records (ADRs)
 
-All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (167 decisions recorded):
+All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (191 decisions recorded):
 - **ADR-0001 to ADR-0012:** System Architecture Principles & Non-Negotiable Standards (ARC-01 / ARC-02)
 - **ADR-0013 to ADR-0027:** Application Architecture, Layering & Monolith Boundaries (ARC-03)
 - **ADR-0028 to ADR-0043:** Modular Domain Architecture, 16 Discrete Modules & Domain Events (ARC-04)
@@ -331,6 +339,7 @@ All core engineering choices are tracked in [`docs/decisions/decision-register.m
 - **ADR-0089 to ADR-0113:** API & Integration Architecture, Contract-First OpenAPI & Webhooks (ARC-07)
 - **ADR-0114 to ADR-0140:** Theme & Customization Architecture, Design Tokens & Component Slots (ARC-08)
 - **ADR-0141 to ADR-0167:** Menu Rendering Architecture, Pure Engine, Snapshots & High-Concurrency Caching (ARC-09)
+- **ADR-0168 to ADR-0191:** Publishing & Versioning Architecture, Atomic Activation, Rollback & Outbox (ARC-10)
 
 ---
 

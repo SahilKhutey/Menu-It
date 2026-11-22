@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/publication-snapshot.schema.json",
+  "title": "PublicationSnapshot",
+  "type": "object",
+  "required": [
+    "snapshot_id",
+    "organization_id",
+    "menu_id",
+    "schema_version",
+    "content_hash",
+    "created_at",
+    "payload"
+  ],
+  "properties": {
+    "snapshot_id": { "type": "string", "format": "uuid" },
+    "organization_id": { "type": "string", "format": "uuid" },
+    "menu_id": { "type": "string", "format": "uuid" },
+    "schema_version": { "type": "string" },
+    "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "payload": {
+      "type": "object",
+      "required": ["restaurant", "menu", "categories", "presentation"],
+      "properties": {
+        "restaurant": {
+          "type": "object",
+          "required": ["display_name"],
+          "properties": {
+            "display_name": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "logo_reference": { "type": ["string", "null"] },
+            "public_contact_information": { "type": ["object", "null"] }
+          }
+        },
+        "menu": {
+          "type": "object",
+          "required": ["menu_id", "title"],
+          "properties": {
+            "menu_id": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "locale": { "type": "string" },
+            "currency": { "type": "string" },
+            "visibility": { "type": "string" }
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["category_id", "title", "items"],
+            "properties": {
+              "category_id": { "type": "string" },
+              "title": { "type": "string" },
+              "description": { "type": ["string", "null"] },
+              "sort_order": { "type": "integer" },
+              "visibility": { "type": "string" },
+              "items": { "type": "array" }
+            }
+          }
+        },
+        "presentation": {
+          "type": "object",
+          "required": ["theme_id", "theme_version", "layout_id", "layout_version"],
+          "properties": {
+            "theme_id": { "type": "string" },
+            "theme_version": { "type": "string" },
+            "layout_id": { "type": "string" },
+            "layout_version": { "type": "string" },
+            "component_definitions": { "type": "array" },
+            "component_instances": { "type": "array" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

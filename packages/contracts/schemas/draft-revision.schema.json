@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/draft-revision.schema.json",
+  "title": "DraftRevision",
+  "type": "object",
+  "required": [
+    "id",
+    "organization_id",
+    "menu_id",
+    "revision_number",
+    "content_hash",
+    "created_by",
+    "created_at",
+    "payload"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "organization_id": { "type": "string", "format": "uuid" },
+    "menu_id": { "type": "string", "format": "uuid" },
+    "revision_number": { "type": "integer", "minimum": 1 },
+    "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "parent_revision_id": { "type": ["string", "null"], "format": "uuid" },
+    "created_by": { "type": "string", "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "payload": { "type": "object" }
+  },
+  "additionalProperties": false
+}

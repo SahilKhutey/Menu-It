@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/publication-operation.schema.json",
+  "title": "PublicationOperation",
+  "type": "object",
+  "required": [
+    "id",
+    "organization_id",
+    "menu_id",
+    "actor_id",
+    "operation_type",
+    "idempotency_key",
+    "request_hash",
+    "status",
+    "created_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "organization_id": { "type": "string", "format": "uuid" },
+    "menu_id": { "type": "string", "format": "uuid" },
+    "actor_id": { "type": "string", "format": "uuid" },
+    "operation_type": { "type": "string", "enum": ["publish", "rollback", "schedule", "reconcile"] },
+    "idempotency_key": { "type": "string" },
+    "request_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "status": { "type": "string", "enum": ["REQUESTED", "VALIDATING", "PREPARING", "PREPARED", "ACTIVATING", "COMPLETED", "FAILED", "REJECTED"] },
+    "result_publication_id": { "type": ["string", "null"], "format": "uuid" },
+    "error_code": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false
+}

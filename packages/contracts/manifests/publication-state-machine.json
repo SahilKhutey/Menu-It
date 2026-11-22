@@ -1,0 +1,59 @@
+{
+  "$schema": "https://contracts.modularmenu.com/manifests/state-machine.json",
+  "id": "publication-state-machine",
+  "version": "1.0",
+  "initial_state": "REQUESTED",
+  "states": {
+    "REQUESTED": {
+      "transitions": {
+        "validate": "VALIDATING",
+        "cancel": "REJECTED"
+      }
+    },
+    "VALIDATING": {
+      "transitions": {
+        "validation_passed": "PREPARING",
+        "validation_failed": "REJECTED"
+      }
+    },
+    "PREPARING": {
+      "transitions": {
+        "snapshot_built": "PREPARED",
+        "preparation_error": "FAILED"
+      }
+    },
+    "PREPARED": {
+      "transitions": {
+        "activate": "ACTIVATING",
+        "cancel": "FAILED"
+      }
+    },
+    "ACTIVATING": {
+      "transitions": {
+        "activation_success": "COMPLETED",
+        "activation_error": "RECONCILIATION_REQUIRED"
+      }
+    },
+    "COMPLETED": {
+      "terminal": true
+    },
+    "REJECTED": {
+      "terminal": true
+    },
+    "FAILED": {
+      "terminal": true
+    },
+    "RECONCILIATION_REQUIRED": {
+      "transitions": {
+        "reconciled": "COMPLETED",
+        "aborted": "FAILED"
+      }
+    }
+  },
+  "publication_record_statuses": [
+    "READY",
+    "ACTIVE",
+    "SUPERSEDED",
+    "INACTIVE"
+  ]
+}

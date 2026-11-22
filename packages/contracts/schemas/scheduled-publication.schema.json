@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/scheduled-publication.schema.json",
+  "title": "ScheduledPublication",
+  "type": "object",
+  "required": [
+    "id",
+    "organization_id",
+    "menu_id",
+    "draft_revision",
+    "scheduled_at",
+    "timezone_name",
+    "status",
+    "created_by"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "organization_id": { "type": "string", "format": "uuid" },
+    "menu_id": { "type": "string", "format": "uuid" },
+    "draft_revision": { "type": "integer", "minimum": 1 },
+    "expected_active_publication_id": { "type": ["string", "null"], "format": "uuid" },
+    "scheduled_at": { "type": "string", "format": "date-time" },
+    "timezone_name": { "type": "string" },
+    "status": { "type": "string", "enum": ["SCHEDULED", "EXECUTING", "COMPLETED", "CANCELLED", "FAILED"] },
+    "created_by": { "type": "string", "format": "uuid" }
+  },
+  "additionalProperties": false
+}

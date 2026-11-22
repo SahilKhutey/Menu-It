@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/publication-event.schema.json",
+  "title": "PublicationEvent",
+  "type": "object",
+  "required": [
+    "id",
+    "organization_id",
+    "aggregate_type",
+    "aggregate_id",
+    "event_type",
+    "payload",
+    "occurred_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "organization_id": { "type": "string", "format": "uuid" },
+    "aggregate_type": { "type": "string" },
+    "aggregate_id": { "type": "string", "format": "uuid" },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "MenuPublicationRequested",
+        "MenuPublicationValidated",
+        "MenuPublicationRejected",
+        "MenuPublished",
+        "MenuRolledBack",
+        "MenuPublicationScheduled",
+        "MenuPublicationCancelled",
+        "MenuPublicationFailed",
+        "MenuPublicationReconciled"
+      ]
+    },
+    "payload": { "type": "object" },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "published_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false
+}

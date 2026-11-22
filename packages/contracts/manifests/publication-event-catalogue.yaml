@@ -1,0 +1,56 @@
+version: "1.0"
+domain: publishing
+events:
+  MenuPublicationRequested:
+    description: "Publication workflow has been initiated"
+    delivery: outbox
+    consumers:
+      - workflow_engine
+  MenuPublicationValidated:
+    description: "Publication candidate successfully passed validation"
+    delivery: outbox
+    consumers:
+      - dashboard
+  MenuPublicationRejected:
+    description: "Publication candidate failed validation"
+    delivery: outbox
+    consumers:
+      - dashboard
+      - audit_log
+  MenuPublished:
+    description: "New publication version has been atomically committed and activated"
+    delivery: outbox
+    consumers:
+      - arc09_rendering_cache
+      - edge_cdn_invalidation
+      - audit_log
+      - search_indexer
+  MenuRolledBack:
+    description: "Historical publication snapshot reactivated as active version"
+    delivery: outbox
+    consumers:
+      - arc09_rendering_cache
+      - edge_cdn_invalidation
+      - audit_log
+  MenuPublicationScheduled:
+    description: "Future publication activation scheduled"
+    delivery: outbox
+    consumers:
+      - scheduler_service
+  MenuPublicationCancelled:
+    description: "Scheduled publication cancelled"
+    delivery: outbox
+    consumers:
+      - scheduler_service
+  MenuPublicationFailed:
+    description: "Publication transaction or activation failed"
+    delivery: outbox
+    consumers:
+      - monitoring_alerts
+      - audit_log
+  MenuPublicationReconciled:
+    description: "Stuck or interrupted publication operation reconciled by background worker"
+    delivery: outbox
+    consumers:
+      - monitoring_alerts
+      - audit_log

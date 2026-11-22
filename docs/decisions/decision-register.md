@@ -895,3 +895,124 @@ ow_version column incremented on every update and checked on save.
 - **Context:** The complexity of menu rendering demands exhaustive automated regression coverage.
 - **Decision:** Implement and enforce a comprehensive 120-scenario automated test suite (ARC09-T001 to ARC09-T120).
 - **Consequences:** 100% verified compliance across normalization, layouts, components, pricing, caching, accessibility, and performance.
+
+### ADR-0168: Immutable Snapshot Publication Model (ARC10-D01)
+- **Context:** Mutable live database states risk serving partially configured or inconsistent menus to dining guests.
+- **Decision:** Every successful publication constructs an immutable snapshot containing all menu and presentation configurations.
+- **Consequences:** Tamper-proof historical records, predictable public rendering, and complete decoupling from ongoing draft edits.
+
+### ADR-0169: Immutable Saved Draft Revision History (ARC10-D02)
+- **Context:** Unsaved or unversioned draft changes make conflict resolution impossible during collaborative editing.
+- **Decision:** Saved draft edits create immutable DraftRevision records with monotonic numbers and parent pointers.
+- **Consequences:** Traceable editing history, reversible draft state, and foundation for optimistic concurrency control.
+
+### ADR-0170: Monotonic Integer Version Numbering per Menu (ARC10-D03)
+- **Context:** Random UUIDs or timestamp versions are difficult for human restaurant operators to discuss and audit.
+- **Decision:** Publications receive sequentially increasing positive integers starting at 1 per menu.
+- **Consequences:** Clear, unambiguous version identities (v1, v2, v3) for restaurant teams and support staff.
+
+### ADR-0171: Non-Destructive Rollback via Historical Snapshot Reactivation (ARC10-D04)
+- **Context:** Rollbacks that overwrite or delete intermediate publications destroy historical audit trails.
+- **Decision:** Rollback shifts the active publication pointer to an existing historical snapshot without mutating history.
+- **Consequences:** Total audit preservation; previous states remain fully inspectable and subsequent edits increment version numbers normally.
+
+### ADR-0172: Single Authoritative Active Publication Pointer Table (ARC10-D05)
+- **Context:** Boolean is_current flags scattered across publication records can desynchronize and create split-brain activations.
+- **Decision:** Maintain a dedicated menu_active_publications table with a primary key on (organization_id, menu_id).
+- **Consequences:** Physically guaranteed at-most-one active publication per menu at the database constraint level.
+
+### ADR-0173: PostgreSQL Database Transaction as Commit Boundary (ARC10-D06)
+- **Context:** Partial publication commits (e.g. snapshot saved but active pointer not updated) leave the system in an invalid state.
+- **Decision:** Snapshot insert, publication metadata, active pointer update, activation history, and outbox event commit within a single ACID transaction.
+- **Consequences:** Atomic all-or-nothing publication semantics; zero corrupted or half-published menus.
+
+### ADR-0174: Optimistic Concurrency via If-Match Revision Checking (ARC10-D07)
+- **Context:** Simultaneous publishes from multiple managers could overwrite concurrent changes silently.
+- **Decision:** Publishing requires an If-Match header matching the current draft revision; mismatches return HTTP 409 Conflict.
+- **Consequences:** Complete elimination of silent lost updates; explicit conflict handling on the client.
+
+### ADR-0175: Scoped Idempotency Key Architecture for Mutation Operations (ARC10-D08)
+- **Context:** Network timeouts cause automated client retries that risk creating duplicate publication records.
+- **Decision:** Scoped Idempotency-Key headers cache operation fingerprints and replay original results safely.
+- **Consequences:** Safe retry semantics; impossible to trigger duplicate versions via network replay.
+
+### ADR-0176: PostgreSQL JSONB for Frozen Snapshot Storage (ARC10-D09)
+- **Context:** Storing complex nested menu hierarchies across dozens of normalized tables adds immense query overhead.
+- **Decision:** Store the frozen public menu payload as a single structured JSONB document in menu_publication_snapshots.
+- **Consequences:** Sub-millisecond snapshot retrieval, atomic storage, and portability across database backends.
+
+### ADR-0177: Canonical SHA-256 Serialization for Snapshot Integrity (ARC10-D10)
+- **Context:** Snapshot payloads must be verified for tamper detection and deterministic cache tagging.
+- **Decision:** Serialize snapshot dictionaries using key-sorted, compact JSON and calculate SHA-256 digests.
+- **Consequences:** Cryptographically verified snapshot integrity and deterministic ETag generation.
+
+### ADR-0178: Pinned Theme, Layout, and Component Versions in Snapshots (ARC10-D11)
+- **Context:** Future updates to themes or component registries could unintentionally alter the look of older published menus.
+- **Decision:** Snapshots explicitly pin theme_version, layout_version, and renderer_contract_version.
+- **Consequences:** Guaranteed visual reproducibility across months or years of historical snapshots.
+
+### ADR-0179: Strict Public Field Allowlist for Snapshot Construction (ARC10-D12)
+- **Context:** A denylist approach to filtering snapshot data risks accidentally leaking new private fields added in the future.
+- **Decision:** The snapshot builder copies only fields explicitly permitted by a strict public allowlist.
+- **Consequences:** Defense-in-depth prevention of internal notes, billing tokens, passwords, or soft-delete flags reaching diners.
+
+### ADR-0180: Revision-Bound Publication Readiness Validation Engine (ARC10-D13)
+- **Context:** Validating a draft does not guarantee readiness if an editor edits dishes before hitting publish.
+- **Decision:** Publication validation binds strictly to a specific draft_revision and content_hash, rechecked at publish time.
+- **Consequences:** Impossible for stale validation certificates to authorize changed or corrupted draft content.
+
+### ADR-0181: Transactional Outbox Pattern for Lifecycle Events (ARC10-D14)
+- **Context:** Asynchronous publishing notifications or cache purges could be lost if the server process crashes after commit.
+- **Decision:** Write lifecycle events (MenuPublished, MenuRolledBack) directly to outbox_events in the same database transaction.
+- **Consequences:** Guaranteed at-least-once event delivery, zero dual-write vulnerabilities, and reliable asynchronous processing.
+
+### ADR-0182: At-Least-Once Event Delivery with Idempotent Consumer Handling (ARC10-D15)
+- **Context:** Distributed workers processing outbox queues can crash or retry, causing duplicate event deliveries.
+- **Decision:** Event consumers track processed event IDs and execute side effects (cache purges) idempotently.
+- **Consequences:** Safe horizontal worker scaling without duplicate side effects or corrupted cache states.
+
+### ADR-0183: Version-Addressed Cache Keys and Edge Tag Invalidation (ARC10-D16)
+- **Context:** Purging CDN caches by URL alone can be slow or subject to propagation lag.
+- **Decision:** Internal caches use version-addressed keys (public-menu:rest:menu:pubId) and broadcast edge cache tag purges.
+- **Consequences:** Instantaneous cache updates upon publication and zero stale content delivery.
+
+### ADR-0184: Decoupled ARC-09 Renderer Integration via Active Pointer (ARC10-D17)
+- **Context:** ARC-09 presentation composition must consume published data without coupling to publishing business logic.
+- **Decision:** Public renderer resolves the active publication snapshot directly without draft dependencies.
+- **Consequences:** Clean separation of concerns between publishing orchestration and public presentation rendering.
+
+### ADR-0185: Centralized Role-Based Access Control for Publishing (ARC10-D18)
+- **Context:** Menu publishing is a high-visibility business action that must be restricted to authorized restaurant roles.
+- **Decision:** Enforce menu.publish and menu.rollback permissions, restricted to RestaurantOwner and RestaurantManager.
+- **Consequences:** Prevents unauthorized junior staff from modifying public menu releases.
+
+### ADR-0186: Durable Publication and Rollback Activation Ledger (ARC10-D19)
+- **Context:** Restaurant operators need an unambiguous audit trail of who published or rolled back each menu version and why.
+- **Decision:** All activation shifts are immutably logged in publication_activations with actor_id, reason, and timestamp.
+- **Consequences:** Total operational transparency, accountability, and dispute resolution evidence.
+
+### ADR-0187: Timezone-Aware UTC Scheduled Publications (P1) (ARC10-D20)
+- **Context:** Restaurants operate in localized time zones; daylight savings and offset shifts cause missed launches.
+- **Decision:** Schedules store canonical UTC instants along with localized timezone names and revalidate candidate state before firing.
+- **Consequences:** Accurate automated menu switches (e.g. breakfast to lunch) across global time zones.
+
+### ADR-0188: Revision-Bound Managerial Approval Workflow (P1) (ARC10-D21)
+- **Context:** Enterprise restaurant chains require head chef or GM sign-off before menu prices change publicly.
+- **Decision:** Approval records bind strictly to exact candidate draft revisions and SHA-256 hashes.
+- **Consequences:** Prevents bait-and-switch modifications where an approved menu is subtly altered before publishing.
+
+### ADR-0189: Unified SaaS and Customer-Hosted Publishing Core (ARC10-D22)
+- **Context:** Maintaining divergent publishing logic for cloud SaaS and on-premise deployments increases defects.
+- **Decision:** Share 100% of the Python publishing domain and application services across both editions.
+- **Consequences:** Complete feature parity and single-codebase maintenance across all customer editions.
+
+### ADR-0190: Non-Destructive Reconciliation Worker Architecture (ARC10-D23)
+- **Context:** Transient database disconnects or interrupted worker jobs could leave operations in non-terminal states.
+- **Decision:** The reconciliation engine audits publication state and outbox backlogs without ever rewriting historical records.
+- **Consequences:** Self-healing operations, zero silent data corruption, and immediate operator visibility.
+
+### ADR-0191: 3-Year Historical Publication Retention Policy (ARC10-D24)
+- **Context:** Indefinite snapshot retention increases database storage footprint over many years of daily menu edits.
+- **Decision:** Active publications are permanent; historical publications and audit logs are retained for a minimum of 3 years.
+- **Consequences:** Full legal and regulatory compliance balance with predictable database storage scaling.
+

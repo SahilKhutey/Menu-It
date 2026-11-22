@@ -2703,10 +2703,11 @@ paths:
   /api/v1/menus/{menu_id}/validate:
     post:
       tags:
-      - Studio Editor
-      summary: Validate Menu
-      description: Validates completeness and integrity of a menu draft prior to publishing.
-      operationId: validate_menu_api_v1_menus__menu_id__validate_post
+      - Publishing & Snapshots
+      summary: Validate Menu Draft
+      description: Validates current menu draft for publication readiness (ARC-10
+        §9, §14.1).
+      operationId: validate_menu_draft_api_v1_menus__menu_id__validate_post
       security:
       - HTTPBearer: []
       parameters:
@@ -2717,29 +2718,20 @@ paths:
           type: string
           format: uuid
           title: Menu Id
-      - name: X-Organization-ID
-        in: header
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Organization-Id
-      - name: session_id
-        in: cookie
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Session Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              default: {}
+              title: Payload
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationReportResponse'
+              schema: {}
         '422':
           description: Validation Error
           content:
@@ -2787,9 +2779,10 @@ paths:
       tags:
       - Publishing & Snapshots
       summary: Publish Menu Direct
-      description: 'Publishes a menu draft directly by menu_id (ARC-07 §4.8).
+      description: 'Publishes a menu draft directly by menu_id (ARC-07 §4.8, ARC-10
+        §14).
 
-        Enforces idempotency when Idempotency-Key header is supplied (ARC-07 §9.2).'
+        Enforces idempotency and optimistic revision locking.'
       operationId: publish_menu_direct_api_v1_menus__menu_id__publish_post
       security:
       - HTTPBearer: []
@@ -2809,6 +2802,14 @@ paths:
           - type: string
           - type: 'null'
           title: Idempotency-Key
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: If-Match
       requestBody:
         content:
           application/json:
@@ -2824,6 +2825,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PublishResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publication-readiness:
+    get:
+      tags:
+      - Publishing & Snapshots
+      summary: Get Publication Readiness
+      description: Retrieves publication readiness report for a menu (ARC-10 §14.1).
+      operationId: get_publication_readiness_api_v1_menus__menu_id__publication_readiness_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
         '422':
           description: Validation Error
           content:
@@ -2896,8 +2926,285 @@ paths:
       tags:
       - Publishing & Snapshots
       summary: List Menu Publications
-      description: Lists publication records for a menu.
+      description: Lists publication records for a menu (ARC-10 §14.1).
       operationId: list_menu_publications_api_v1_menus__menu_id__publications_get
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publications/{publication_id}:
+    get:
+      tags:
+      - Publishing & Snapshots
+      summary: Get Menu Publication Detail
+      description: Retrieves single publication metadata.
+      operationId: get_menu_publication_detail_api_v1_menus__menu_id__publications__publication_id__get
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      - name: publication_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Publication Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publications/{publication_id}/snapshot:
+    get:
+      tags:
+      - Publishing & Snapshots
+      summary: Inspect Publication Snapshot
+      description: Authorized inspection of frozen snapshot payload (ARC-10 §14.1).
+      operationId: inspect_publication_snapshot_api_v1_menus__menu_id__publications__publication_id__snapshot_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      - name: publication_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Publication Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publications/{publication_id}/rollback:
+    post:
+      tags:
+      - Publishing & Snapshots
+      summary: Rollback Menu Publication
+      description: Rollback menu to specific publication or version (ARC-10 §12, §14.1).
+      operationId: rollback_menu_publication_api_v1_menus__menu_id__publications__publication_id__rollback_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      - name: publication_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Publication Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              default: {}
+              title: Payload
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/active-publication:
+    get:
+      tags:
+      - Publishing & Snapshots
+      summary: Get Active Publication Metadata
+      description: Retrieves current active publication metadata for menu (ARC-10
+        §14.1).
+      operationId: get_active_publication_metadata_api_v1_menus__menu_id__active_publication_get
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publication-operations/{operation_id}:
+    get:
+      tags:
+      - Publishing & Snapshots
+      summary: Get Publication Operation
+      description: Tracks status of an ongoing or completed publication operation
+        (ARC-10 §14.1).
+      operationId: get_publication_operation_api_v1_menus__menu_id__publication_operations__operation_id__get
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      - name: operation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Operation Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publication-schedules:
+    post:
+      tags:
+      - Publishing & Snapshots
+      summary: Create Publication Schedule
+      description: Schedules a future publication activation (P1, ARC-10 §16.1).
+      operationId: create_publication_schedule_api_v1_menus__menu_id__publication_schedules_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Payload
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publication-schedules/{schedule_id}:
+    delete:
+      tags:
+      - Publishing & Snapshots
+      summary: Cancel Publication Schedule
+      description: Cancels a pending scheduled publication (ARC-10 §14.1).
+      operationId: cancel_publication_schedule_api_v1_menus__menu_id__publication_schedules__schedule_id__delete
+      parameters:
+      - name: menu_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Menu Id
+      - name: schedule_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Schedule Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/menus/{menu_id}/publication-audit:
+    get:
+      tags:
+      - Publishing & Snapshots
+      summary: Get Publication Audit History
+      description: Reviews publishing audit history (ARC-10 §15.3).
+      operationId: get_publication_audit_history_api_v1_menus__menu_id__publication_audit_get
+      security:
+      - HTTPBearer: []
       parameters:
       - name: menu_id
         in: path
@@ -5514,6 +5821,21 @@ components:
         public_url:
           type: string
           title: Public Url
+        operation_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Operation Id
+        publication_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Publication Id
+        active_publication_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Active Publication Id
       type: object
       required:
       - status

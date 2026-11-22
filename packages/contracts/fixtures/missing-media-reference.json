@@ -1,0 +1,5 @@
+{
+  "media_id": "99999999-9999-9999-9999-999999999999",
+  "error_code": "MEDIA_NOT_FOUND",
+  "message": "Referenced hero image does not exist or has been deleted."
+}

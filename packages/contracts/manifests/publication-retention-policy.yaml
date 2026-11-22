@@ -1,0 +1,25 @@
+version: "1.0"
+domain: publishing
+retention_policies:
+  active_publications:
+    retention: permanent
+    immutable: true
+  historical_publications:
+    minimum_retention_days: 730
+    default_policy: keep_all
+    allow_archival: true
+  publication_snapshots:
+    retention: permanent
+    immutable: true
+    alteration_forbidden: true
+  draft_revisions:
+    minimum_saved_revisions: 50
+    prune_dirty_older_than_days: 90
+  publication_operations:
+    retention_days: 365
+  outbox_events:
+    published_retention_days: 30
+    failed_retention_days: 180
+  publication_audit_logs:
+    retention_days: 1095
+    immutable: true
