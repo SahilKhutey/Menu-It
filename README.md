@@ -1,11 +1,11 @@
 # Menu-It (ModularMenu™)
 ### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
 
-[![Version](https://img.shields.io/badge/version-1.0.0--arc07-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc07)
-[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--07%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
-[![Tests](https://img.shields.io/badge/Quality%20Gates-274%2F274%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
-[![Devlogs](https://img.shields.io/badge/Devlogs-8%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
-[![Tasklogs](https://img.shields.io/badge/Tasklogs-7%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Version](https://img.shields.io/badge/version-1.0.0--arc08-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc08)
+[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--08%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
+[![Tests](https://img.shields.io/badge/Quality%20Gates-378%2F378%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Devlogs](https://img.shields.io/badge/Devlogs-9%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
+[![Tasklogs](https://img.shields.io/badge/Tasklogs-8%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
 [![Python](https://img.shields.io/badge/Python-3.12%20FastAPI-005571.svg?style=for-the-badge&logo=python)](backend/)
 [![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?style=for-the-badge&logo=next.js)](frontend/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=for-the-badge&logo=typescript)](frontend/)
@@ -97,12 +97,12 @@ The engineering specifications of ModularMenu are formally documented in the 12-
 | :--- | :--- | :--- | :--- |
 | **ARC-01** | [System Architecture Overview](documentation/03_System_Architecture/ARC-01_System_Architecture_Overview.md) | **Approved** | 7-layer architecture, 7 external actors, system boundaries, and 10 non-negotiables. |
 | **ARC-02** | [Principles, Standards & Constraints](documentation/03_System_Architecture/ARC-02_Architectural_Principles_Standards_Constraints.md) | **Approved & Implemented** | Principles P-01 to P-10, Constraints CON-01 to CON-16, 10 Work Packages, and 32 tests. |
-| **ARC-03** | Application Architecture | *Next* | Frontend Next.js boundaries, Backend service/repository dispatch lifecycles. |
-| **ARC-04** | Modular Domain Architecture | *Roadmap* | 16 discrete domain modules, event contracts, and inter-module dependencies. |
-| **ARC-05** | Multi-Tenant Architecture | *Roadmap* | Tenant resolution, organization/branch hierarchy, and RLS policy rules. |
-| **ARC-06** | Data Architecture | *Roadmap* | Normalized schema, JSONB snapshot design, indexing, and migration standards. |
-| **ARC-07** | API & Integration Architecture | *Roadmap* | OpenAPI 3.1 contracts, RFC 7807 problem details, and webhook pipelines. |
-| **ARC-08** | Theme & Customization Engine | *Roadmap* | Design token taxonomy, layout engines, and dynamic variable compilation. |
+| **ARC-03** | [Application Architecture](documentation/03_System_Architecture/ARC-03_Application_Architecture.md) | **Approved & Implemented** | Modular monolith, Next.js 14 + FastAPI, Layered boundaries, Repository & UoW, 46 tests. |
+| **ARC-04** | [Modular Domain Architecture](documentation/03_System_Architecture/ARC-04_Modular_Domain_Architecture.md) | **Approved & Implemented** | 16 discrete domain modules, 18 domain events, pure domain entities, AST checks, 94 tests. |
+| **ARC-05** | [Multi-Tenant Architecture](documentation/03_System_Architecture/ARC-05_Multi_Tenant_Architecture.md) | **Approved & Implemented** | Organization primary tenancy, 8-layer defense in depth, PostgreSQL RLS, storage/cache isolation, 144 tests. |
+| **ARC-06** | [Data Architecture](documentation/03_System_Architecture/ARC-06_Data_Architecture.md) | **Approved & Implemented** | Relational schema, composite FKs, 30+ SQLAlchemy models, immutable published snapshots, 199 tests. |
+| **ARC-07** | [API & Integration Architecture](documentation/03_System_Architecture/ARC-07_API_Integration_Architecture.md) | **Approved & Implemented** | REST API (/api/v1), 66 endpoints, OpenAPI 3.1, TypeScript SDK, server-derived tenancy, outbox webhooks, 274 tests. |
+| **ARC-08** | [Theme & Customization Architecture](documentation/03_System_Architecture/ARC-08_Theme_Customization_Architecture.md) | **Approved & Implemented** | Configuration-driven, token taxonomy, 6 themes, 4 layouts, 13 components, dual-editor parity, 378 tests. |
 | **ARC-09** | Menu Rendering Architecture | *Roadmap* | Mobile webview optimization, category jump scrolling, and SSR caching. |
 | **ARC-10** | Publishing & Versioning Lifecycle | *Roadmap* | Snapshot compiling, SHA-256 digest validation, and zero-downtime rollback. |
 | **ARC-11** | Infrastructure & Deployment | *Roadmap* | Docker compose, multi-profile environment handling, and backup/restore. |

@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0.0",
+  "layouts": [
+    {
+      "id": "layout-list",
+      "name": "List Layout",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "description": "Compact, text-led presentation ideal for cafes, bars, and dense menus.",
+      "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+      "allowed_components": [
+        "restaurant-header", "menu-title", "category-navigation", "category-heading",
+        "menu-item-card", "menu-item-price", "menu-item-description", "dietary-label",
+        "allergen-label", "availability-indicator", "menu-footer", "contact-information"
+      ],
+      "default_settings": {
+        "content_width": "normal",
+        "category_navigation": "sticky",
+        "item_density": "compact",
+        "image_ratio": "hidden"
+      },
+      "responsive": {
+        "mobile": { "columns": 1, "navigation": "horizontal-scroll" },
+        "tablet": { "columns": 1, "navigation": "horizontal-scroll" },
+        "desktop": { "columns": 2, "navigation": "inline" }
+      }
+    },
+    {
+      "id": "layout-grid",
+      "name": "Grid Layout",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "description": "Balanced, responsive multi-column grid with item cards and photography.",
+      "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+      "allowed_components": [
+        "restaurant-header", "menu-title", "category-navigation", "category-heading",
+        "menu-item-card", "menu-item-image", "menu-item-price", "menu-item-description",
+        "dietary-label", "allergen-label", "availability-indicator", "menu-footer", "contact-information"
+      ],
+      "default_settings": {
+        "content_width": "wide",
+        "category_navigation": "sticky",
+        "item_density": "comfortable",
+        "image_ratio": "4:3"
+      },
+      "responsive": {
+        "mobile": { "columns": 1, "navigation": "horizontal-scroll" },
+        "tablet": { "columns": 2, "navigation": "horizontal-scroll" },
+        "desktop": { "columns": 3, "navigation": "inline" }
+      }
+    },
+    {
+      "id": "layout-image-cards",
+      "name": "Image-Card Layout",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "description": "Visual-first card arrangement emphasizing high-resolution dish photography.",
+      "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+      "allowed_components": [
+        "restaurant-header", "menu-title", "category-navigation", "category-heading",
+        "menu-item-card", "menu-item-image", "menu-item-price", "menu-item-description",
+        "dietary-label", "allergen-label", "availability-indicator", "menu-footer", "contact-information"
+      ],
+      "default_settings": {
+        "content_width": "wide",
+        "category_navigation": "sticky",
+        "item_density": "comfortable",
+        "image_ratio": "16:9"
+      },
+      "responsive": {
+        "mobile": { "columns": 1, "navigation": "horizontal-scroll" },
+        "tablet": { "columns": 2, "navigation": "horizontal-scroll" },
+        "desktop": { "columns": 3, "navigation": "inline" }
+      }
+    },
+    {
+      "id": "layout-editorial",
+      "name": "Editorial Layout",
+      "version": "1.0.0",
+      "schema_version": "1.0.0",
+      "description": "Magazine-style hierarchy with featured sections, rich descriptions, and curated pacing.",
+      "supported_slots": ["header", "navigation", "content", "category.header", "category.items", "footer"],
+      "allowed_components": [
+        "restaurant-header", "menu-title", "category-navigation", "category-heading",
+        "menu-item-card", "menu-item-image", "menu-item-price", "menu-item-description",
+        "dietary-label", "allergen-label", "availability-indicator", "menu-footer", "contact-information"
+      ],
+      "default_settings": {
+        "content_width": "normal",
+        "category_navigation": "tabs",
+        "item_density": "spacious",
+        "image_ratio": "1:1"
+      },
+      "responsive": {
+        "mobile": { "columns": 1, "navigation": "dropdown" },
+        "tablet": { "columns": 2, "navigation": "tabs" },
+        "desktop": { "columns": 2, "navigation": "sidebar" }
+      }
+    }
+  ]
+}

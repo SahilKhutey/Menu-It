@@ -28,6 +28,12 @@ def require_permission(permission_str: str) -> Callable:
             "item.manage": "food_item.manage",
             "editor.read": "editor.draft.read",
             "editor.write": "editor.draft.write",
+            "menu.customization.read": "menu.read",
+            "menu.customization.update": "menu.update",
+            "menu.customization.validate": "menu.read",
+            "menu.customization.restore": "menu.update",
+            "menu.preview": "menu.read",
+            "theme.catalog.read": "theme.read",
         }
         effective_perm = aliases.get(permission_str, permission_str)
 

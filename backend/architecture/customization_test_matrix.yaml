@@ -1,0 +1,29 @@
+version: 1.0.0-arc08
+architecture_standard: ARC-08
+total_scenarios: 104
+target_pass_rate: 100%
+categories:
+  - category: Theme and token tests (ARC08-T001 to T015)
+    start_id: 1
+    end_id: 15
+  - category: Layout tests (ARC08-T016 to T025)
+    start_id: 16
+    end_id: 25
+  - category: Component registry tests (ARC08-T026 to T035)
+    start_id: 26
+    end_id: 35
+  - category: Configuration validation tests (ARC08-T036 to T050)
+    start_id: 36
+    end_id: 50
+  - category: Editor tests (ARC08-T051 to T065)
+    start_id: 51
+    end_id: 65
+  - category: Preview, publication and version tests (ARC08-T066 to T080)
+    start_id: 66
+    end_id: 80
+  - category: Tenant security test cases (ARC08-T081 to T092)
+    start_id: 81
+    end_id: 92
+  - category: Accessibility and performance test cases (ARC08-T093 to T104)
+    start_id: 93
+    end_id: 104

@@ -18,8 +18,10 @@ Level 1 — System Architecture
 │   └── Organization-based tenancy, 8-layer defense in depth, PostgreSQL RLS fail-closed policies, and 50-test security suite.
 ├── ARC-06: Data Architecture & Persistence Baseline
 │   └── Relational-first schema, composite foreign keys, PostgreSQL RLS, SQLAlchemy 2.x, immutable published snapshots, and 55-test persistence catalogue.
-└── ARC-07: API & Integration Architecture
-    └── Contract-first REST API, versioned endpoints (/api/v1), OpenAPI 3.1, server-derived tenant context, TypeScript contracts, reliable outbox webhooks, and 75-test API catalogue.
+├── ARC-07: API & Integration Architecture
+│   └── Contract-first REST API, versioned endpoints (/api/v1), OpenAPI 3.1, server-derived tenant context, TypeScript contracts, reliable outbox webhooks, and 75-test API catalogue.
+└── ARC-08: Theme & Customization Architecture
+    └── Configuration-driven customization, hierarchical design tokens, 6 themes, 4 layouts, 13 components, deterministic resolver, dual-editor parity, optimistic concurrency, and 104-test customization catalogue.
 ```
 
 ---
@@ -69,12 +71,19 @@ Level 1 — System Architecture
    - Error & Resilience Standards: Standard RFC 7807/RFC 9457 Problem Details envelopes; optimistic concurrency via ETags/row_version; reliable outbox event dispatch with HMAC-SHA256 signed webhooks.
    - Documentation & Quality Gates: 27 architectural deliverables in `docs/architecture/ARC-07-api-integration-architecture/`; 274 automated backend tests passing (including 75 API catalogue scenarios ARC07-T001 to T075); 0 regressions.
 
+8. **[ARC-08 — Theme & Customization Architecture](documentation/03_System_Architecture/ARC-08_Theme_Customization_Architecture.md)**
+   - Status: **Approved & Implemented**
+   - Customization Model: 100% configuration-driven, schema-validated, versioned, portable JSON customization documents with bounded limits (256 KB, 100 components, depth 10) and zero executable/script content.
+   - Registries & Token Engine: 6 platform themes, 4 responsive layouts, 13 registered components; pure deterministic theme resolver ($f(\text{Theme}, \text{Overrides}) \to \text{ResolvedTokens}$) and CSS custom properties generator (`--mm-`).
+   - Dual-Editor Parity & Concurrency: Settings Editor and Visual Drag-and-Drop Editor operating on the exact same JSON document; optimistic concurrency control (`If-Match` / `ETag`); immutable revision audit log and one-click restoration.
+   - Documentation & Quality Gates: 28 architectural deliverables in `docs/architecture/ARC-08-theme-customization-architecture/`; 378 total automated platform tests passing (including 104 customization catalogue scenarios ARC08-T001 to T104); 100% pass rate.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0113).
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-008).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0140).
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-009).
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Comprehensive work package execution and test verification records.
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
@@ -82,6 +91,7 @@ Level 1 — System Architecture
 - **[Multi-Tenant Architecture Suite](docs/architecture/ARC-05-multi-tenant-architecture/):** Complete specifications for multi-tenancy, RLS policies, threat models, and risk register.
 - **[Data Architecture Suite](docs/architecture/ARC-06-data-architecture/):** Complete specifications for 30+ relational models across 10 capability groups, composite foreign keys, RLS policies, and recovery drills.
 - **[API Architecture Suite](docs/architecture/ARC-07-api-integration-architecture/):** Complete specifications for 66 REST endpoints, RFC 7807 error models, OpenAPI 3.1 contracts, and outbox webhooks.
+- **[Theme & Customization Architecture Suite](docs/architecture/ARC-08-theme-customization-architecture/):** Complete specifications for 6 themes, 4 layouts, 13 components, deterministic resolver, and 104-test scenario matrix.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, and Published Snapshots.
 
 ---

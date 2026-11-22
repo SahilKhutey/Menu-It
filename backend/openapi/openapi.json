@@ -3258,6 +3258,7 @@
           "Themes & Design"
         ],
         "summary": "List Available Themes",
+        "description": "Lists platform theme presets (ARC-08 \u00a76).",
         "operationId": "list_available_themes_api_v1_themes_get",
         "responses": {
           "200": {
@@ -3271,6 +3272,47 @@
                   },
                   "type": "array",
                   "title": "Response List Available Themes Api V1 Themes Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/themes/{theme_id}": {
+      "get": {
+        "tags": [
+          "Themes & Design"
+        ],
+        "summary": "Get Theme Definition",
+        "description": "Retrieves theme preset definition by ID or slug.",
+        "operationId": "get_theme_definition_api_v1_themes__theme_id__get",
+        "parameters": [
+          {
+            "name": "theme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Theme Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -3384,7 +3426,7 @@
           "Themes & Design"
         ],
         "summary": "List Supported Layouts",
-        "description": "Lists supported layout presets (ARC-07 \u00a74.6).",
+        "description": "Lists supported layout presets (ARC-08 \u00a77, ARC-07 \u00a74.6).",
         "operationId": "list_supported_layouts_api_v1_layouts_get",
         "responses": {
           "200": {
@@ -3398,13 +3440,54 @@
         }
       }
     },
+    "/api/v1/layouts/{layout_id}": {
+      "get": {
+        "tags": [
+          "Themes & Design"
+        ],
+        "summary": "Get Layout Definition",
+        "description": "Retrieves layout definition.",
+        "operationId": "get_layout_definition_api_v1_layouts__layout_id__get",
+        "parameters": [
+          {
+            "name": "layout_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Layout Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/components": {
       "get": {
         "tags": [
           "Themes & Design"
         ],
         "summary": "List Registered Components",
-        "description": "Lists whitelisted UI components from the component registry (ARC-07 \u00a74.6).",
+        "description": "Lists registered UI components from the component registry (ARC-08 \u00a78, ARC-07 \u00a74.6).",
         "operationId": "list_registered_components_api_v1_components_get",
         "responses": {
           "200": {
@@ -3412,6 +3495,775 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/components/{component_id}": {
+      "get": {
+        "tags": [
+          "Themes & Design"
+        ],
+        "summary": "Get Component Definition",
+        "description": "Retrieves component definition and property schema.",
+        "operationId": "get_component_definition_api_v1_components__component_id__get",
+        "parameters": [
+          {
+            "name": "component_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Component Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization": {
+      "get": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Get Menu Customization",
+        "description": "Retrieves current customization draft for the menu.",
+        "operationId": "get_menu_customization_api_v1_menus__menu_id__customization_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Update Menu Customization",
+        "description": "Saves validated customization draft with optimistic concurrency check.",
+        "operationId": "update_menu_customization_api_v1_menus__menu_id__customization_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomizationUpdateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization/validate": {
+      "post": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Validate Customization Endpoint",
+        "description": "Validates customization document without saving.",
+        "operationId": "validate_customization_endpoint_api_v1_menus__menu_id__customization_validate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization/preview": {
+      "post": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Preview Customization Endpoint",
+        "description": "Generates preview using deterministic theme resolver.",
+        "operationId": "preview_customization_endpoint_api_v1_menus__menu_id__customization_preview_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization/reset": {
+      "post": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Reset Customization Endpoint",
+        "description": "Resets customization draft back to clean defaults.",
+        "operationId": "reset_customization_endpoint_api_v1_menus__menu_id__customization_reset_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization/revisions": {
+      "get": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "List Customization Revisions",
+        "description": "Lists historical draft revisions for the menu.",
+        "operationId": "list_customization_revisions_api_v1_menus__menu_id__customization_revisions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization/revisions/{revision_num}": {
+      "get": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Get Customization Revision",
+        "description": "Retrieves full document of a specific revision.",
+        "operationId": "get_customization_revision_api_v1_menus__menu_id__customization_revisions__revision_num__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "revision_num",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Revision Num"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{menu_id}/customization/revisions/{revision_num}/restore": {
+      "post": {
+        "tags": [
+          "Customization"
+        ],
+        "summary": "Restore Customization Revision",
+        "description": "Restores historical revision as a new draft revision.",
+        "operationId": "restore_customization_revision_api_v1_menus__menu_id__customization_revisions__revision_num__restore_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Menu Id"
+            }
+          },
+          {
+            "name": "revision_num",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Revision Num"
+            }
+          },
+          {
+            "name": "X-Organization-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Organization-Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -5500,6 +6352,46 @@
         "additionalProperties": false,
         "type": "object",
         "title": "CategoryUpdateRequest"
+      },
+      "CustomizationUpdateResponse": {
+        "properties": {
+          "menu_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Menu Id"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "configuration_version": {
+            "type": "string",
+            "title": "Configuration Version",
+            "default": "1.0.0"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "draft"
+          },
+          "configuration": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Configuration"
+          },
+          "validation": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Validation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "menu_id",
+          "revision",
+          "configuration"
+        ],
+        "title": "CustomizationUpdateResponse"
       },
       "DesignConfigRequest": {
         "properties": {

@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.in/schemas/design-tokens.schema.json",
+  "title": "DesignTokens",
+  "description": "Design Token System Schema (ARC-08 §5). Defines allowable semantic visual tokens.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tokens"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "color",
+        "typography",
+        "spacing",
+        "radius",
+        "shadow"
+      ],
+      "properties": {
+        "color": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "brand",
+            "surface",
+            "text",
+            "border"
+          ],
+          "properties": {
+            "brand": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["primary"],
+              "properties": {
+                "primary": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "secondary": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "accent": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" }
+              }
+            },
+            "surface": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["default"],
+              "properties": {
+                "default": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "subtle": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "raised": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" }
+              }
+            },
+            "text": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["primary"],
+              "properties": {
+                "primary": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "secondary": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "inverse": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" }
+              }
+            },
+            "border": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["default"],
+              "properties": {
+                "default": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "subtle": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" }
+              }
+            },
+            "status": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "success": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "warning": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" },
+                "error": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$" }
+              }
+            }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fontFamily",
+            "fontSize",
+            "fontWeight"
+          ],
+          "properties": {
+            "fontFamily": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["body", "heading"],
+              "properties": {
+                "body": { "type": "string", "enum": ["system", "inter", "cinzel", "playfair", "merriweather", "roboto", "lato"] },
+                "heading": { "type": "string", "enum": ["system", "inter", "cinzel", "playfair", "merriweather", "roboto", "lato"] }
+              }
+            },
+            "fontSize": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["small", "body", "heading", "display"],
+              "properties": {
+                "small": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+                "body": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+                "heading": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+                "display": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" }
+              }
+            },
+            "fontWeight": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["normal", "medium", "bold"],
+              "properties": {
+                "normal": { "type": "integer", "enum": [300, 400] },
+                "medium": { "type": "integer", "enum": [500, 600] },
+                "bold": { "type": "integer", "enum": [700, 800, 900] }
+              }
+            }
+          }
+        },
+        "spacing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["xs", "sm", "md", "lg", "xl"],
+          "properties": {
+            "xs": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "sm": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "md": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "lg": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "xl": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "2xl": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" }
+          }
+        },
+        "radius": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["small", "medium", "large"],
+          "properties": {
+            "none": { "type": "string", "pattern": "^0(px)?$" },
+            "small": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "medium": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "large": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|px|em)$" },
+            "full": { "type": "string", "pattern": "^(9999px|50%)$" }
+          }
+        },
+        "shadow": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["card"],
+          "properties": {
+            "none": { "type": "string", "const": "none" },
+            "sm": { "type": "string" },
+            "card": { "type": "string" },
+            "raised": { "type": "string" },
+            "floating": { "type": "string" }
+          }
+        },
+        "motion": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "durationFast": { "type": "string", "pattern": "^[0-9]+(ms|s)$" },
+            "durationNormal": { "type": "string", "pattern": "^[0-9]+(ms|s)$" },
+            "durationSlow": { "type": "string", "pattern": "^[0-9]+(ms|s)$" }
+          }
+        }
+      }
+    }
+  }
+}

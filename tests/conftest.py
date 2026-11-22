@@ -25,6 +25,7 @@ from app.modules.menus.models import (
     Publication,
 )
 from app.modules.themes.models import RestaurantDesignConfig, Theme
+from app.modules.customization.models import MenuCustomization, CustomizationRevision
 from app.main import app
 
 # In-memory SQLite with StaticPool ensures all connections share the same DB during tests

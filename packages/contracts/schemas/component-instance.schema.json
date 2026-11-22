@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.in/schemas/component-instance.schema.json",
+  "title": "ComponentInstance",
+  "description": "Configured Component Instance Schema (ARC-08 §8.6).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "instance_id",
+    "component_id",
+    "component_version",
+    "schema_version",
+    "slot",
+    "position",
+    "visible",
+    "props"
+  ],
+  "properties": {
+    "instance_id": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "component_id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "component_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "slot": { "type": "string", "enum": ["header", "navigation", "content", "category.header", "category.items", "footer"] },
+    "position": { "type": "integer", "minimum": 0, "maximum": 1000 },
+    "visible": { "type": "boolean" },
+    "props": { "type": "object" }
+  }
+}

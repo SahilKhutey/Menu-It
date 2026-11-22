@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.in/schemas/menu-customization.schema.json",
+  "title": "MenuCustomization",
+  "description": "Canonical Menu Customization Document Schema (ARC-08 §9).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "configuration_version",
+    "schema_version",
+    "theme",
+    "layout",
+    "components"
+  ],
+  "properties": {
+    "configuration_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "overrides"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "version": { "type": "string" },
+        "overrides": { "type": "object" }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "settings", "responsive"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "settings": { "type": "object" },
+        "responsive": { "type": "object" }
+      }
+    },
+    "components": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instance_id",
+          "component_id",
+          "component_version",
+          "schema_version",
+          "slot",
+          "position",
+          "visible",
+          "props"
+        ],
+        "properties": {
+          "instance_id": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "component_id": { "type": "string", "minLength": 1 },
+          "component_version": { "type": "string" },
+          "schema_version": { "type": "string" },
+          "slot": { "type": "string" },
+          "position": { "type": "integer", "minimum": 0, "maximum": 1000 },
+          "visible": { "type": "boolean" },
+          "props": { "type": "object" }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "revision": { "type": "integer", "minimum": 1 },
+        "updated_at": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

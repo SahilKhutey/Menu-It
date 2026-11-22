@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "supported_migrations": [
+    {
+      "from_version": "0.9.0",
+      "to_version": "1.0.0",
+      "migration_key": "migrate_v09_to_v10",
+      "description": "Standardizes theme overrides into nested token contract and maps display_order to position."
+    }
+  ]
+}

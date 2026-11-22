@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.in/schemas/component-definition.schema.json",
+  "title": "ComponentDefinition",
+  "description": "Component Registry Definition Schema (ARC-08 §8).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "schema_version",
+    "name",
+    "category",
+    "description",
+    "default_props",
+    "props_schema",
+    "supported_slots",
+    "supported_layouts",
+    "status"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "category": { "type": "string", "enum": ["structure", "content", "metadata", "navigation"] },
+    "description": { "type": "string", "maxLength": 500 },
+    "default_props": { "type": "object" },
+    "props_schema": { "type": "object" },
+    "supported_slots": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "supported_layouts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "accessibility": {
+      "type": "object",
+      "properties": {
+        "requirements": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "status": { "type": "string", "enum": ["active", "deprecated", "retired"] }
+  }
+}

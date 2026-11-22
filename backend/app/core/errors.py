@@ -51,8 +51,14 @@ class ConflictError(ApiBaseException):
 
 
 class ConcurrencyConflictError(ApiBaseException):
-    def __init__(self, detail: str = "Concurrency version conflict: stale update rejected", code: str = "VERSION_CONFLICT"):
+    def __init__(
+        self,
+        detail: str = "Concurrency version conflict: stale update rejected",
+        code: str = "VERSION_CONFLICT",
+        current_version: Optional[str] = None,
+    ):
         super().__init__(detail=detail, code=code)
+        self.current_version = current_version
 
 
 class IdempotencyConflictError(ApiBaseException):
@@ -304,4 +310,27 @@ def register_error_handlers(app: FastAPI) -> None:
             instance=request.url.path,
             code=exc.code or "DEPENDENCY_UNAVAILABLE",
             request_id=getattr(request.state, "request_id", None),
+        )
+
+    # Customization Validation Error Handler (ARC-08 §10, §15.5)
+    from app.modules.customization.validators import CustomizationValidationError
+
+    @app.exception_handler(CustomizationValidationError)
+    async def customization_validation_handler(request: Request, exc: CustomizationValidationError):
+        formatted_errors = [
+            {
+                "field": err.get("path", "$"),
+                "code": err.get("code", "INVALID"),
+                "message": err.get("message", "Validation error"),
+            }
+            for err in exc.errors
+        ]
+        return _build_problem_response(
+            status_code=422,
+            title="Customization Validation Failed",
+            detail="One or more configuration values are invalid.",
+            instance=request.url.path,
+            code="CUSTOMIZATION_INVALID",
+            request_id=getattr(request.state, "request_id", None),
+            errors=formatted_errors,
         )

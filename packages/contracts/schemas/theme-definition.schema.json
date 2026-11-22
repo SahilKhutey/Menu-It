@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.in/schemas/theme-definition.schema.json",
+  "title": "ThemeDefinition",
+  "description": "Theme Preset Registry Definition Schema (ARC-08 §6).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "slug",
+    "description",
+    "version",
+    "schema_version",
+    "status",
+    "tokens",
+    "supported_layouts",
+    "supported_components"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^theme-[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "description": { "type": "string", "maxLength": 500 },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "status": { "type": "string", "enum": ["draft", "published", "deprecated", "retired"] },
+    "tokens": { "type": "object" },
+    "supported_layouts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "supported_components": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "preview_thumbnail": { "type": "string" }
+  }
+}
