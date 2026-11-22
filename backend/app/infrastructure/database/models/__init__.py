@@ -46,8 +46,12 @@ from app.infrastructure.database.models.pricing import (
     MenuItemTranslationModel,
 )
 from app.infrastructure.database.models.publishing import (
+    DraftRevisionModel,
     MenuVersionModel,
+    PublicationActivationModel,
     PublicationModel,
+    PublicationSnapshotModel,
+    ScheduledPublicationModel,
 )
 from app.infrastructure.database.models.restaurants import (
     RestaurantDomainModel,
@@ -81,6 +85,10 @@ __all__ = [
     "ComponentDefinitionModel",
     "MenuVersionModel",
     "PublicationModel",
+    "DraftRevisionModel",
+    "PublicationSnapshotModel",
+    "PublicationActivationModel",
+    "ScheduledPublicationModel",
     "MediaAssetModel",
     "MediaUsageModel",
     "SubscriptionPlanModel",

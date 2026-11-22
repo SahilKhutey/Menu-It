@@ -1,0 +1,31 @@
+version: "1.0"
+domain: publishing
+schema_versions:
+  supported:
+    - "1.0"
+  current: "1.0"
+renderer_contracts:
+  supported:
+    - "1.0"
+  current: "1.0"
+theme_compatibility:
+  minimum_theme_version: "1.0.0"
+  allowed_presets:
+    - "modern_clean"
+    - "warm_editorial"
+    - "minimal"
+    - "dark_mode"
+layout_compatibility:
+  minimum_layout_version: "1.0.0"
+  allowed_types:
+    - "category_first"
+    - "two_column"
+    - "grid_dense"
+component_compatibility:
+  registry_version: "1.0"
+  required_components:
+    - "restaurant_header"
+    - "category_navigation"
+    - "category_section"
+    - "food_item_card"
+    - "menu_footer"

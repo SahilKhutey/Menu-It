@@ -1,5 +1,5 @@
 """
-ModularMenu — Publication & Versioning Persistence Models (ARC-06 §3.2, §6.2).
+ModularMenu — Publication & Versioning Persistence Models (ARC-06 §3.2, §6.2, ARC-10 §8).
 Immutable menu snapshots with SHA-256 verification and active publication pointers.
 """
 from datetime import datetime, timezone
@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional
 from uuid import UUID
 
 from sqlalchemy import (
+    BigInteger,
     CheckConstraint,
     DateTime,
     ForeignKeyConstraint,
@@ -55,7 +56,7 @@ class MenuVersionModel(Base, UUIDPrimaryKey):
     )
 
 
-# Enforce database and ORM immutability (ARC-06 §6.4)
+# Enforce database and ORM immutability (ARC-06 §6.4, ARC-10 §8.5)
 register_immutability_guard(MenuVersionModel)
 
 
@@ -77,5 +78,82 @@ class PublicationModel(Base, UUIDPrimaryKey):
     menu_version_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
     status: Mapped[str] = mapped_column(String(30), default="active", nullable=False)
     published_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+
+# ARC-10 Extended Persistence Models (§8)
+
+class DraftRevisionModel(Base, UUIDPrimaryKey):
+    __tablename__ = "menu_draft_revisions"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "menu_id", "revision_number", name="uq_draft_revision_number"),
+        CheckConstraint("revision_number > 0", name="ck_draft_revision_positive"),
+    )
+
+    organization_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    menu_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    revision_number: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    parent_revision_id: Mapped[Optional[UUID]] = mapped_column(GUID(), nullable=True)
+    payload: Mapped[Dict[str, Any]] = mapped_column(PortableJSON(), nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_by: Mapped[Optional[UUID]] = mapped_column(GUID(), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+
+register_immutability_guard(DraftRevisionModel)
+
+
+class PublicationSnapshotModel(Base, UUIDPrimaryKey):
+    __tablename__ = "menu_publication_snapshots"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "menu_id", "id", name="uq_snapshot_scope"),
+    )
+
+    organization_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    menu_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    schema_version: Mapped[str] = mapped_column(String(32), default="1.0", nullable=False)
+    payload: Mapped[Dict[str, Any]] = mapped_column(PortableJSON(), nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+
+register_immutability_guard(PublicationSnapshotModel)
+
+
+class PublicationActivationModel(Base, UUIDPrimaryKey):
+    __tablename__ = "publication_activations"
+
+    organization_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    menu_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    publication_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    previous_publication_id: Mapped[Optional[UUID]] = mapped_column(GUID(), nullable=True)
+    operation_id: Mapped[UUID] = mapped_column(GUID(), nullable=False)
+    activation_reason: Mapped[str] = mapped_column(String(32), default="publish", nullable=False)
+    actor_id: Mapped[Optional[UUID]] = mapped_column(GUID(), nullable=True)
+    activated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+
+register_immutability_guard(PublicationActivationModel)
+
+
+class ScheduledPublicationModel(Base, UUIDPrimaryKey):
+    __tablename__ = "scheduled_publications"
+
+    organization_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    menu_id: Mapped[UUID] = mapped_column(GUID(), nullable=False, index=True)
+    draft_revision: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    expected_active_publication_id: Mapped[Optional[UUID]] = mapped_column(GUID(), nullable=True)
+    scheduled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    timezone_name: Mapped[str] = mapped_column(String(64), default="UTC", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="SCHEDULED", nullable=False)
+    created_by: Mapped[UUID] = mapped_column(GUID(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )

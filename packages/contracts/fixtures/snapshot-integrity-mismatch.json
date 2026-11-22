@@ -1,0 +1,7 @@
+{
+  "snapshot_id": "88888888-8888-8888-8888-888888888888",
+  "expected_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "calculated_hash": "a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0",
+  "error_code": "SNAPSHOT_INTEGRITY_FAILED",
+  "message": "Calculated SHA-256 hash does not match stored immutable hash record."
+}

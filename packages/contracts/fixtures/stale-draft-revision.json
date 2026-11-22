@@ -1,0 +1,6 @@
+{
+  "submitted_draft_revision": 12,
+  "current_server_draft_revision": 14,
+  "error_code": "DRAFT_REVISION_STALE",
+  "message": "The submitted draft revision (12) is stale. The latest saved revision is 14."
+}

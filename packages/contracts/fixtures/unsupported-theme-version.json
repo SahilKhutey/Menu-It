@@ -1,0 +1,6 @@
+{
+  "theme_id": "experimental_retro",
+  "theme_version": "0.1.0-alpha",
+  "error_code": "THEME_VERSION_UNSUPPORTED",
+  "message": "Theme experimental_retro version 0.1.0-alpha is not supported by production renderer contract 1.0."
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/publication-request.schema.json",
+  "title": "PublicationRequest",
+  "type": "object",
+  "required": ["draft_revision"],
+  "properties": {
+    "draft_revision": { "type": "integer", "minimum": 1 },
+    "expected_active_publication_id": { "type": ["string", "null"], "format": "uuid" },
+    "validation_id": { "type": ["string", "null"], "format": "uuid" },
+    "reason": { "type": "string", "maxLength": 500 }
+  },
+  "additionalProperties": false
+}

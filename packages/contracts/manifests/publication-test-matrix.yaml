@@ -1,0 +1,36 @@
+version: "1.0"
+domain: publishing
+test_matrix:
+  draft_revisions:
+    range: "ARC10-T001 to ARC10-T015"
+    count: 15
+    focus: "Monotonic revisioning, immutability, optimistic concurrency (If-Match), parent tracking"
+  publication_validation:
+    range: "ARC10-T016 to ARC10-T035"
+    count: 20
+    focus: "Content, pricing, availability, media, theme, layout, component compatibility, diagnostic codes"
+  snapshot_and_integrity:
+    range: "ARC10-T036 to ARC10-T050"
+    count: 15
+    focus: "Public allowlist, private field exclusion, dependency pinning, canonical SHA-256 digest"
+  publication_transaction:
+    range: "ARC10-T051 to ARC10-T065"
+    count: 15
+    focus: "ACID commit, row-level locking, version allocation, idempotency replay, conflict isolation"
+  rollback_engine:
+    range: "ARC10-T066 to ARC10-T080"
+    count: 15
+    focus: "Historical reactivation, compatibility checks, unchanged snapshot immutability, activation history"
+  version_history:
+    range: "ARC10-T081 to ARC10-T090"
+    count: 10
+    focus: "Deterministic ordering, pagination, tenant separation, snapshot payload inspection"
+  events_and_outbox:
+    range: "ARC10-T091 to ARC10-T100"
+    count: 10
+    focus: "Transactional outbox, worker claiming, at-least-once delivery, retry policy, dead letter"
+  api_security_cache:
+    range: "ARC10-T101 to ARC10-T120"
+    count: 20
+    focus: "Authentication, RBAC, tenant RLS, rate limiting, public renderer integration, cache invalidation"
+  total_test_count: 120

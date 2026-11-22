@@ -19,6 +19,7 @@ This directory contains chronological engineering chronicles capturing the archi
 | **[Devlog-008](devlog-008-arc07-api-and-integration-architecture.md)** | **ARC-07 API & Integration Architecture** | 2026-11-21 | `v1.0.0-arc07` | REST API, 66 endpoints, OpenAPI 3.1, TypeScript SDK, server-derived tenancy, outbox webhooks, 274 tests (75 API tests). |
 | **[Devlog-009](devlog-009-arc08-theme-and-customization-architecture.md)** | **ARC-08 Theme & Customization Architecture** | 2026-11-22 | `v1.0.0-arc08` | Configuration-driven, token taxonomy, 6 themes, 4 layouts, 13 components, dual-editor parity, 378 tests (104 customization tests). |
 | **[Devlog-010](devlog-010-arc09-menu-rendering-architecture.md)** | **ARC-09 Menu Rendering Architecture** | 2026-11-22 | `v1.0.0-arc09` | Decoupled presentation engine, immutable published snapshots, ETag HTTP 304, Next.js dynamic routing, 92 kB JS bundle, 498 tests (120 rendering tests). |
+| **[Devlog-011](devlog-011-arc10-publishing-versioning-architecture.md)** | **ARC-10 Publishing & Versioning Architecture** | 2026-11-22 | `v1.0.0-arc10` | Draft isolation, immutable snapshots, atomic activation, non-destructive rollback, transactional outbox, 92 kB JS bundle, 618 tests (120 publishing tests). |
 
 ---
 

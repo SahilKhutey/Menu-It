@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.modularmenu.com/schemas/publication-response.schema.json",
+  "title": "PublicationResponse",
+  "type": "object",
+  "required": ["operation_id", "publication", "active_publication_id"],
+  "properties": {
+    "operation_id": { "type": "string", "format": "uuid" },
+    "publication": {
+      "type": "object",
+      "required": ["id", "version_number", "snapshot_id", "status", "created_at"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "version_number": { "type": "integer", "minimum": 1 },
+        "snapshot_id": { "type": "string", "format": "uuid" },
+        "status": { "type": "string", "enum": ["READY", "ACTIVE", "SUPERSEDED", "INACTIVE"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "activated_at": { "type": ["string", "null"], "format": "date-time" },
+        "checksum": { "type": "string" }
+      }
+    },
+    "active_publication_id": { "type": "string", "format": "uuid" }
+  },
+  "additionalProperties": false
+}

@@ -22,8 +22,10 @@ Level 1 — System Architecture
 │   └── Contract-first REST API, versioned endpoints (/api/v1), OpenAPI 3.1, server-derived tenant context, TypeScript contracts, reliable outbox webhooks, and 75-test API catalogue.
 ├── ARC-08: Theme & Customization Architecture
 │   └── Configuration-driven customization, hierarchical design tokens, 6 themes, 4 layouts, 13 components, deterministic resolver, dual-editor parity, optimistic concurrency, and 104-test customization catalogue.
-└── ARC-09: Menu Rendering Architecture
-    └── Pure presentation engine, deterministic composition, 5 mandatory slots, immutable published snapshots, ETag HTTP 304, Next.js dynamic routing, 92 kB JS bundle, and 120-test rendering catalogue.
+├── ARC-09: Menu Rendering Architecture
+│   └── Pure presentation engine, deterministic composition, 5 mandatory slots, immutable published snapshots, ETag HTTP 304, Next.js dynamic routing, 92 kB JS bundle, and 120-test rendering catalogue.
+└── ARC-10: Publishing & Versioning Architecture
+    └── Draft isolation, immutable snapshots, monotonic versioning, atomic activation, non-destructive rollback, transactional outbox, and 120-test publishing catalogue.
 ```
 
 ---
@@ -87,12 +89,19 @@ Level 1 — System Architecture
    - Operator Previewing: Authorized draft previews with visual watermarking (`PREVIEW MODE — Unpublished Draft`), diagnostic warnings panel, and strict `Cache-Control: private, no-store`.
    - Documentation & Quality Gates: 31 architectural deliverables in `docs/architecture/ARC-09-menu-rendering-architecture/`; 498 total automated platform tests passing (including 120 rendering catalogue scenarios ARC09-T001 to T120); 92.0 kB public First Load JS bundle; 100% pass rate.
 
+10. **[ARC-10 — Publishing & Versioning Architecture](documentation/03_System_Architecture/ARC-10_Publishing_and_Versioning_Architecture.md)**
+    - Status: **Approved & Implemented**
+    - Publishing Model: Draft isolation, monotonic version numbering (`v1`, `v2`, `v3`...), immutable snapshots with canonical SHA-256 digests, and atomic transactional activation.
+    - Concurrency & Rollback: Optimistic locking via `If-Match` revision checks; non-destructive rollback reactivating previous snapshots; single authoritative active publication pointer.
+    - Events & Cache: Transactional Outbox pattern (`outbox_events`) for reliable lifecycle events (`MenuPublished`, `MenuRolledBack`), edge CDN cache tag invalidations, and reconciliation jobs.
+    - Documentation & Quality Gates: 30 architectural deliverables in `docs/architecture/ARC-10-publishing-versioning-architecture/`; operational guides in `docs/publishing/`; 618 total automated platform tests passing (including 120 publishing catalogue scenarios ARC10-T001 to T120); 100% pass rate.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0167).
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-010).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0191).
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-011).
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Comprehensive work package execution and test verification records.
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
@@ -102,7 +111,8 @@ Level 1 — System Architecture
 - **[API Architecture Suite](docs/architecture/ARC-07-api-integration-architecture/):** Complete specifications for 66 REST endpoints, RFC 7807 error models, OpenAPI 3.1 contracts, and outbox webhooks.
 - **[Theme & Customization Architecture Suite](docs/architecture/ARC-08-theme-customization-architecture/):** Complete specifications for 6 themes, 4 layouts, 13 components, deterministic resolver, and 104-test scenario matrix.
 - **[Menu Rendering Architecture Suite](docs/architecture/ARC-09-menu-rendering-architecture/):** Complete specifications for pure rendering engine, deterministic composition, 5 mandatory slots, and 120-test scenario matrix.
-- **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, and Published Snapshots.
+- **[Publishing & Versioning Architecture Suite](docs/architecture/ARC-10-publishing-versioning-architecture/):** Complete specifications for draft revisions, validation, immutable snapshots, rollback, outbox events, and 120-test scenario matrix.
+- **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, Published Snapshots, and Publishing Workflows.
 
 ---
 
