@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "mappings": {
+    "restaurant-header@1.0.0": {
+      "renderer": "RestaurantHeader",
+      "slot": "header",
+      "category": "identity"
+    },
+    "menu-title@1.0.0": {
+      "renderer": "MenuHeader",
+      "slot": "header",
+      "category": "identity"
+    },
+    "category-navigation@1.0.0": {
+      "renderer": "CategoryNavigation",
+      "slot": "navigation",
+      "category": "navigation"
+    },
+    "category-heading@1.0.0": {
+      "renderer": "CategoryHeading",
+      "slot": "category.header",
+      "category": "content"
+    },
+    "menu-item-card@1.0.0": {
+      "renderer": "FoodItemCard",
+      "slot": "category.items",
+      "category": "content"
+    },
+    "menu-item-image@1.0.0": {
+      "renderer": "MenuItemImage",
+      "slot": "category.items",
+      "category": "media"
+    },
+    "menu-item-price@1.0.0": {
+      "renderer": "MenuItemPrice",
+      "slot": "category.items",
+      "category": "pricing"
+    },
+    "menu-item-description@1.0.0": {
+      "renderer": "MenuItemDescription",
+      "slot": "category.items",
+      "category": "content"
+    },
+    "dietary-label@1.0.0": {
+      "renderer": "DietaryLabel",
+      "slot": "category.items",
+      "category": "supporting"
+    },
+    "allergen-label@1.0.0": {
+      "renderer": "AllergenLabel",
+      "slot": "category.items",
+      "category": "supporting"
+    },
+    "availability-indicator@1.0.0": {
+      "renderer": "AvailabilityIndicator",
+      "slot": "category.items",
+      "category": "availability"
+    },
+    "menu-footer@1.0.0": {
+      "renderer": "MenuFooter",
+      "slot": "footer",
+      "category": "footer"
+    },
+    "contact-information@1.0.0": {
+      "renderer": "ContactInformation",
+      "slot": "footer",
+      "category": "footer"
+    }
+  }
+}

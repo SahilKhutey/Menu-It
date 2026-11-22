@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "render_mode": "published",
+    "schema_version": "1.0.0",
+    "locale": "en-IN",
+    "currency": "INR",
+    "snapshot_id": "snap_001"
+  },
+  "restaurant": {
+    "name": "The Garden Table",
+    "slug": "the-garden-table",
+    "description": "Fresh farm-to-table dining",
+    "logo": {
+      "asset_id": "logo_1",
+      "url": "https://images.modularmenu.dev/logo.webp",
+      "alt": "Garden Table Logo",
+      "width": 120,
+      "height": 120
+    },
+    "cover_image": {
+      "asset_id": "cover_1",
+      "url": "https://images.modularmenu.dev/cover.webp",
+      "alt": "Garden Table Ambience",
+      "width": 1200,
+      "height": 400
+    },
+    "contact_information": {
+      "phone": "+91 98765 43210",
+      "address": "12 Lavelle Road, Bangalore"
+    }
+  },
+  "menu": {
+    "id": "menu_001",
+    "title": "Summer Tasting Menu",
+    "description": "Seasonal garden plates",
+    "status": "active",
+    "categories": [
+      {
+        "id": "cat_starters",
+        "name": "Small Plates",
+        "description": "Light appetisers and raw bar",
+        "sort_order": 1,
+        "items": [
+          {
+            "id": "item_burrata",
+            "name": "Heirloom Burrata",
+            "description": "Artisanal burrata with torn basil and aged balsamic",
+            "price": {
+              "amount_minor": 65000,
+              "currency": "INR"
+            },
+            "availability": "available",
+            "dietary_labels": ["veg", "gluten-free"],
+            "allergen_labels": ["dairy"],
+            "images": [
+              {
+                "asset_id": "img_burrata",
+                "url": "https://images.modularmenu.dev/burrata.webp",
+                "alt": "Heirloom Burrata dish",
+                "width": 800,
+                "height": 600,
+                "is_primary": true
+              }
+            ]
+          },
+          {
+            "id": "item_bruschetta",
+            "name": "Wild Mushroom Bruschetta",
+            "description": "Sourdough toast with truffle oil and shaved parmesan",
+            "price": {
+              "amount_minor": 45000,
+              "currency": "INR"
+            },
+            "availability": "sold_out",
+            "dietary_labels": ["veg"],
+            "allergen_labels": ["gluten", "dairy"],
+            "images": []
+          }
+        ]
+      }
+    ]
+  },
+  "resolved_configuration": {
+    "theme": {
+      "id": "theme-minimal",
+      "version": "1.0.0",
+      "tokens": {
+        "color": {
+          "brand": { "primary": "#18181B", "secondary": "#3F3F46", "accent": "#0284C7" },
+          "surface": { "default": "#FFFFFF", "subtle": "#F4F4F5", "raised": "#FFFFFF" },
+          "text": { "primary": "#09090B", "secondary": "#71717A", "inverse": "#FFFFFF" },
+          "border": { "default": "#E4E4E7", "subtle": "#F4F4F5" },
+          "status": { "success": "#16A34A", "warning": "#D97706", "error": "#DC2626" }
+        },
+        "typography": {
+          "fontFamily": { "body": "inter", "heading": "inter" },
+          "fontSize": { "small": "0.875rem", "body": "1rem", "heading": "1.5rem", "display": "2rem" },
+          "fontWeight": { "normal": 400, "medium": 500, "bold": 700 }
+        },
+        "spacing": { "xs": "0.25rem", "sm": "0.5rem", "md": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "3rem" },
+        "radius": { "none": "0px", "small": "0.25rem", "medium": "0.375rem", "large": "0.5rem", "full": "9999px" },
+        "shadow": { "none": "none", "sm": "0 1px 2px rgba(0,0,0,0.05)", "card": "0 1px 3px rgba(0,0,0,0.08)" }
+      }
+    },
+    "layout": {
+      "id": "layout-grid",
+      "version": "1.0.0",
+      "settings": { "card_gap": "1rem" },
+      "responsive": {
+        "mobile": { "columns": 1, "navigation": "horizontal-scroll" },
+        "tablet": { "columns": 2, "navigation": "horizontal-scroll" },
+        "desktop": { "columns": 3, "navigation": "inline" }
+      }
+    },
+    "components": [
+      {
+        "instance_id": "header-1",
+        "component_id": "restaurant-header",
+        "component_version": "1.0.0",
+        "slot": "header",
+        "position": 1,
+        "visible": true,
+        "props": { "show_logo": true, "show_cover": true, "logo_alignment": "center", "logo_size": "medium" }
+      },
+      {
+        "instance_id": "item-card-1",
+        "component_id": "menu-item-card",
+        "component_version": "1.0.0",
+        "slot": "category.items",
+        "position": 2,
+        "visible": true,
+        "props": { "card_style": "elevated", "image_visible": true, "image_ratio": "4:3", "alignment": "left", "dense": false }
+      }
+    ],
+    "css_variables": {
+      "--mm-color-brand-primary": "#18181B",
+      "--mm-color-surface-default": "#FFFFFF"
+    }
+  },
+  "media_manifest": {
+    "approved_assets": [
+      {
+        "asset_id": "img_burrata",
+        "url": "https://images.modularmenu.dev/burrata.webp",
+        "mime_type": "image/webp",
+        "width": 800,
+        "height": 600
+      }
+    ]
+  },
+  "publication": {
+    "version": 1,
+    "published_at": "2026-11-22T12:00:00Z",
+    "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

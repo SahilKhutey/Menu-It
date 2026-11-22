@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "render_mode": "published",
+    "schema_version": "1.0.0",
+    "locale": "en-IN",
+    "currency": "INR"
+  },
+  "restaurant": { "name": "Negative Price Diner", "slug": "neg-price" },
+  "menu": {
+    "title": "Menu",
+    "categories": [
+      {
+        "id": "c1",
+        "name": "Cat",
+        "items": [
+          {
+            "id": "i1",
+            "name": "Item",
+            "availability": "available",
+            "price": {
+              "amount_minor": -500,
+              "currency": "INVALID_CURRENCY"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "resolved_configuration": {
+    "theme": { "id": "theme-minimal", "version": "1.0.0", "tokens": {} },
+    "layout": { "id": "layout-grid", "version": "1.0.0", "responsive": {} },
+    "components": []
+  }
+}

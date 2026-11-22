@@ -1,19 +1,32 @@
 """
-Rendering Domain Concepts (ARC-04 §6.11, MOD-11).
+Rendering Domain Concepts (ARC-04 §6.11, ARC-09 §4, MOD-11).
 """
-from dataclasses import dataclass, field
-from typing import Any
+from app.modules.rendering.domain.render_mode import RenderMode
+from app.modules.rendering.domain.render_input import (
+    RenderMetadata,
+    RenderRestaurant,
+    RenderPrice,
+    RenderItem,
+    RenderCategory,
+    RenderMenu,
+    RenderTheme,
+    RenderLayout,
+    RenderPlan,
+    RenderInput,
+    RenderResult,
+)
 
-
-@dataclass(frozen=True)
-class RenderInput:
-    published_snapshot: dict[str, Any]
-    render_context: dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass(frozen=True)
-class RenderResult:
-    menu_data: dict[str, Any]
-    theme: dict[str, Any]
-    layout: dict[str, Any]
-    components: list[dict[str, Any]]
+__all__ = [
+    "RenderMode",
+    "RenderMetadata",
+    "RenderRestaurant",
+    "RenderPrice",
+    "RenderItem",
+    "RenderCategory",
+    "RenderMenu",
+    "RenderTheme",
+    "RenderLayout",
+    "RenderPlan",
+    "RenderInput",
+    "RenderResult",
+]

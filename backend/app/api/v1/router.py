@@ -17,6 +17,7 @@ from app.api.v1 import (
     pricing,
     public,
     publishing,
+    rendering,
     restaurants,
     themes,
 )
@@ -35,6 +36,7 @@ v1_router.include_router(themes.router)
 v1_router.include_router(customization.router)
 v1_router.include_router(editor.router)
 v1_router.include_router(publishing.router)
+v1_router.include_router(rendering.router)
 v1_router.include_router(media.router)
 v1_router.include_router(public.router)
 v1_router.include_router(licensing.router)

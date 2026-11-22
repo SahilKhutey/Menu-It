@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "policies": {
+    "public_menu": {
+      "cache_control": "public, max-age=60, s-maxage=300, stale-while-revalidate=60",
+      "key_template": "public-menu:{restaurant_slug}:{menu_slug}:{publication_version}"
+    },
+    "preview": {
+      "cache_control": "private, no-cache, no-store, must-revalidate",
+      "key_template": null
+    },
+    "static_assets": {
+      "cache_control": "public, max-age=31536000, immutable",
+      "key_template": "asset:{asset_id}:{content_hash}"
+    }
+  }
+}
