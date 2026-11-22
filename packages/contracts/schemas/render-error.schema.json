@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://modularmenu.dev/schemas/render-error.schema.json",
+  "title": "RenderError",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["code", "message", "stage"],
+  "properties": {
+    "code": {
+      "type": "string",
+      "enum": [
+        "RENDER_INPUT_INVALID",
+        "RENDER_SCHEMA_UNSUPPORTED",
+        "RENDER_THEME_NOT_FOUND",
+        "RENDER_LAYOUT_NOT_FOUND",
+        "RENDER_COMPONENT_NOT_FOUND",
+        "RENDER_COMPONENT_INVALID",
+        "RENDER_MEDIA_UNAVAILABLE",
+        "RENDER_PRICE_INVALID",
+        "RENDER_LOCALE_UNSUPPORTED",
+        "RENDER_PUBLICATION_NOT_FOUND",
+        "RENDER_PREVIEW_FORBIDDEN"
+      ]
+    },
+    "message": { "type": "string" },
+    "stage": { "type": "string" },
+    "details": { "type": ["object", "array", "null"] }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "themes": {
+    "theme-luxury": { "contrast_certified": true, "dark_mode": true },
+    "theme-minimal": { "contrast_certified": true, "dark_mode": false },
+    "theme-rustic": { "contrast_certified": true, "dark_mode": false },
+    "theme-contemporary": { "contrast_certified": true, "dark_mode": false },
+    "theme-vibrant": { "contrast_certified": true, "dark_mode": false },
+    "theme-editorial": { "contrast_certified": true, "dark_mode": false }
+  }
+}

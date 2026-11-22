@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "render_mode": "published",
+    "schema_version": "1.0.0",
+    "locale": "en-IN",
+    "currency": "INR"
+  },
+  "restaurant": { "name": "Broken Theme Co", "slug": "broken-theme-co" },
+  "menu": { "title": "Menu", "categories": [] },
+  "resolved_configuration": {
+    "theme": { "id": "theme-nonexistent-unsupported", "version": "99.9.9", "tokens": {} },
+    "layout": { "id": "layout-grid", "version": "1.0.0", "responsive": {} },
+    "components": []
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "render_mode": "published",
+    "schema_version": "1.0.0",
+    "locale": "en-IN",
+    "currency": "INR"
+  },
+  "restaurant": { "name": "Broken Co", "slug": "broken-co" },
+  "menu": { "title": "Menu", "categories": [] },
+  "resolved_configuration": {
+    "theme": { "id": "theme-minimal", "version": "1.0.0", "tokens": {} },
+    "layout": { "id": "layout-grid", "version": "1.0.0", "responsive": {} },
+    "components": [
+      {
+        "instance_id": "malicious-1",
+        "component_id": "arbitrary-unregistered-script-widget",
+        "component_version": "1.0.0",
+        "slot": "header",
+        "position": 1,
+        "visible": true,
+        "props": { "evil": "<script>alert(1)</script>" }
+      }
+    ]
+  }
+}

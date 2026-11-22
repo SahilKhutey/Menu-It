@@ -20,8 +20,10 @@ Level 1 — System Architecture
 │   └── Relational-first schema, composite foreign keys, PostgreSQL RLS, SQLAlchemy 2.x, immutable published snapshots, and 55-test persistence catalogue.
 ├── ARC-07: API & Integration Architecture
 │   └── Contract-first REST API, versioned endpoints (/api/v1), OpenAPI 3.1, server-derived tenant context, TypeScript contracts, reliable outbox webhooks, and 75-test API catalogue.
-└── ARC-08: Theme & Customization Architecture
-    └── Configuration-driven customization, hierarchical design tokens, 6 themes, 4 layouts, 13 components, deterministic resolver, dual-editor parity, optimistic concurrency, and 104-test customization catalogue.
+├── ARC-08: Theme & Customization Architecture
+│   └── Configuration-driven customization, hierarchical design tokens, 6 themes, 4 layouts, 13 components, deterministic resolver, dual-editor parity, optimistic concurrency, and 104-test customization catalogue.
+└── ARC-09: Menu Rendering Architecture
+    └── Pure presentation engine, deterministic composition, 5 mandatory slots, immutable published snapshots, ETag HTTP 304, Next.js dynamic routing, 92 kB JS bundle, and 120-test rendering catalogue.
 ```
 
 ---
@@ -78,12 +80,19 @@ Level 1 — System Architecture
    - Dual-Editor Parity & Concurrency: Settings Editor and Visual Drag-and-Drop Editor operating on the exact same JSON document; optimistic concurrency control (`If-Match` / `ETag`); immutable revision audit log and one-click restoration.
    - Documentation & Quality Gates: 28 architectural deliverables in `docs/architecture/ARC-08-theme-customization-architecture/`; 378 total automated platform tests passing (including 104 customization catalogue scenarios ARC08-T001 to T104); 100% pass rate.
 
+9. **[ARC-09 — Menu Rendering Architecture](documentation/03_System_Architecture/ARC-09_Menu_Rendering_Architecture.md)**
+   - Status: **Approved & Implemented**
+   - Rendering Model: Pure decoupled presentation engine (`@modularmenu/menu-renderer`) with zero database and zero network dependencies; deterministic `RenderPlan` output.
+   - Delivery Tier: Immutable published snapshots, SHA-256 ETag generation, RFC 7232 conditional GET support (HTTP 304 Not Modified), and Next.js dynamic App Router routes (`/r/[slug]/[menuSlug]`).
+   - Operator Previewing: Authorized draft previews with visual watermarking (`PREVIEW MODE — Unpublished Draft`), diagnostic warnings panel, and strict `Cache-Control: private, no-store`.
+   - Documentation & Quality Gates: 31 architectural deliverables in `docs/architecture/ARC-09-menu-rendering-architecture/`; 498 total automated platform tests passing (including 120 rendering catalogue scenarios ARC09-T001 to T120); 92.0 kB public First Load JS bundle; 100% pass rate.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0140).
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-009).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0167).
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-010).
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Comprehensive work package execution and test verification records.
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
@@ -92,6 +101,7 @@ Level 1 — System Architecture
 - **[Data Architecture Suite](docs/architecture/ARC-06-data-architecture/):** Complete specifications for 30+ relational models across 10 capability groups, composite foreign keys, RLS policies, and recovery drills.
 - **[API Architecture Suite](docs/architecture/ARC-07-api-integration-architecture/):** Complete specifications for 66 REST endpoints, RFC 7807 error models, OpenAPI 3.1 contracts, and outbox webhooks.
 - **[Theme & Customization Architecture Suite](docs/architecture/ARC-08-theme-customization-architecture/):** Complete specifications for 6 themes, 4 layouts, 13 components, deterministic resolver, and 104-test scenario matrix.
+- **[Menu Rendering Architecture Suite](docs/architecture/ARC-09-menu-rendering-architecture/):** Complete specifications for pure rendering engine, deterministic composition, 5 mandatory slots, and 120-test scenario matrix.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, and Published Snapshots.
 
 ---

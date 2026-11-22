@@ -17,6 +17,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **ARC-06** | Data Architecture & Persistence | WP-ARC06-01 to WP-ARC06-12 | 199 Tests | **Approved & Implemented** | **[Tasklog-ARC06](tasklog-arc06-data.md)** |
 | **ARC-07** | API & Integration Architecture | WP-ARC07-01 to WP-ARC07-12 | 274 Tests (75 API) | **Approved & Implemented** | **[Tasklog-ARC07](tasklog-arc07-api.md)** |
 | **ARC-08** | Theme & Customization Architecture | WP-ARC08-01 to WP-ARC08-13 | 378 Tests (104 Customization) | **Approved & Implemented** | **[Tasklog-ARC08](tasklog-arc08-customization.md)** |
+| **ARC-09** | Menu Rendering Architecture | WP-ARC09-01 to WP-ARC09-15 | 498 Tests (120 Rendering) | **Approved & Implemented** | **[Tasklog-ARC09](tasklog-arc09-rendering.md)** |
 
 ---
 
@@ -30,6 +31,7 @@ ARC-05 Tenancy:   [=============================================================
 ARC-06 Persistence:[========================================================================================================================================================] 199 Tests Passing (100%)
 ARC-07 API Layer: [==============================================================================================================================================================================] 274 Tests Passing (100%)
 ARC-08 Customization: [====================================================================================================================================================================================================================] 378 Tests Passing (100%)
+ARC-09 Rendering: [========================================================================================================================================================================================================================================================] 498 Tests Passing (100%)
 ```
 
 ---

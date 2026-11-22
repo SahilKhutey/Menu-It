@@ -1,0 +1,213 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://modularmenu.dev/schemas/menu-render-input.schema.json",
+  "title": "MenuRenderInput",
+  "description": "Canonical validated input contract for the ModularMenu presentation renderer (ARC-09 §4).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metadata", "restaurant", "menu", "resolved_configuration"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["render_mode", "schema_version", "locale", "currency"],
+      "properties": {
+        "render_mode": { "type": "string", "enum": ["published", "preview"] },
+        "snapshot_id": { "type": "string" },
+        "menu_id": { "type": "string" },
+        "locale": { "type": "string", "pattern": "^[a-z]{2}(-[A-Z]{2})?$" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" }
+      }
+    },
+    "restaurant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "slug"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9_-]{1,100}$" },
+        "description": { "type": ["string", "null"], "maxLength": 1000 },
+        "logo": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "asset_id": { "type": "string" },
+            "url": { "type": "string" },
+            "alt": { "type": "string" },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "cover_image": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "asset_id": { "type": "string" },
+            "url": { "type": "string" },
+            "alt": { "type": "string" },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "contact_information": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        }
+      }
+    },
+    "menu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "categories"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": ["string", "null"], "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["active", "draft", "archived"] },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "items"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+              "description": { "type": ["string", "null"], "maxLength": 1000 },
+              "sort_order": { "type": "integer" },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["id", "name", "availability"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+                    "description": { "type": ["string", "null"], "maxLength": 2000 },
+                    "price": {
+                      "type": ["object", "null"],
+                      "additionalProperties": false,
+                      "required": ["amount_minor", "currency"],
+                      "properties": {
+                        "amount_minor": { "type": "integer", "minimum": 0 },
+                        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+                      }
+                    },
+                    "availability": {
+                      "type": "string",
+                      "enum": ["available", "unavailable", "sold_out"]
+                    },
+                    "dietary_labels": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "allergen_labels": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["url", "width", "height"],
+                        "properties": {
+                          "asset_id": { "type": "string" },
+                          "url": { "type": "string" },
+                          "alt": { "type": "string" },
+                          "width": { "type": "integer", "minimum": 1 },
+                          "height": { "type": "integer", "minimum": 1 },
+                          "is_primary": { "type": "boolean" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "resolved_configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["theme", "layout", "components"],
+      "properties": {
+        "theme": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "tokens"],
+          "properties": {
+            "id": { "type": "string" },
+            "version": { "type": "string" },
+            "tokens": { "type": "object" }
+          }
+        },
+        "layout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "responsive"],
+          "properties": {
+            "id": { "type": "string" },
+            "version": { "type": "string" },
+            "settings": { "type": "object" },
+            "responsive": { "type": "object" }
+          }
+        },
+        "components": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["instance_id", "component_id", "component_version", "slot", "position", "visible"],
+            "properties": {
+              "instance_id": { "type": "string" },
+              "component_id": { "type": "string" },
+              "component_version": { "type": "string" },
+              "slot": { "type": "string" },
+              "position": { "type": "integer" },
+              "visible": { "type": "boolean" },
+              "props": { "type": "object" }
+            }
+          }
+        },
+        "css_variables": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "media_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "approved_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset_id": { "type": "string" },
+              "url": { "type": "string" },
+              "mime_type": { "type": "string" },
+              "width": { "type": "integer" },
+              "height": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "publication": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "published_at": { "type": "string" },
+        "content_hash": { "type": "string" }
+      }
+    }
+  }
+}

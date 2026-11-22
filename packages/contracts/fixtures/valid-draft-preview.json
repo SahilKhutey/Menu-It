@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "render_mode": "preview",
+    "schema_version": "1.0.0",
+    "locale": "en-IN",
+    "currency": "INR",
+    "menu_id": "menu_draft_99"
+  },
+  "restaurant": {
+    "name": "The Garden Table (Draft)",
+    "slug": "the-garden-table"
+  },
+  "menu": {
+    "title": "Winter Tasting Menu (Unpublished Draft)",
+    "categories": []
+  },
+  "resolved_configuration": {
+    "theme": {
+      "id": "theme-luxury",
+      "version": "1.0.0",
+      "tokens": {
+        "color": {
+          "brand": { "primary": "#D4AF37" }
+        }
+      }
+    },
+    "layout": {
+      "id": "layout-list",
+      "version": "1.0.0",
+      "responsive": { "mobile": { "columns": 1 } }
+    },
+    "components": []
+  },
+  "preview": {
+    "revision": 3,
+    "valid": true,
+    "warnings": [],
+    "generated_at": "2026-11-22T14:00:00Z"
+  }
+}

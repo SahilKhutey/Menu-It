@@ -1,11 +1,11 @@
 # Menu-It (ModularMenu™)
 ### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
 
-[![Version](https://img.shields.io/badge/version-1.0.0--arc08-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc08)
-[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--08%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
-[![Tests](https://img.shields.io/badge/Quality%20Gates-378%2F378%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
-[![Devlogs](https://img.shields.io/badge/Devlogs-9%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
-[![Tasklogs](https://img.shields.io/badge/Tasklogs-8%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Version](https://img.shields.io/badge/version-1.0.0--arc09-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc09)
+[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--09%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
+[![Tests](https://img.shields.io/badge/Quality%20Gates-498%2F498%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Devlogs](https://img.shields.io/badge/Devlogs-10%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
+[![Tasklogs](https://img.shields.io/badge/Tasklogs-9%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
 [![Python](https://img.shields.io/badge/Python-3.12%20FastAPI-005571.svg?style=for-the-badge&logo=python)](backend/)
 [![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?style=for-the-badge&logo=next.js)](frontend/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=for-the-badge&logo=typescript)](frontend/)
@@ -314,17 +314,23 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Tasklog-ARC04: Modular Domain Architecture (WP-01 to WP-10)](docs/tasklogs/tasklog-arc04-domain.md)
   - [Tasklog-ARC05: Multi-Tenant Architecture (WP-01 to WP-12)](docs/tasklogs/tasklog-arc05-multitenant.md)
   - [Tasklog-ARC06: Data Architecture & Persistence (WP-01 to WP-12)](docs/tasklogs/tasklog-arc06-data.md)
+  - [Tasklog-ARC07: API & Integration Architecture (WP-01 to WP-12)](docs/tasklogs/tasklog-arc07-api.md)
+  - [Tasklog-ARC08: Theme & Customization Architecture (WP-01 to WP-13)](docs/tasklogs/tasklog-arc08-customization.md)
+  - [Tasklog-ARC09: Menu Rendering Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc09-rendering.md)
 
 ---
 
 ## 📜 Architectural Decision Records (ADRs)
 
-All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (88 decisions recorded):
+All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (167 decisions recorded):
 - **ADR-0001 to ADR-0012:** System Architecture Principles & Non-Negotiable Standards (ARC-01 / ARC-02)
 - **ADR-0013 to ADR-0027:** Application Architecture, Layering & Monolith Boundaries (ARC-03)
 - **ADR-0028 to ADR-0043:** Modular Domain Architecture, 16 Discrete Modules & Domain Events (ARC-04)
 - **ADR-0044 to ADR-0063:** Multi-Tenant Architecture, 8-Layer Defense in Depth & Fail-Closed RLS (ARC-05)
 - **ADR-0064 to ADR-0088:** Data Architecture, Composite Foreign Keys & Immutable Snapshot Persistence (ARC-06)
+- **ADR-0089 to ADR-0113:** API & Integration Architecture, Contract-First OpenAPI & Webhooks (ARC-07)
+- **ADR-0114 to ADR-0140:** Theme & Customization Architecture, Design Tokens & Component Slots (ARC-08)
+- **ADR-0141 to ADR-0167:** Menu Rendering Architecture, Pure Engine, Snapshots & High-Concurrency Caching (ARC-09)
 
 ---
 

@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "layouts": {
+    "layout-list": {
+      "supported_slots": ["header", "navigation", "category.header", "category.items", "footer"],
+      "default_item_component": "menu-item-card",
+      "max_columns": 2
+    },
+    "layout-grid": {
+      "supported_slots": ["header", "navigation", "category.header", "category.items", "footer"],
+      "default_item_component": "menu-item-card",
+      "max_columns": 4
+    },
+    "layout-image-cards": {
+      "supported_slots": ["header", "navigation", "category.header", "category.items", "footer"],
+      "default_item_component": "menu-item-card",
+      "max_columns": 3
+    },
+    "layout-editorial": {
+      "supported_slots": ["header", "navigation", "category.header", "category.items", "footer"],
+      "default_item_component": "menu-item-card",
+      "max_columns": 2
+    }
+  }
+}

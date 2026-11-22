@@ -1,0 +1,13 @@
+{
+  "name": "@modularmenu/menu-renderer",
+  "version": "1.0.0",
+  "description": "Pure presentation rendering engine and plan builder for ModularMenu (ARC-09)",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@modularmenu/contracts": "*",
+    "@modularmenu/theme-engine": "*",
+    "@modularmenu/component-registry": "*"
+  }
+}

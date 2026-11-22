@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://modularmenu.dev/schemas/public-media-manifest.schema.json",
+  "title": "PublicMediaManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["approved_assets"],
+  "properties": {
+    "approved_assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "url", "width", "height"],
+        "properties": {
+          "asset_id": { "type": "string" },
+          "url": { "type": "string" },
+          "mime_type": { "type": "string" },
+          "width": { "type": "integer" },
+          "height": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

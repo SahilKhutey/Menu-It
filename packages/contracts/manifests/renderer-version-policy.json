@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0.0",
+  "current_renderer_version": "1.0.0",
+  "supported_schema_versions": ["1.0.0"],
+  "deprecated_schema_versions": [],
+  "unsupported_schema_versions": ["0.9.0", "99.0.0"]
+}
