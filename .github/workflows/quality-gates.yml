@@ -1,6 +1,6 @@
 name: Architecture and Quality Gates
 
-on:
+"on":
   pull_request:
     branches:
       - main

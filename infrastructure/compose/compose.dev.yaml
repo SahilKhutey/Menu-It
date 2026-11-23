@@ -1,0 +1,17 @@
+# ModularMenu — Compose Development Override (ARC-11 §5)
+services:
+  backend:
+    environment:
+      LOG_LEVEL: "DEBUG"
+      APP_DEBUG: "true"
+    volumes:
+      - ../../backend:/app:ro
+      - ../../tests:/tests:ro
+
+  frontend:
+    environment:
+      NEXT_PUBLIC_DEBUG: "true"
+    volumes:
+      - ../../frontend:/app
+      - /app/node_modules
+      - /app/.next

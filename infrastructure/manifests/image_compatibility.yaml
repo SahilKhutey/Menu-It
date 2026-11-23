@@ -1,0 +1,22 @@
+version: "1.0"
+compatibility_matrix:
+  releases:
+    - release: "1.0.0"
+      frontend:
+        base_image: "node:22-alpine"
+        node_version: "22"
+        next_version: "14.2.35"
+      backend:
+        base_image: "python:3.12-slim"
+        python_version: "3.12"
+        fastapi_version: "0.110.0"
+      worker:
+        base_image: "python:3.12-slim"
+        entrypoint: "app.worker"
+      database:
+        minimum_postgres_version: "15"
+        tested_postgres_version: "16"
+        target_postgres_version: "17"
+      supported_upgrade_from: ["0.9.0", "0.9.5"]
+      renderer_contract_version: "1.0"
+      snapshot_schema_version: "1.0"

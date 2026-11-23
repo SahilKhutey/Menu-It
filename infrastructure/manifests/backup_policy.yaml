@@ -1,0 +1,27 @@
+version: "1.0"
+policy:
+  postgresql:
+    schedule: "0 2 * * *" # Daily at 02:00 UTC
+    format: "custom" # pg_dump -Fc
+    encryption: "AES-256-GCM"
+    integrity_verification: "sha256sum"
+    retention_days:
+      local_customer_hosted: 7
+      managed_saas: 30
+    wal_archiving:
+      enabled_in_saas: true
+      target_rpo_minutes: 15
+  media:
+    schedule: "0 3 * * *" # Daily at 03:00 UTC
+    strategy: "incremental_snapshot_or_versioning"
+    retention_days: 90
+  configuration:
+    trigger: "on_approved_change"
+    storage: "encrypted_git_or_kms_store"
+  recovery_objectives:
+    rpo_hours:
+      customer_hosted: 24
+      managed_saas: 1
+    rto_hours:
+      customer_hosted: 6
+      managed_saas: 2

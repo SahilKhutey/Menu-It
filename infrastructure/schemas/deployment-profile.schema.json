@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DeploymentProfile",
+  "type": "object",
+  "required": ["profile_id", "name", "target", "isolation_level", "services", "networking", "storage", "database"],
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "enum": ["profile_a_local", "profile_b_customer_hosted", "profile_c_saas_production", "profile_d_scaled_saas"]
+    },
+    "name": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string",
+      "enum": ["local_workstation", "single_server_vps", "managed_cloud_cluster", "distributed_multi_zone"]
+    },
+    "isolation_level": {
+      "type": "string",
+      "enum": ["development_shared", "single_tenant_isolated", "multi_tenant_rls_isolated", "multi_tenant_distributed"]
+    },
+    "services": {
+      "type": "object",
+      "required": ["frontend", "backend", "worker", "postgres"],
+      "properties": {
+        "frontend": { "type": "object", "required": ["enabled", "containerized"] },
+        "backend": { "type": "object", "required": ["enabled", "containerized"] },
+        "worker": { "type": "object", "required": ["enabled", "containerized"] },
+        "postgres": { "type": "object", "required": ["enabled", "managed"] },
+        "redis": { "type": "object", "required": ["enabled", "optional"] },
+        "reverse_proxy": { "type": "object", "required": ["enabled"] }
+      }
+    },
+    "networking": {
+      "type": "object",
+      "required": ["tls_termination", "internal_networks_enforced"],
+      "properties": {
+        "tls_termination": { "type": "boolean" },
+        "internal_networks_enforced": { "type": "boolean" },
+        "public_ports": { "type": "array", "items": { "type": "integer" } }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "required": ["backend", "durable_media"],
+      "properties": {
+        "backend": { "type": "string", "enum": ["local", "s3", "azure_blob", "gcs"] },
+        "durable_media": { "type": "boolean" }
+      }
+    },
+    "database": {
+      "type": "object",
+      "required": ["engine", "rls_enforced", "connection_pooling"],
+      "properties": {
+        "engine": { "type": "string", "enum": ["postgresql"] },
+        "rls_enforced": { "type": "boolean" },
+        "connection_pooling": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

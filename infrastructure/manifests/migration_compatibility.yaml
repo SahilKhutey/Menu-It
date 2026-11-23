@@ -1,0 +1,17 @@
+version: "1.0"
+migration_policy:
+  strategy: "expand_and_contract"
+  alembic_branch: "master"
+  current_head: "001_initial_schema"
+  zero_downtime_rules:
+    - rule_id: "ZD-01"
+      description: "Columns added in phase 1 must be nullable or possess defaults."
+    - rule_id: "ZD-02"
+      description: "Existing columns must never be dropped before old application versions are retired."
+    - rule_id: "ZD-03"
+      description: "Rename operations must use dual-write and view abstraction."
+    - rule_id: "ZD-04"
+      description: "RLS policies and table grants must be explicitly preserved."
+  reversibility:
+    downgrade_script_required: true
+    backup_before_migration: true

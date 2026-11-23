@@ -1,0 +1,153 @@
+version: "1.0"
+profiles:
+  profile_a_local:
+    profile_id: "profile_a_local"
+    name: "Profile A — Local Development"
+    target: "local_workstation"
+    isolation_level: "development_shared"
+    services:
+      frontend:
+        enabled: true
+        containerized: true
+        hot_reload: true
+      backend:
+        enabled: true
+        containerized: true
+        hot_reload: true
+      worker:
+        enabled: true
+        containerized: true
+      postgres:
+        enabled: true
+        managed: false
+      redis:
+        enabled: false
+        optional: true
+      reverse_proxy:
+        enabled: false
+    networking:
+      tls_termination: false
+      internal_networks_enforced: false
+      public_ports: [3000, 8000, 5432]
+    storage:
+      backend: "local"
+      durable_media: true
+      path: "/app/storage"
+    database:
+      engine: "postgresql"
+      rls_enforced: true
+      connection_pooling: false
+
+  profile_b_customer_hosted:
+    profile_id: "profile_b_customer_hosted"
+    name: "Profile B — Single-Server Customer-Hosted"
+    target: "single_server_vps"
+    isolation_level: "single_tenant_isolated"
+    services:
+      frontend:
+        enabled: true
+        containerized: true
+        hot_reload: false
+      backend:
+        enabled: true
+        containerized: true
+        hot_reload: false
+      worker:
+        enabled: true
+        containerized: true
+      postgres:
+        enabled: true
+        managed: false
+      redis:
+        enabled: false
+        optional: true
+      reverse_proxy:
+        enabled: true
+    networking:
+      tls_termination: true
+      internal_networks_enforced: true
+      public_ports: [80, 443]
+    storage:
+      backend: "local"
+      durable_media: true
+      path: "/var/lib/modularmenu/storage"
+    database:
+      engine: "postgresql"
+      rls_enforced: true
+      connection_pooling: true
+
+  profile_c_saas_production:
+    profile_id: "profile_c_saas_production"
+    name: "Profile C — Managed SaaS Production"
+    target: "managed_cloud_cluster"
+    isolation_level: "multi_tenant_rls_isolated"
+    services:
+      frontend:
+        enabled: true
+        containerized: true
+        hot_reload: false
+      backend:
+        enabled: true
+        containerized: true
+        hot_reload: false
+      worker:
+        enabled: true
+        containerized: true
+      postgres:
+        enabled: true
+        managed: true
+      redis:
+        enabled: true
+        optional: true
+      reverse_proxy:
+        enabled: true
+    networking:
+      tls_termination: true
+      internal_networks_enforced: true
+      public_ports: [443]
+    storage:
+      backend: "s3"
+      durable_media: true
+      bucket: "modularmenu-saas-media-prod"
+    database:
+      engine: "postgresql"
+      rls_enforced: true
+      connection_pooling: true
+
+  profile_d_scaled_saas:
+    profile_id: "profile_d_scaled_saas"
+    name: "Profile D — Scaled Distributed SaaS"
+    target: "distributed_multi_zone"
+    isolation_level: "multi_tenant_distributed"
+    services:
+      frontend:
+        enabled: true
+        containerized: true
+        hot_reload: false
+      backend:
+        enabled: true
+        containerized: true
+        hot_reload: false
+      worker:
+        enabled: true
+        containerized: true
+      postgres:
+        enabled: true
+        managed: true
+      redis:
+        enabled: true
+        optional: false
+      reverse_proxy:
+        enabled: true
+    networking:
+      tls_termination: true
+      internal_networks_enforced: true
+      public_ports: [443]
+    storage:
+      backend: "s3"
+      durable_media: true
+      bucket: "modularmenu-distributed-media"
+    database:
+      engine: "postgresql"
+      rls_enforced: true
+      connection_pooling: true

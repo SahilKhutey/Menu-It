@@ -44,43 +44,56 @@ def create_application() -> FastAPI:
     # Mount API v1 router
     application.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
-    # Consolidated Operational Health Check (ARC-02 §12.5)
+    # Consolidated Operational Health Check (ARC-02 §12.5, ARC-11 §16.2)
     @application.get("/health", tags=["Health"])
     async def health_check():
         return {
             "status": "healthy",
-            "service": settings.PROJECT_NAME,
-            "version": settings.VERSION,
+            "service": settings.APP_NAME,
+            "version": settings.APP_VERSION,
             "deployment_mode": settings.DEPLOYMENT_MODE,
-            "environment": settings.ENVIRONMENT,
+            "environment": settings.APP_ENV,
         }
 
-    # Process Liveness Probe (ARC-03 §11.3)
+    # Process Liveness Probe (ARC-03 §11.3, ARC-11 §16.2)
     @application.get("/health/live", tags=["Health"])
     async def liveness_check():
-        return {"status": "alive", "service": settings.PROJECT_NAME}
+        return {"status": "alive", "service": settings.APP_NAME}
 
-    # Readiness Probe (ARC-03 §11.3 - inspects required dependencies without exposing credentials)
+    # Readiness Probe (ARC-03 §11.3, ARC-11 §16.2 - inspects dependencies without exposing credentials)
     @application.get("/health/ready", tags=["Health"])
     async def readiness_check():
         try:
             async with AsyncSessionLocal() as session:
                 await session.execute(text("SELECT 1"))
+            redis_status = "disabled"
+            if settings.REDIS_ENABLED:
+                redis_status = "connected" if settings.REDIS_URL else "unconfigured"
             return {
                 "status": "ready",
-                "service": settings.PROJECT_NAME,
+                "service": settings.APP_NAME,
                 "database": "connected",
-                "redis": "optional_unconfigured",
+                "redis": redis_status,
             }
         except Exception:
             return JSONResponse(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 content={
-                    "status": "unready",
-                    "service": settings.PROJECT_NAME,
-                    "detail": "Database connection verification failed",
+                    "status": "not_ready",
+                    "service": settings.APP_NAME,
+                    "database": "unavailable",
+                    "redis": "skipped",
                 },
             )
+
+    # Startup Initialization Probe (ARC-11 §16.2)
+    @application.get("/health/startup", tags=["Health"])
+    async def startup_check():
+        return {
+            "status": "started",
+            "service": settings.APP_NAME,
+            "version": settings.APP_VERSION,
+        }
 
     return application
 
