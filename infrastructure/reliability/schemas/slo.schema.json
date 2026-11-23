@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ModularMenu Service Level Objective (SLO) Schema",
+  "type": "object",
+  "required": [
+    "slo_id",
+    "service",
+    "sli_metric",
+    "target_percentage",
+    "evaluation_window"
+  ],
+  "properties": {
+    "slo_id": {
+      "type": "string"
+    },
+    "service": {
+      "type": "string"
+    },
+    "sli_metric": {
+      "type": "string"
+    },
+    "target_percentage": {
+      "type": "number",
+      "minimum": 90.0,
+      "maximum": 100.0
+    },
+    "evaluation_window": {
+      "type": "string"
+    }
+  }
+}

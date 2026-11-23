@@ -1,0 +1,9 @@
+version: 1
+objectives:
+  rpo_hours: 1.0
+  rto_hours: 4.0
+  recovery_tiers:
+    tier_1_process_crash: "Automatic container restart (restart: unless-stopped)"
+    tier_2_dependency_outage: "Graceful degradation without data corruption"
+    tier_3_host_loss: "Reprovision host, restore database from off-host encrypted backup"
+    tier_4_data_corruption: "Point-in-time recovery via WAL and pg_dump"

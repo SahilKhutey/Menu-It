@@ -1,0 +1,18 @@
+version: 1
+cache_layers:
+  public_menu:
+    authority: non_authoritative
+    storage: redis_and_cdn
+    ttl_seconds: 86400
+    stale_while_revalidate_seconds: 300
+    key_pattern: "public-menu:{restaurant_slug}:{menu_slug}:{publication_id}"
+  api_query_cache:
+    authority: non_authoritative
+    storage: redis
+    ttl_seconds: 300
+    key_pattern: "org:{org_id}:query:{query_hash}"
+  session_cache:
+    authority: non_authoritative
+    storage: redis
+    ttl_seconds: 1800
+    key_pattern: "sess:{session_token_hash}"

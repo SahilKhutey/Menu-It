@@ -9,6 +9,8 @@ from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.core.errors import register_error_handlers
 from app.core.middleware import CorrelationIdMiddleware
+from app.middleware.csrf import CSRFMiddleware
+from app.middleware.security_headers import SecurityHeadersMiddleware
 
 
 def create_application() -> FastAPI:
@@ -22,8 +24,14 @@ def create_application() -> FastAPI:
         redoc_url="/redoc",
     )
 
-    # Register Request Correlation ID Middleware (ARC-03 §6.1)
+    # Register Request Correlation ID Middleware (ARC-03 §6.1, ARC-12 §30.2)
     application.add_middleware(CorrelationIdMiddleware)
+
+    # Register Security Headers Middleware (ARC-12 §7.7, §30.3)
+    application.add_middleware(SecurityHeadersMiddleware)
+
+    # Register CSRF Protection Middleware (ARC-12 §7.4)
+    application.add_middleware(CSRFMiddleware)
 
     # Register Central RFC 7807 / RFC 9457 Exception Handlers (ARC-02 §4.4, ARC-03 §6.4, ARC-07 §5.5, §14.6)
     register_error_handlers(application)

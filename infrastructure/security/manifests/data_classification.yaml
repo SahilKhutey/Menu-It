@@ -1,0 +1,22 @@
+version: 1
+tiers:
+  public:
+    description: "Published restaurant menus, items, approved theme tokens"
+    protection: "Integrity, public caching, canonical digests"
+    encryption_at_rest: optional
+  internal:
+    description: "Operational telemetry, health status, unauthenticated metrics"
+    protection: "Access controls, log redaction"
+    encryption_at_rest: standard
+  confidential:
+    description: "Draft menu revisions, private restaurant settings, layout definitions"
+    protection: "Authentication, RBAC, tenant isolation, RLS"
+    encryption_at_rest: required
+  sensitive:
+    description: "User passwords, session tokens, billing tokens, password reset secrets"
+    protection: "Argon2id hashing, secure cookies, masking in logs, rotation"
+    encryption_at_rest: required
+  security_critical:
+    description: "JWT signing keys, database passwords, object storage secret keys, backups"
+    protection: "Hardware/secret manager, AES-256 backup encryption, strict separation"
+    encryption_at_rest: required

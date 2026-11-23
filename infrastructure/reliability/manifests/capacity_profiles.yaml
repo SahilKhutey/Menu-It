@@ -1,0 +1,14 @@
+version: 1
+profiles:
+  pilot_small:
+    concurrent_users: 25
+    public_rps: 50
+    db_pool_size: 10
+  growth_medium:
+    concurrent_users: 250
+    public_rps: 500
+    db_pool_size: 25
+  peak_event:
+    concurrent_users: 1000
+    public_rps: 2000
+    db_pool_size: 50

@@ -1,0 +1,19 @@
+version: 1
+retention_rules:
+  user_sessions:
+    active_max_age_days: 14
+    idle_timeout_hours: 24
+    revoked_purge_days: 7
+  audit_logs:
+    retention_days: 365
+    storage: append_only_compressed
+  publication_snapshots:
+    retention_days: 1095  # 3 years
+    permanence: true
+  outbox_events:
+    processed_retention_days: 14
+    dead_letter_retention_days: 90
+  database_backups:
+    daily_count: 7
+    weekly_count: 4
+    monthly_count: 12

@@ -1,0 +1,27 @@
+version: 1
+threats:
+  - id: THREAT-01
+    category: Spoofing
+    description: Stolen session identifier or account takeover
+    preventive_control: "Argon2id hashing, __Host- prefix secure cookies, session rotation"
+    detective_control: "Audit log of login anomalies and IP changes"
+  - id: THREAT-02
+    category: Information Disclosure
+    description: Cross-tenant data leakage via direct ID parameter tampering
+    preventive_control: "PostgreSQL Row-Level Security, composite FKs, TenantContext resolution"
+    detective_control: "Automated RLS test assertions in CI"
+  - id: THREAT-03
+    category: Tampering
+    description: Unauthorized menu item price manipulation or publishing
+    preventive_control: "Centralized RBAC, If-Match draft revision locks, immutable snapshots"
+    detective_control: "Immutable activation ledger with actor logging"
+  - id: THREAT-04
+    category: Denial of Service
+    description: QR code public menu endpoint flooding
+    preventive_control: "Nginx rate limiting, version-aware CDN caching, HTTP 304 ETags"
+    detective_control: "Latency and error rate telemetry"
+  - id: THREAT-05
+    category: Elevation of Privilege
+    description: Menu editor attempting to publish or access billing settings
+    preventive_control: "Server-side RBAC policy evaluation (require_permission)"
+    detective_control: "Permission denial audit logging"

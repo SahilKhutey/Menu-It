@@ -316,6 +316,7 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Devlog-011: ARC-10 Publishing & Versioning Architecture](docs/devlogs/devlog-011-arc10-publishing-versioning-architecture.md)
   - [Devlog-012: CI/CD Quality Gates & Jobs Remediation](docs/devlogs/devlog-012-ci-cd-quality-gates-and-jobs-remediation.md)
   - [Devlog-013: ARC-11 Infrastructure & Deployment Architecture](docs/devlogs/devlog-013-arc11-infrastructure-deployment.md)
+  - [Devlog-014: ARC-12 Security, Scalability & Reliability Architecture](docs/devlogs/devlog-014-arc12-security-scalability-reliability.md)
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Task verification logs and work package breakdowns:
   - [Tasklog-ARC01: System Overview Tasks](docs/tasklogs/tasklog-arc01-overview.md)
   - [Tasklog-ARC02: Engineering Standards (WP-01 to WP-10)](docs/tasklogs/tasklog-arc02-principles.md)
@@ -328,12 +329,13 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Tasklog-ARC09: Menu Rendering Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc09-rendering.md)
   - [Tasklog-ARC10: Publishing & Versioning Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc10-publishing.md)
   - [Tasklog-ARC11: Infrastructure & Deployment Architecture (WP-01 to WP-14)](docs/tasklogs/tasklog-arc11-infrastructure.md)
+  - [Tasklog-ARC12: Security, Scalability & Reliability (WP-01 to WP-15)](docs/tasklogs/tasklog-arc12-security.md)
 
 ---
 
 ## 📜 Architectural Decision Records (ADRs)
 
-All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (221 decisions recorded):
+All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (256 decisions recorded):
 - **ADR-0001 to ADR-0012:** System Architecture Principles & Non-Negotiable Standards (ARC-01 / ARC-02)
 - **ADR-0013 to ADR-0027:** Application Architecture, Layering & Monolith Boundaries (ARC-03)
 - **ADR-0028 to ADR-0043:** Modular Domain Architecture, 16 Discrete Modules & Domain Events (ARC-04)
@@ -344,6 +346,7 @@ All core engineering choices are tracked in [`docs/decisions/decision-register.m
 - **ADR-0141 to ADR-0167:** Menu Rendering Architecture, Pure Engine, Snapshots & High-Concurrency Caching (ARC-09)
 - **ADR-0168 to ADR-0191:** Publishing & Versioning Architecture, Atomic Activation, Rollback & Outbox (ARC-10)
 - **ADR-0192 to ADR-0221:** Infrastructure & Deployment Architecture, Dual Profiles, Non-Root Containers, HMAC Local Storage & DR (ARC-11)
+- **ADR-0222 to ADR-0256:** Security, Scalability & Reliability Architecture, Argon2id, RBAC, RLS Defense, Circuit Breakers & DLQ (ARC-12)
 
 ---
 
