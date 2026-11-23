@@ -23,6 +23,7 @@ This directory contains chronological engineering chronicles capturing the archi
 | **[Devlog-012](devlog-012-ci-cd-quality-gates-and-jobs-remediation.md)** | **CI/CD Quality Gates & Jobs Comprehensive Remediation** | 2026-11-22 | `v1.0.0-arc10` / Patch | Ruff linting & formatting (194 files), ESLint & frozen lockfile integration, workflow dependencies, 100% green CI jobs (618/618 tests). |
 | **[Devlog-013](devlog-013-arc11-infrastructure-deployment.md)** | **ARC-11 Infrastructure & Deployment Architecture** | 2026-11-23 | `v1.0.0-arc11` | Docker Compose profiles (SaaS & Appliance), non-root multi-stage builds, Nginx reverse proxy, HMAC local storage, 738 tests (120 infra tests). |
 | **[Devlog-014](devlog-014-arc12-security-scalability-reliability.md)** | **ARC-12 Security, Scalability & Reliability Architecture** | 2026-11-23 | `v1.0.0-arc12` | Argon2id auth, centralized RBAC, PostgreSQL RLS defense, circuit breakers, outbox DLQ, 888 platform tests (150 security tests). |
+| **[Devlog-015](devlog-015-fcd01-development-environment-foundation.md)** | **FCD-01 Development Environment & Repository Foundation** | 2026-11-23 | `v1.0.0-fcd01` | Workstation toolchain verification, monorepo standards, code quality, developer automation, and 10-document technical foundation suite. |
 
 ---
 
