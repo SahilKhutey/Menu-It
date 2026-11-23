@@ -1,0 +1,99 @@
+# ModularMenu — Profile B Customer-Hosted Compose Profile (ARC-11 §4.2, §14.3)
+services:
+  reverse_proxy:
+    image: nginx:1.25-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /opt/modularmenu/certs:/etc/letsencrypt:ro
+    networks:
+      - public_net
+      - application_net
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/modularmenu/modularmenu-frontend:1.0.0}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_URL: http://backend:8000
+    networks:
+      - application_net
+    security_opt:
+      - no-new-privileges:true
+
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/modularmenu/modularmenu-backend:1.0.0}
+    restart: unless-stopped
+    env_file:
+      - ${CUSTOMER_ENV_FILE:-/opt/modularmenu/.env}
+    volumes:
+      - modularmenu_media:/app/storage
+    networks:
+      - application_net
+      - database_net
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health/live')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    image: ${BACKEND_IMAGE:-ghcr.io/modularmenu/modularmenu-backend:1.0.0}
+    command: ["python", "-m", "app.worker"]
+    restart: unless-stopped
+    env_file:
+      - ${CUSTOMER_ENV_FILE:-/opt/modularmenu/.env}
+    volumes:
+      - modularmenu_media:/app/storage
+    networks:
+      - application_net
+      - database_net
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: modularmenu
+      POSTGRES_USER: ${POSTGRES_USER:-modularmenu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_secure_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - database_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-modularmenu}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  public_net:
+    driver: bridge
+  application_net:
+    internal: true
+  database_net:
+    internal: true
+
+volumes:
+  postgres_data:
+  modularmenu_media:

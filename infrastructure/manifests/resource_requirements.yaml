@@ -1,0 +1,45 @@
+version: "1.0"
+resources:
+  minimum_customer_hosted_host:
+    cpu_cores: 2
+    ram_gb: 4
+    disk_gb: 40
+    os: "Ubuntu 22.04 LTS / Debian 12 / RHEL 9"
+    container_engine: "Docker Engine 24.0+ and Docker Compose v2"
+
+  service_limits:
+    frontend:
+      cpu_limit: "1.0"
+      cpu_reservation: "0.2"
+      memory_limit: "1024M"
+      memory_reservation: "256M"
+
+    backend:
+      cpu_limit: "2.0"
+      cpu_reservation: "0.5"
+      memory_limit: "2048M"
+      memory_reservation: "512M"
+
+    worker:
+      cpu_limit: "1.0"
+      cpu_reservation: "0.2"
+      memory_limit: "1024M"
+      memory_reservation: "256M"
+
+    postgres:
+      cpu_limit: "2.0"
+      cpu_reservation: "0.5"
+      memory_limit: "2048M"
+      memory_reservation: "1024M"
+
+    redis:
+      cpu_limit: "0.5"
+      cpu_reservation: "0.1"
+      memory_limit: "512M"
+      memory_reservation: "128M"
+
+    reverse_proxy:
+      cpu_limit: "0.5"
+      cpu_reservation: "0.1"
+      memory_limit: "256M"
+      memory_reservation: "64M"

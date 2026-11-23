@@ -1,0 +1,34 @@
+version: "1.0"
+security_rules:
+  containers:
+    - id: "SEC-CNT-01"
+      rule: "Containers must run as non-root user (UID != 0)."
+      enforced_by: "USER directive and security_opt"
+    - id: "SEC-CNT-02"
+      rule: "Read-only root filesystem enabled in production with tmpfs for /tmp."
+      enforced_by: "read_only: true"
+    - id: "SEC-CNT-03"
+      rule: "Drop unnecessary Linux capabilities (cap_drop: ALL) and add no-new-privileges."
+      enforced_by: "security_opt: [no-new-privileges:true]"
+    - id: "SEC-CNT-04"
+      rule: "No credentials, secrets, or .env files baked into container image layers."
+      enforced_by: ".dockerignore and CI layer scanner"
+
+  network:
+    - id: "SEC-NET-01"
+      rule: "PostgreSQL port 5432 must never be bound to 0.0.0.0 on public hosts."
+      enforced_by: "Internal Docker network and localhost-only host binding"
+    - id: "SEC-NET-02"
+      rule: "Only ports 80 and 443 exposed publicly via reverse proxy."
+      enforced_by: "Docker Compose port declarations and host firewall"
+    - id: "SEC-NET-03"
+      rule: "TLS termination must enforce modern ciphers, HTTP/2, and strict security headers."
+      enforced_by: "Nginx configuration"
+
+  database:
+    - id: "SEC-DB-01"
+      rule: "Application runtime role must NOT have BYPASSRLS or superuser privileges."
+      enforced_by: "PostgreSQL role provisioning scripts"
+    - id: "SEC-DB-02"
+      rule: "RLS must be set with FORCE ROW LEVEL SECURITY on all tenant tables."
+      enforced_by: "ARC-05 database migration conventions"

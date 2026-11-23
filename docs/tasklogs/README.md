@@ -20,6 +20,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **ARC-09** | Menu Rendering Architecture | WP-ARC09-01 to WP-ARC09-15 | 498 Tests (120 Rendering) | **Approved & Implemented** | **[Tasklog-ARC09](tasklog-arc09-rendering.md)** |
 | **ARC-10** | Publishing & Versioning Architecture | WP-ARC10-01 to WP-ARC10-15 | 618 Tests (120 Publishing) | **Approved & Implemented** | **[Tasklog-ARC10](tasklog-arc10-publishing.md)** |
 | **CI/CD Ops** | CI Quality Gates & Jobs Remediation | Ruff, ESLint, Lockfile, CI Workflows | 618 Platform Tests (100% Pass) | **Approved & Verified** | **[Tasklog-CI-Jobs](tasklog-ci-cd-jobs-analysis-and-fix.md)** |
+| **ARC-11** | Infrastructure & Deployment Architecture | WP-ARC11-01 to WP-ARC11-14 | 738 Tests (120 Infrastructure) | **Approved & Implemented** | **[Tasklog-ARC11](tasklog-arc11-infrastructure.md)** |
 
 ---
 
@@ -35,6 +36,7 @@ ARC-07 API Layer: [=============================================================
 ARC-08 Customization: [====================================================================================================================================================================================================================] 378 Tests Passing (100%)
 ARC-09 Rendering: [========================================================================================================================================================================================================================================================] 498 Tests Passing (100%)
 ARC-10 Publishing:[========================================================================================================================================================================================================================================================================================] 618 Tests Passing (100%)
+ARC-11 Infrastructure:[====================================================================================================================================================================================================================================================================================================================] 738 Tests Passing (100%)
 ```
 
 ---

@@ -1,0 +1,130 @@
+version: "1.0"
+variables:
+  - name: "APP_ENV"
+    type: "string"
+    allowed_values: ["local", "development", "staging", "production"]
+    required: true
+    secret: false
+    description: "Application runtime tier."
+
+  - name: "APP_NAME"
+    type: "string"
+    default: "ModularMenu"
+    required: false
+    secret: false
+    description: "Canonical product name."
+
+  - name: "APP_VERSION"
+    type: "string"
+    required: true
+    secret: false
+    description: "SemVer release identifier matching git tag."
+
+  - name: "APP_DEBUG"
+    type: "boolean"
+    default: false
+    required: true
+    secret: false
+    description: "Debug mode flag. Must be false in staging and production."
+
+  - name: "FRONTEND_URL"
+    type: "uri"
+    required: true
+    secret: false
+    description: "Root public URL of Next.js frontend."
+
+  - name: "BACKEND_URL"
+    type: "uri"
+    required: true
+    secret: false
+    description: "Public URL of FastAPI backend API."
+
+  - name: "API_PREFIX"
+    type: "string"
+    default: "/api/v1"
+    required: true
+    secret: false
+    description: "Versioned REST API prefix."
+
+  - name: "DATABASE_URL"
+    type: "secret_uri"
+    required: true
+    secret: true
+    description: "PostgreSQL connection string with credentials."
+
+  - name: "SECRET_KEY"
+    type: "string"
+    min_length: 32
+    required: true
+    secret: true
+    description: "Cryptographic signing key for JWT tokens and HMAC signatures."
+
+  - name: "REDIS_ENABLED"
+    type: "boolean"
+    default: false
+    required: true
+    secret: false
+    description: "Whether Redis ephemeral cache is active."
+
+  - name: "REDIS_URL"
+    type: "secret_uri"
+    required_if: "REDIS_ENABLED == true"
+    secret: true
+    description: "Redis connection string."
+
+  - name: "STORAGE_BACKEND"
+    type: "string"
+    allowed_values: ["local", "s3"]
+    default: "local"
+    required: true
+    secret: false
+    description: "Active object storage adapter."
+
+  - name: "LOCAL_STORAGE_PATH"
+    type: "string"
+    default: "/app/storage"
+    required_if: "STORAGE_BACKEND == local"
+    secret: false
+    description: "Filesystem path for local object storage."
+
+  - name: "S3_ENDPOINT_URL"
+    type: "uri"
+    required_if: "STORAGE_BACKEND == s3"
+    secret: false
+    description: "S3-compatible endpoint URL."
+
+  - name: "S3_BUCKET_NAME"
+    type: "string"
+    required_if: "STORAGE_BACKEND == s3"
+    secret: false
+    description: "Target S3 bucket for media assets."
+
+  - name: "SESSION_COOKIE_SECURE"
+    type: "boolean"
+    default: false
+    required: true
+    secret: false
+    description: "Forces Secure flag on cookies. Must be true in production."
+
+  - name: "SESSION_COOKIE_HTTPONLY"
+    type: "boolean"
+    default: true
+    required: true
+    secret: false
+    description: "Forces HttpOnly flag on cookies."
+
+  - name: "SESSION_COOKIE_SAMESITE"
+    type: "string"
+    allowed_values: ["lax", "strict", "none"]
+    default: "lax"
+    required: true
+    secret: false
+    description: "SameSite cookie policy."
+
+  - name: "LOG_LEVEL"
+    type: "string"
+    allowed_values: ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    default: "INFO"
+    required: false
+    secret: false
+    description: "Structured logging verbosity."

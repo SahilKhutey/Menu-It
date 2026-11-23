@@ -1,11 +1,11 @@
 # Menu-It (ModularMenu™)
 ### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
 
-[![Version](https://img.shields.io/badge/version-1.0.0--arc09-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc09)
-[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--09%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
-[![Tests](https://img.shields.io/badge/Quality%20Gates-498%2F498%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
-[![Devlogs](https://img.shields.io/badge/Devlogs-10%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
-[![Tasklogs](https://img.shields.io/badge/Tasklogs-9%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Version](https://img.shields.io/badge/version-1.0.0--arc11-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc11)
+[![Architecture](https://img.shields.io/badge/Architecture-ARC--01%20to%20ARC--11%20Approved-success.svg?style=for-the-badge)](ARCHITECTURE.md)
+[![Tests](https://img.shields.io/badge/Quality%20Gates-738%2F738%20Passing-brightgreen.svg?style=for-the-badge)](docs/tasklogs/README.md)
+[![Devlogs](https://img.shields.io/badge/Devlogs-13%20Chronicles-orange.svg?style=for-the-badge)](docs/devlogs/README.md)
+[![Tasklogs](https://img.shields.io/badge/Tasklogs-11%20Milestones-blueviolet.svg?style=for-the-badge)](docs/tasklogs/README.md)
 [![Python](https://img.shields.io/badge/Python-3.12%20FastAPI-005571.svg?style=for-the-badge&logo=python)](backend/)
 [![Next.js](https://img.shields.io/badge/Next.js-14%20App%20Router-black.svg?style=for-the-badge&logo=next.js)](frontend/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?style=for-the-badge&logo=typescript)](frontend/)
@@ -302,7 +302,7 @@ python scripts/validate_arc02_e2e.py
 ## 📚 Engineering Chronicles: Devlogs & Tasklogs
 
 Detailed milestone execution and developer journals are documented in dedicated archives:
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** 11 comprehensive engineering chronicles:
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** 13 comprehensive engineering chronicles:
   - [Devlog-001: Project Initialization & Blueprint Baseline](docs/devlogs/devlog-001-project-initialization-and-blueprint.md)
   - [Devlog-002: ARC-01 System Architecture Overview](docs/devlogs/devlog-002-arc01-system-architecture-overview.md)
   - [Devlog-003: ARC-02 Principles, Standards & Constraints](docs/devlogs/devlog-003-arc02-architectural-principles-and-standards.md)
@@ -314,6 +314,8 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Devlog-009: ARC-08 Theme & Customization Architecture](docs/devlogs/devlog-009-arc08-theme-and-customization-architecture.md)
   - [Devlog-010: ARC-09 Menu Rendering Architecture](docs/devlogs/devlog-010-arc09-menu-rendering-architecture.md)
   - [Devlog-011: ARC-10 Publishing & Versioning Architecture](docs/devlogs/devlog-011-arc10-publishing-versioning-architecture.md)
+  - [Devlog-012: CI/CD Quality Gates & Jobs Remediation](docs/devlogs/devlog-012-ci-cd-quality-gates-and-jobs-remediation.md)
+  - [Devlog-013: ARC-11 Infrastructure & Deployment Architecture](docs/devlogs/devlog-013-arc11-infrastructure-deployment.md)
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Task verification logs and work package breakdowns:
   - [Tasklog-ARC01: System Overview Tasks](docs/tasklogs/tasklog-arc01-overview.md)
   - [Tasklog-ARC02: Engineering Standards (WP-01 to WP-10)](docs/tasklogs/tasklog-arc02-principles.md)
@@ -325,12 +327,13 @@ Detailed milestone execution and developer journals are documented in dedicated 
   - [Tasklog-ARC08: Theme & Customization Architecture (WP-01 to WP-13)](docs/tasklogs/tasklog-arc08-customization.md)
   - [Tasklog-ARC09: Menu Rendering Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc09-rendering.md)
   - [Tasklog-ARC10: Publishing & Versioning Architecture (WP-01 to WP-15)](docs/tasklogs/tasklog-arc10-publishing.md)
+  - [Tasklog-ARC11: Infrastructure & Deployment Architecture (WP-01 to WP-14)](docs/tasklogs/tasklog-arc11-infrastructure.md)
 
 ---
 
 ## 📜 Architectural Decision Records (ADRs)
 
-All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (191 decisions recorded):
+All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (221 decisions recorded):
 - **ADR-0001 to ADR-0012:** System Architecture Principles & Non-Negotiable Standards (ARC-01 / ARC-02)
 - **ADR-0013 to ADR-0027:** Application Architecture, Layering & Monolith Boundaries (ARC-03)
 - **ADR-0028 to ADR-0043:** Modular Domain Architecture, 16 Discrete Modules & Domain Events (ARC-04)
@@ -340,6 +343,7 @@ All core engineering choices are tracked in [`docs/decisions/decision-register.m
 - **ADR-0114 to ADR-0140:** Theme & Customization Architecture, Design Tokens & Component Slots (ARC-08)
 - **ADR-0141 to ADR-0167:** Menu Rendering Architecture, Pure Engine, Snapshots & High-Concurrency Caching (ARC-09)
 - **ADR-0168 to ADR-0191:** Publishing & Versioning Architecture, Atomic Activation, Rollback & Outbox (ARC-10)
+- **ADR-0192 to ADR-0221:** Infrastructure & Deployment Architecture, Dual Profiles, Non-Root Containers, HMAC Local Storage & DR (ARC-11)
 
 ---
 

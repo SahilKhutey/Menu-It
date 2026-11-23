@@ -24,8 +24,10 @@ Level 1 — System Architecture
 │   └── Configuration-driven customization, hierarchical design tokens, 6 themes, 4 layouts, 13 components, deterministic resolver, dual-editor parity, optimistic concurrency, and 104-test customization catalogue.
 ├── ARC-09: Menu Rendering Architecture
 │   └── Pure presentation engine, deterministic composition, 5 mandatory slots, immutable published snapshots, ETag HTTP 304, Next.js dynamic routing, 92 kB JS bundle, and 120-test rendering catalogue.
-└── ARC-10: Publishing & Versioning Architecture
-    └── Draft isolation, immutable snapshots, monotonic versioning, atomic activation, non-destructive rollback, transactional outbox, and 120-test publishing catalogue.
+├── ARC-10: Publishing & Versioning Architecture
+│   └── Draft isolation, immutable snapshots, monotonic versioning, atomic activation, non-destructive rollback, transactional outbox, and 120-test publishing catalogue.
+└── ARC-11: Infrastructure & Deployment Architecture
+    └── Dual deployment profiles (SaaS vs Customer-Hosted appliance), non-root container packaging, Docker Compose orchestration, Nginx reverse proxy, HMAC local storage, and 120-test infrastructure catalogue.
 ```
 
 ---
@@ -96,12 +98,19 @@ Level 1 — System Architecture
     - Events & Cache: Transactional Outbox pattern (`outbox_events`) for reliable lifecycle events (`MenuPublished`, `MenuRolledBack`), edge CDN cache tag invalidations, and reconciliation jobs.
     - Documentation & Quality Gates: 30 architectural deliverables in `docs/architecture/ARC-10-publishing-versioning-architecture/`; operational guides in `docs/publishing/`; 618 total automated platform tests passing (including 120 publishing catalogue scenarios ARC10-T001 to T120); 100% pass rate.
 
+11. **[ARC-11 — Infrastructure & Deployment Architecture](documentation/03_System_Architecture/ARC-11_Infrastructure_and_Deployment_Architecture.md)**
+    - Status: **Approved & Implemented**
+    - Deployment Parity: Dual profile architecture (Profile C Managed SaaS multi-tenant vs Profile D Customer-Hosted appliance) sharing identical application container images and domain logic.
+    - Security Hardening: Unprivileged non-root users (`UID 10001`/`1000`), read-only root filesystems, dropped capabilities (`cap_drop: [ALL]`), isolated `data-net` bridge network, Pydantic preflight configuration validation, and automated secret redaction.
+    - Resilient Operations: Ephemeral non-authoritative Redis degradation, expand-and-contract zero-downtime database migrations with pre-migration backups, triple health probes (`/live`, `/ready`, `/startup`), HMAC-signed local storage URLs, and bounded worker backoff with DLQ.
+    - Documentation & Quality Gates: 34 architectural specifications in `docs/architecture/ARC-11-infrastructure-deployment/`; 29 operational runbooks across `docs/deployment/`, `docs/operations/`, `docs/backup-recovery/`, and `docs/runbooks/`; 738 total automated platform tests passing (including 120 infrastructure catalogue scenarios ARC11-T001 to T120); 100% pass rate.
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0191).
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-011).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0221).
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-013).
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Comprehensive work package execution and test verification records.
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
@@ -112,6 +121,7 @@ Level 1 — System Architecture
 - **[Theme & Customization Architecture Suite](docs/architecture/ARC-08-theme-customization-architecture/):** Complete specifications for 6 themes, 4 layouts, 13 components, deterministic resolver, and 104-test scenario matrix.
 - **[Menu Rendering Architecture Suite](docs/architecture/ARC-09-menu-rendering-architecture/):** Complete specifications for pure rendering engine, deterministic composition, 5 mandatory slots, and 120-test scenario matrix.
 - **[Publishing & Versioning Architecture Suite](docs/architecture/ARC-10-publishing-versioning-architecture/):** Complete specifications for draft revisions, validation, immutable snapshots, rollback, outbox events, and 120-test scenario matrix.
+- **[Infrastructure & Deployment Architecture Suite](docs/architecture/ARC-11-infrastructure-deployment/):** Complete specifications for container packaging, Compose orchestration, Nginx reverse proxy, disaster recovery, runbooks, and 120-test scenario matrix.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, Published Snapshots, and Publishing Workflows.
 
 ---

@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ReleaseManifest",
+  "type": "object",
+  "required": ["product", "release", "git_commit", "created_at", "components", "database", "compatibility"],
+  "properties": {
+    "product": {
+      "type": "string",
+      "const": "ModularMenu"
+    },
+    "release": {
+      "type": "string",
+      "pattern": "^v?[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.]+)?$"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "components": {
+      "type": "object",
+      "required": ["frontend", "backend", "worker"],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "required": ["image", "digest"],
+          "properties": {
+            "image": { "type": "string" },
+            "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "required": ["image", "digest"],
+          "properties": {
+            "image": { "type": "string" },
+            "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+          }
+        },
+        "worker": {
+          "type": "object",
+          "required": ["image", "digest"],
+          "properties": {
+            "image": { "type": "string" },
+            "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+          }
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "required": ["migration_head"],
+      "properties": {
+        "migration_head": { "type": "string" }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "required": ["minimum_supported_schema", "maximum_supported_schema", "renderer_contract_version"],
+      "properties": {
+        "minimum_supported_schema": { "type": "string" },
+        "maximum_supported_schema": { "type": "string" },
+        "renderer_contract_version": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

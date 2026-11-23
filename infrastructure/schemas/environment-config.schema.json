@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnvironmentConfig",
+  "type": "object",
+  "required": [
+    "APP_ENV",
+    "APP_NAME",
+    "APP_VERSION",
+    "APP_DEBUG",
+    "FRONTEND_URL",
+    "BACKEND_URL",
+    "API_PREFIX",
+    "DATABASE_URL",
+    "SECRET_KEY",
+    "REDIS_ENABLED",
+    "STORAGE_BACKEND",
+    "SESSION_COOKIE_SECURE",
+    "SESSION_COOKIE_HTTPONLY",
+    "SESSION_COOKIE_SAMESITE"
+  ],
+  "properties": {
+    "APP_ENV": {
+      "type": "string",
+      "enum": ["local", "development", "staging", "production"]
+    },
+    "APP_NAME": { "type": "string" },
+    "APP_VERSION": { "type": "string" },
+    "APP_DEBUG": { "type": "boolean" },
+    "FRONTEND_URL": { "type": "string", "format": "uri" },
+    "BACKEND_URL": { "type": "string", "format": "uri" },
+    "API_PREFIX": { "type": "string" },
+    "DATABASE_URL": { "type": "string" },
+    "SECRET_KEY": { "type": "string", "minLength": 32 },
+    "REDIS_ENABLED": { "type": "boolean" },
+    "REDIS_URL": { "type": ["string", "null"] },
+    "STORAGE_BACKEND": { "type": "string", "enum": ["local", "s3"] },
+    "LOCAL_STORAGE_PATH": { "type": "string" },
+    "S3_ENDPOINT_URL": { "type": ["string", "null"] },
+    "S3_BUCKET_NAME": { "type": ["string", "null"] },
+    "SESSION_COOKIE_SECURE": { "type": "boolean" },
+    "SESSION_COOKIE_HTTPONLY": { "type": "boolean" },
+    "SESSION_COOKIE_SAMESITE": { "type": "string", "enum": ["lax", "strict", "none"] },
+    "LOG_LEVEL": { "type": "string", "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] }
+  },
+  "additionalProperties": true
+}

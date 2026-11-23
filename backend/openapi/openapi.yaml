@@ -2722,9 +2722,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: true
-              default: {}
+              anyOf:
+              - type: object
+                additionalProperties: true
+              - type: 'null'
               title: Payload
       responses:
         '200':
@@ -2814,9 +2815,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: true
-              default: {}
+              anyOf:
+              - type: object
+                additionalProperties: true
+              - type: 'null'
               title: Payload
       responses:
         '200':
@@ -3046,9 +3048,10 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: true
-              default: {}
+              anyOf:
+              - type: object
+                additionalProperties: true
+              - type: 'null'
               title: Payload
       responses:
         '200':
@@ -3981,6 +3984,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/health:
+    get:
+      tags:
+      - Health & Observability
+      summary: Consolidated Health Overview
+      operationId: health_overview_api_v1_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/health/live:
+    get:
+      tags:
+      - Health & Observability
+      summary: Process Liveness Probe
+      description: Returns 200 OK if the process is responsive and running (ARC-11
+        §16.2).
+      operationId: live_probe_api_v1_health_live_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/health/ready:
+    get:
+      tags:
+      - Health & Observability
+      summary: Service Readiness Probe
+      description: 'Returns 200 OK if service dependencies (PostgreSQL) are operational.
+
+        Does NOT leak connection strings, credentials, or internal topology (ARC-11
+        §16.2).'
+      operationId: ready_probe_api_v1_health_ready_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/health/startup:
+    get:
+      tags:
+      - Health & Observability
+      summary: Process Startup Initialization Probe
+      description: Confirms startup sequence initialization has completed (ARC-11
+        §16.2).
+      operationId: startup_probe_api_v1_health_startup_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
   /api/v1/platform/overview:
     get:
       tags:
@@ -4029,6 +4088,18 @@ paths:
       - Health
       summary: Readiness Check
       operationId: readiness_check_health_ready_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /health/startup:
+    get:
+      tags:
+      - Health
+      summary: Startup Check
+      operationId: startup_check_health_startup_get
       responses:
         '200':
           description: Successful Response

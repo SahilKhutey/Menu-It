@@ -1,60 +1,118 @@
-version: '3.8'
-
+# ModularMenu — Local Development Compose (ARC-11 §4.1, §7.1)
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: modularmenu_postgres
-    environment:
-      POSTGRES_USER: modularmenu
-      POSTGRES_PASSWORD: devpassword123
-      POSTGRES_DB: modularmenu_db
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U modularmenu -d modularmenu_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_API_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: modularmenu_backend
-    environment:
-      DEPLOYMENT_MODE: managed
-      ENVIRONMENT: development
-      DATABASE_URL: postgresql+asyncpg://modularmenu:devpassword123@postgres:5432/modularmenu_db
-      SECRET_KEY: dev-jwt-super-secret-key-32-chars-long
-      PUBLIC_BASE_URL: http://localhost:3000
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
     ports:
       - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "true"
+      DATABASE_URL: postgresql+asyncpg://modularmenu:devpassword123@postgres:5432/modularmenu
+      SECRET_KEY: dev-jwt-super-secret-key-32-chars-long
+      FRONTEND_URL: http://localhost:3000
+      BACKEND_URL: http://localhost:8000
+      STORAGE_BACKEND: local
+      LOCAL_STORAGE_PATH: /app/storage
+    volumes:
+      - ./backend:/app
+      - modularmenu_media:/app/storage
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
-      - backend_uploads:/app/uploads
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health/live')"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
-  frontend:
+  worker:
     build:
-      context: ./frontend
+      context: ./backend
       dockerfile: Dockerfile
-    container_name: modularmenu_frontend
+    command: ["python", "-m", "app.worker"]
+    env_file:
+      - path: .env
+        required: false
     environment:
-      NODE_ENV: development
-      NEXT_PUBLIC_API_URL: http://backend:8000
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
+      APP_ENV: development
+      APP_DEBUG: "true"
+      DATABASE_URL: postgresql+asyncpg://modularmenu:devpassword123@postgres:5432/modularmenu
+      SECRET_KEY: dev-jwt-super-secret-key-32-chars-long
+      STORAGE_BACKEND: local
+      LOCAL_STORAGE_PATH: /app/storage
+      WORKER_POLL_INTERVAL_SECONDS: "2"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
+      - modularmenu_media:/app/storage
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: modularmenu
+      POSTGRES_USER: modularmenu
+      POSTGRES_PASSWORD: devpassword123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U modularmenu -d modularmenu
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    profiles:
+      - redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_data:
-  backend_uploads:
+  modularmenu_media:

@@ -54,6 +54,39 @@ This register records all formal Architectural Decision Records (ADRs) governing
 
 ---
 
+| **ADR-0192** | Docker Compose v2 as Primary Orchestration Engine (ARC11-D01) | **Accepted** | 2026-11-23 | P-08, P-01 | ARC-11 §5.1 |
+| **ADR-0193** | Unified Multi-Stage Container Images for SaaS & Customer-Hosted (ARC11-D02) | **Accepted** | 2026-11-23 | P-08, CON-10 | ARC-11 §4.1 |
+| **ADR-0194** | Unprivileged Non-Root Execution across All Containers (ARC11-D03) | **Accepted** | 2026-11-23 | P-09, CON-09 | ARC-11 §4.2 |
+| **ADR-0195** | Read-Only Root Filesystem with Ephemeral tmpfs Mounts (ARC11-D04) | **Accepted** | 2026-11-23 | P-09, P-08 | ARC-11 §5.3 |
+| **ADR-0196** | Strictly Ephemeral Redis with Graceful In-Memory Degradation (ARC11-D05) | **Accepted** | 2026-11-23 | P-08, CON-10 | ARC-11 §5.4 |
+| **ADR-0197** | Expand-and-Contract Zero-Downtime Database Migration Protocol (ARC11-D06) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-11 §8.2 |
+| **ADR-0198** | HMAC SHA-256 Signed URLs for Local Filesystem Object Storage (ARC11-D07) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-11 §10.2 |
+| **ADR-0199** | Explicit TenantJobContext Envelope Required for Worker Jobs (ARC11-D08) | **Accepted** | 2026-11-23 | P-04, P-07 | ARC-11 §9.2 |
+| **ADR-0200** | Mandatory Pre-Migration Database Snapshot and Verification (ARC11-D09) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-11 §8.3 |
+| **ADR-0201** | Triple Health Probe Model (/live, /ready, /startup) (ARC11-D10) | **Accepted** | 2026-11-23 | P-01, P-08 | ARC-11 §11.1 |
+| **ADR-0202** | Strict Environment Preflight Validation via Pydantic Settings (ARC11-D11) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §7.1 |
+| **ADR-0203** | Automated Secret Redaction in Logs, Exceptions, and Dumps (ARC11-D12) | **Accepted** | 2026-11-23 | P-09, CON-09 | ARC-11 §7.2 |
+| **ADR-0204** | Next.js 14 Standalone Mode with < 120 kB First Load JS Budget (ARC11-D13) | **Accepted** | 2026-11-23 | P-03, P-06 | ARC-11 §4.3 |
+| **ADR-0205** | Python 3.12 Slim Debian Bookworm Standardized Base Image (ARC11-D14) | **Accepted** | 2026-11-23 | P-01, P-08 | ARC-11 §4.4 |
+| **ADR-0206** | Nginx Reverse Proxy for TLS 1.3 Termination and Rate Limiting (ARC11-D15) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §6.1 |
+| **ADR-0207** | Dropping All Linux Capabilities (`cap_drop: [ALL]`) in Production (ARC11-D16) | **Accepted** | 2026-11-23 | P-09, CON-09 | ARC-11 §5.5 |
+| **ADR-0208** | Isolated Internal Bridge Networks for Data Persistence Layer (ARC11-D17) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-11 §16.1 |
+| **ADR-0209** | Bounded Exponential Backoff and Dead-Letter Queue in Worker (ARC11-D18) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-11 §9.3 |
+| **ADR-0210** | Path Traversal Normalization Guard in Local Storage Adapter (ARC11-D19) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-11 §10.3 |
+| **ADR-0211** | Encrypted Off-Host Backup Storage with 1h RPO and 4h RTO (ARC11-D20) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-11 §12.1 |
+| **ADR-0212** | GitHub Actions Automated Quality Gates with 100% Test Pass Gate (ARC11-D21) | **Accepted** | 2026-11-23 | P-01, P-02 | ARC-11 §13.1 |
+| **ADR-0213** | Explicit Manual Approval Gate for Production SaaS Deployments (ARC11-D22) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §13.2 |
+| **ADR-0214** | Turnkey Single-Command Customer Appliance Offline Installation (ARC11-D23) | **Accepted** | 2026-11-23 | P-08, CON-10 | ARC-11 §14.1 |
+| **ADR-0215** | Bounded 10 MB Maximum File Size for Media Ingestion (ARC11-D24) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §10.4 |
+| **ADR-0216** | Sanitized Database Error Responses on Probe Failures (ARC11-D25) | **Accepted** | 2026-11-23 | P-09, CON-09 | ARC-11 §11.2 |
+| **ADR-0217** | Transactional Outbox Queue Lag Growth Telemetry (ARC11-D26) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-11 §9.4 |
+| **ADR-0218** | Minimum 20 GB Disk Space Preflight Enforcement (ARC11-D27) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §18.2 |
+| **ADR-0219** | Automated 30-Day TLS Certificate Expiry Alerting (ARC11-D28) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §6.3 |
+| **ADR-0220** | Semi-Annual Simulated Disaster Recovery Restore Drills (ARC11-D29) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-11 §12.3 |
+| **ADR-0221** | Automated Release Verification Smoke Suite Post-Deployment (ARC11-D30) | **Accepted** | 2026-11-23 | P-01, P-08 | ARC-11 §13.3 |
+
+---
+
 ## Detailed Decision Summaries
 
 ### ADR-0001: Python 3.12 & FastAPI Core Application Service
@@ -1016,3 +1049,154 @@ ow_version column incremented on every update and checked on save.
 - **Decision:** Active publications are permanent; historical publications and audit logs are retained for a minimum of 3 years.
 - **Consequences:** Full legal and regulatory compliance balance with predictable database storage scaling.
 
+
+
+### ADR-0192: Docker Compose v2 as Primary Orchestration Engine (ARC11-D01)
+- **Context:** Premature Kubernetes adoption introduces operational complexity, etcd quorum management overhead, and resource penalties for small restaurant appliances.
+- **Decision:** Standardize on Docker Compose v2 profiles across development, staging, SaaS production, and customer-hosted installations.
+- **Consequences:** Reproducible, lightweight container orchestration with zero vendor lock-in.
+
+### ADR-0193: Unified Multi-Stage Container Images for SaaS & Customer-Hosted (ARC11-D02)
+- **Context:** Divergent builds for cloud and customer-hosted editions cause test divergence and bug leakage.
+- **Decision:** Build and publish identical container images; operational differences are controlled solely via environment variables and Compose overrides.
+- **Consequences:** Single image artifact stream, 100% test fidelity, and simplified release maintenance.
+
+### ADR-0194: Unprivileged Non-Root Execution across All Containers (ARC11-D03)
+- **Context:** Running containers as root creates severe privilege escalation and container breakout risks.
+- **Decision:** Mandate non-root user execution: `menuapp:menuapp` (UID/GID 10001) for Python services and `nextjs:nodejs` (UID/GID 1001) for frontend.
+- **Consequences:** Eliminates root execution privileges; aligns with CIS Docker benchmarks.
+
+### ADR-0195: Read-Only Root Filesystem with Ephemeral tmpfs Mounts (ARC11-D04)
+- **Context:** Writable container root filesystems allow unauthorized modifications, persistence of malware, and non-deterministic state.
+- **Decision:** Enforce `read_only: true` on production containers with explicit tmpfs mounts on `/tmp`.
+- **Consequences:** Immutable runtime environments; unauthorized runtime mutations are physically prevented.
+
+### ADR-0196: Strictly Ephemeral Redis with Graceful In-Memory Degradation (ARC11-D05)
+- **Context:** Hard dependencies on Redis cause entire platform outages when cache clusters experience maintenance or failure.
+- **Decision:** Redis is strictly non-authoritative; core read and write flows must seamlessly degrade to in-memory bypasses if Redis is offline.
+- **Consequences:** Platform resilience is maintained; restaurants can continue taking orders even during Redis outages.
+
+### ADR-0197: Expand-and-Contract Zero-Downtime Database Migration Protocol (ARC11-D06)
+- **Context:** Destructive or blocking database migrations cause customer downtime and failed requests during deployments.
+- **Decision:** Mandate expand-and-contract migrations where database changes remain forward and backward compatible across rolling releases.
+- **Consequences:** Zero-downtime deployments without table locks or transaction aborts.
+
+### ADR-0198: HMAC SHA-256 Signed URLs for Local Filesystem Object Storage (ARC11-D07)
+- **Context:** Customer-hosted editions use local storage but must prevent unauthenticated enumeration or hotlinking of private restaurant media.
+- **Decision:** Generate expiring, tamper-evident URLs protected by SHA-256 HMAC tokens for all local media access.
+- **Consequences:** Parity with S3 pre-signed URLs without requiring complex third-party storage daemons.
+
+### ADR-0199: Explicit TenantJobContext Envelope Required for Worker Jobs (ARC11-D08)
+- **Context:** Asynchronous background jobs could execute without tenant scoping, risking cross-tenant data leakage.
+- **Decision:** Require all background worker jobs to be wrapped in an explicit `TenantJobContext(organization_id, actor_id)` envelope.
+- **Consequences:** Strict multi-tenant isolation guarantees extended to asynchronous and background processing.
+
+### ADR-0200: Mandatory Pre-Migration Database Snapshot and Verification (ARC11-D09)
+- **Context:** Migration scripts can fail mid-execution due to data anomalies or network disconnects, leaving database schemas in corrupted states.
+- **Decision:** Automated migration tooling must execute a verified `pg_dump` snapshot prior to applying any Alembic revision.
+- **Consequences:** Guaranteed point-in-time recovery before any structural database mutation.
+
+### ADR-0201: Triple Health Probe Model (/live, /ready, /startup) (ARC11-D10)
+- **Context:** Conflating process liveness with dependency readiness leads orchestrators to restart healthy processes during downstream outages.
+- **Decision:** Separate probes into `/health/live` (process responsiveness), `/health/ready` (dependency check), and `/health/startup` (initialization).
+- **Consequences:** Accurate orchestration restarts, zero thundering-herd container crashes during database maintenance.
+
+### ADR-0202: Strict Environment Preflight Validation via Pydantic Settings (ARC11-D11)
+- **Context:** Misconfigured production settings (e.g., debug enabled, default secrets) lead to critical security vulnerabilities.
+- **Decision:** Fail fast at container startup using Pydantic Settings validators that reject insecure production configurations.
+- **Consequences:** Impossible to boot production containers with debug mode or insecure default passwords.
+
+### ADR-0203: Automated Secret Redaction in Logs, Exceptions, and Dumps (ARC11-D12)
+- **Context:** Sensitive credentials logged during exceptions or startup expose credentials to log aggregation pipelines.
+- **Decision:** Implement custom `__repr__` and `__str__` masking on all credential models, replacing secrets with `***`.
+- **Consequences:** Clean logs and zero credential leakage in monitoring platforms and error traces.
+
+### ADR-0204: Next.js 14 Standalone Mode with < 120 kB First Load JS Budget (ARC11-D13)
+- **Context:** Standard Next.js production deployments carry bulky `node_modules`, bloating container images and slowing mobile guests.
+- **Decision:** Enable `output: "standalone"` in Next.js build and enforce < 120 kB first load JavaScript budget.
+- **Consequences:** Container size reduced by 70%; sub-second menu loading for guests on mobile data.
+
+### ADR-0205: Python 3.12 Slim Debian Bookworm Standardized Base Image (ARC11-D14)
+- **Context:** Alpine Linux Python builds suffer from musl libc performance penalties, while full Debian images carry unnecessary utilities and CVEs.
+- **Decision:** Standardize backend and worker base images on `python:3.12-slim-bookworm`.
+- **Consequences:** High-performance glibc runtime, minimized vulnerability surface, fast build times.
+
+### ADR-0206: Nginx Reverse Proxy for TLS 1.3 Termination and Rate Limiting (ARC11-D15)
+- **Context:** Direct exposure of Python and Node servers creates security and DDoS risks.
+- **Decision:** Route all external traffic through an Nginx reverse proxy enforcing TLS 1.3, rate limits, and security headers.
+- **Consequences:** Hardened perimeter, protection against brute-force attacks, and single entry point.
+
+### ADR-0207: Dropping All Linux Capabilities (`cap_drop: [ALL]`) in Production (ARC11-D16)
+- **Context:** Default Linux container capabilities provide attack surfaces for kernel exploits.
+- **Decision:** Drop all Linux capabilities in production Compose files, running with minimum necessary permissions.
+- **Consequences:** Prevents root escalation inside containers even if code execution occurs.
+
+### ADR-0208: Isolated Internal Bridge Networks for Data Persistence Layer (ARC11-D17)
+- **Context:** Direct exposure of PostgreSQL or Redis to host interfaces risks unauthorized database connections.
+- **Decision:** Restrict database and Redis containers to an internal `data-net` bridge with zero host port mappings in production.
+- **Consequences:** Database is physically unreachable from the public internet.
+
+### ADR-0209: Bounded Exponential Backoff and Dead-Letter Queue in Worker (ARC11-D18)
+- **Context:** Poison-pill events can lock worker threads in continuous retry loops, exhausting resources.
+- **Decision:** Worker applies exponential backoff capped at 60s; moves events failing 5 attempts to dead-letter queue.
+- **Consequences:** Uninterrupted queue throughput and visibility into toxic events for operator remediation.
+
+### ADR-0210: Path Traversal Normalization Guard in Local Storage Adapter (ARC11-D19)
+- **Context:** Local storage adapters handling user-supplied paths can be manipulated via `../` directory traversal attacks.
+- **Decision:** Enforce canonical path resolution and verify that resolved paths reside strictly within the configured root directory.
+- **Consequences:** Absolute prevention of host filesystem read/write vulnerabilities.
+
+### ADR-0211: Encrypted Off-Host Backup Storage with 1h RPO and 4h RTO (ARC11-D20)
+- **Context:** Storing backups on the same host leaves systems vulnerable to complete host or disk loss.
+- **Decision:** Backups are compressed, AES-256 encrypted, and replicated off-host to secondary cloud or remote locations.
+- **Consequences:** Adherence to strict disaster recovery SLOs: 1-hour RPO and 4-hour RTO.
+
+### ADR-0212: GitHub Actions Automated Quality Gates with 100% Test Pass Gate (ARC11-D21)
+- **Context:** Allowing broken or untested commits onto main branches causes production regressions.
+- **Decision:** Require all 738 automated platform tests and linters to pass before code can merge to `develop` or `main`.
+- **Consequences:** Regression-free releases and zero-tolerance policy for broken quality gates.
+
+### ADR-0213: Explicit Manual Approval Gate for Production SaaS Deployments (ARC11-D22)
+- **Context:** Continuous deployment directly to production without oversight risks deploying unverified changes during peak restaurant hours.
+- **Decision:** Production deployments require explicit manual approval from authorized engineering leads in GitHub Actions.
+- **Consequences:** Controlled release timing and scheduled maintenance windows.
+
+### ADR-0214: Turnkey Single-Command Customer Appliance Offline Installation (ARC11-D23)
+- **Context:** Restaurant IT staff require friction-free installation without complex manual configurations.
+- **Decision:** Provide an automated turnkey installation script (`install-customer-hosted.sh`) capable of operating offline.
+- **Consequences:** Frictionless on-premise installation in under 10 minutes.
+
+### ADR-0215: Bounded 10 MB Maximum File Size for Media Ingestion (ARC11-D24)
+- **Context:** Unbounded media uploads exhaust disk space and bandwidth, enabling denial-of-service attacks.
+- **Decision:** Enforce strict 10 MB upload limits across reverse proxy, backend API, and storage adapters.
+- **Consequences:** Bounded storage consumption and predictable bandwidth utilization.
+
+### ADR-0216: Sanitized Database Error Responses on Probe Failures (ARC11-D25)
+- **Context:** Returning raw SQL exception traces in health endpoints leaks internal server topology and credentials.
+- **Decision:** Sanitize all health probe failure payloads to emit generic degraded status messages.
+- **Consequences:** Zero information disclosure through public health monitoring endpoints.
+
+### ADR-0217: Transactional Outbox Queue Lag Growth Telemetry (ARC11-D26)
+- **Context:** Silent worker stall allows outbox backlogs to grow unnoticed until operators report delayed publishing.
+- **Decision:** Emit telemetry alerts when unprocessed outbox events exceed 500 records or lag by more than 5 minutes.
+- **Consequences:** Proactive operational alerting before customer-facing impact occurs.
+
+### ADR-0218: Minimum 20 GB Disk Space Preflight Enforcement (ARC11-D27)
+- **Context:** Deploying to hosts with insufficient disk causes database write freezes and corruption.
+- **Decision:** Installation and deployment scripts verify at least 20 GB free disk space prior to proceeding.
+- **Consequences:** Elimination of disk exhaustion failures during container startup or migrations.
+
+### ADR-0219: Automated 30-Day TLS Certificate Expiry Alerting (ARC11-D28)
+- **Context:** Expired SSL certificates immediately break diner access to QR digital menus.
+- **Decision:** Monitoring alerts fire when SSL certificates have fewer than 30 days remaining until expiration.
+- **Consequences:** Sufficient lead time for automated or manual certificate renewal.
+
+### ADR-0220: Semi-Annual Simulated Disaster Recovery Restore Drills (ARC11-D29)
+- **Context:** Untested backups frequently fail during actual disasters due to corrupted files or missing credentials.
+- **Decision:** Mandate semi-annual simulated disaster recovery drills executing full restore scripts.
+- **Consequences:** Verified backup viability and trained operational incident teams.
+
+### ADR-0221: Automated Release Verification Smoke Suite Post-Deployment (ARC11-D30)
+- **Context:** Successful container startup does not guarantee that frontend UI, backend API, and database are collaborating properly.
+- **Decision:** Run automated smoke tests immediately following deployments, validating health probes, API routes, and static assets.
+- **Consequences:** Fast detection of release regressions and immediate trigger for rollback if smoke tests fail.

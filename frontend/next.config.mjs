@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: process.env.NEXT_OUTPUT_STANDALONE === "true" || process.platform !== "win32" ? "standalone" : undefined,
   reactStrictMode: true,
   images: {
     remotePatterns: [

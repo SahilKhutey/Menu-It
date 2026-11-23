@@ -10,6 +10,7 @@ from app.api.v1 import (
     categories,
     customization,
     editor,
+    health,
     items,
     licensing,
     media,
@@ -41,3 +42,4 @@ v1_router.include_router(rendering.router)
 v1_router.include_router(media.router)
 v1_router.include_router(public.router)
 v1_router.include_router(licensing.router)
+v1_router.include_router(health.router)

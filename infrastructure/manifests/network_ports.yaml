@@ -1,0 +1,53 @@
+version: "1.0"
+ports:
+  external:
+    - port: 80
+      protocol: "TCP"
+      service: "reverse_proxy"
+      purpose: "HTTP redirection to HTTPS & ACME challenge"
+      environment: ["profile_b_customer_hosted", "profile_c_saas_production"]
+
+    - port: 443
+      protocol: "TCP"
+      service: "reverse_proxy"
+      purpose: "Primary encrypted public HTTPS ingress"
+      environment: ["profile_b_customer_hosted", "profile_c_saas_production", "profile_d_scaled_saas"]
+
+    - port: 3000
+      protocol: "TCP"
+      service: "frontend"
+      purpose: "Local Next.js development server"
+      environment: ["profile_a_local"]
+
+    - port: 8000
+      protocol: "TCP"
+      service: "backend"
+      purpose: "Local FastAPI backend server"
+      environment: ["profile_a_local"]
+
+    - port: 5432
+      protocol: "TCP"
+      service: "postgres"
+      purpose: "Local database access (bound to 127.0.0.1)"
+      environment: ["profile_a_local"]
+
+  internal_only:
+    - port: 3000
+      service: "frontend"
+      network: "application_net"
+      purpose: "Nginx reverse proxy upstream to Next.js"
+
+    - port: 8000
+      service: "backend"
+      network: "application_net"
+      purpose: "Nginx reverse proxy upstream to FastAPI"
+
+    - port: 5432
+      service: "postgres"
+      network: "database_net"
+      purpose: "Backend & Worker connection to PostgreSQL"
+
+    - port: 6379
+      service: "redis"
+      network: "application_net"
+      purpose: "Ephemeral cache and rate limiting coordination"

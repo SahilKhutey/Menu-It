@@ -1,0 +1,54 @@
+version: "1.0"
+services:
+  frontend:
+    depends_on:
+      backend:
+        condition: "service_healthy"
+        critical: true
+    optional_dependencies: []
+    restart_policy: "unless-stopped"
+    graceful_shutdown_timeout_seconds: 15
+
+  backend:
+    depends_on:
+      postgres:
+        condition: "service_healthy"
+        critical: true
+    optional_dependencies:
+      redis:
+        fallback: "in_memory_or_authoritative_database"
+        critical: false
+      storage:
+        fallback: "degraded_uploads_only"
+        critical: false
+    restart_policy: "unless-stopped"
+    graceful_shutdown_timeout_seconds: 30
+
+  worker:
+    depends_on:
+      postgres:
+        condition: "service_healthy"
+        critical: true
+    optional_dependencies:
+      redis:
+        fallback: "polling_postgresql_outbox_directly"
+        critical: false
+    restart_policy: "unless-stopped"
+    graceful_shutdown_timeout_seconds: 30
+
+  postgres:
+    depends_on: {}
+    storage_volume: "postgres_data"
+    critical: true
+    restart_policy: "unless-stopped"
+    healthcheck_cmd: "pg_isready -U modularmenu -d modularmenu"
+
+  reverse_proxy:
+    depends_on:
+      frontend:
+        condition: "service_started"
+        critical: true
+      backend:
+        condition: "service_healthy"
+        critical: true
+    restart_policy: "unless-stopped"
