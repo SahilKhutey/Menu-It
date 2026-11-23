@@ -1,0 +1,22 @@
+version: 1
+zones:
+  auth_strict:
+    rate: "5r/m"
+    burst: 5
+    key_type: "client_ip"
+  api_standard:
+    rate: "100r/m"
+    burst: 20
+    key_type: "client_ip"
+  public_read:
+    rate: "300r/m"
+    burst: 50
+    key_type: "client_ip"
+  publication:
+    rate: "10r/m"
+    burst: 2
+    key_type: "tenant_id"
+  media_upload:
+    rate: "20r/m"
+    burst: 5
+    key_type: "tenant_id"

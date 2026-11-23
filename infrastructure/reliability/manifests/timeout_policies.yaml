@@ -1,0 +1,9 @@
+version: 1
+timeouts:
+  database_connect_timeout_seconds: 5.0
+  database_statement_timeout_seconds: 30.0
+  external_http_connect_seconds: 2.0
+  external_http_read_seconds: 5.0
+  object_storage_operation_seconds: 15.0
+  worker_job_execution_seconds: 60.0
+  graceful_shutdown_period_seconds: 15.0

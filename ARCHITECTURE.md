@@ -26,8 +26,10 @@ Level 1 — System Architecture
 │   └── Pure presentation engine, deterministic composition, 5 mandatory slots, immutable published snapshots, ETag HTTP 304, Next.js dynamic routing, 92 kB JS bundle, and 120-test rendering catalogue.
 ├── ARC-10: Publishing & Versioning Architecture
 │   └── Draft isolation, immutable snapshots, monotonic versioning, atomic activation, non-destructive rollback, transactional outbox, and 120-test publishing catalogue.
-└── ARC-11: Infrastructure & Deployment Architecture
-    └── Dual deployment profiles (SaaS vs Customer-Hosted appliance), non-root container packaging, Docker Compose orchestration, Nginx reverse proxy, HMAC local storage, and 120-test infrastructure catalogue.
+├── ARC-11: Infrastructure & Deployment Architecture
+│   └── Dual deployment profiles (SaaS vs Customer-Hosted appliance), non-root container packaging, Docker Compose orchestration, Nginx reverse proxy, HMAC local storage, and 120-test infrastructure catalogue.
+└── ARC-12: Security, Scalability & Reliability Architecture
+    └── Argon2id password hashing, centralized RBAC authorization, PostgreSQL RLS defense, CSRF/XSS/SSRF protections, circuit breakers, bounded outbox DLQ, disaster recovery (RPO<=1h, RTO<=4h), and 150-test security catalogue.
 ```
 
 ---
@@ -105,12 +107,19 @@ Level 1 — System Architecture
     - Resilient Operations: Ephemeral non-authoritative Redis degradation, expand-and-contract zero-downtime database migrations with pre-migration backups, triple health probes (`/live`, `/ready`, `/startup`), HMAC-signed local storage URLs, and bounded worker backoff with DLQ.
     - Documentation & Quality Gates: 34 architectural specifications in `docs/architecture/ARC-11-infrastructure-deployment/`; 29 operational runbooks across `docs/deployment/`, `docs/operations/`, `docs/backup-recovery/`, and `docs/runbooks/`; 738 total automated platform tests passing (including 120 infrastructure catalogue scenarios ARC11-T001 to T120); 100% pass rate.
 
+12. **[ARC-12 — Security, Scalability & Reliability Architecture](documentation/03_System_Architecture/ARC-12_Security_Scalability_Reliability_Architecture.md)**
+    - Status: **Approved & Implemented**
+    - Security Engineering: Argon2id password hashing, high-entropy 256-bit CSPRNG session tokens with immediate rotation, `__Host-` cookies, centralized RBAC permission table (`ROLE_PERMISSIONS`), PostgreSQL RLS defense-in-depth, CSRF middleware with Bearer exemption, OWASP input hardening, magic-byte image validation with 10MB/25MP limits, webhook HMAC SHA-256 signatures, and append-only masked audit logging.
+    - Scalability & Performance: Tiered caching (in-memory + Redis + Edge CDN), immutable published snapshots with ETags and Stale-While-Revalidate headers, sub-300ms p95 public menu latency, frontend bundle budget strictly under 120 kB gzip, and asyncpg connection pooling (`pool_size=20, max_overflow=10`).
+    - Resilience & Disaster Recovery: Three-state circuit breakers (`CLOSED`, `OPEN`, `HALF_OPEN`), bounded exponential backoff with full uniform jitter, outbox dead-letter queue (DLQ) after 8 failed attempts, ephemeral Redis graceful degradation, and point-in-time disaster recovery guaranteeing RPO <= 1 hour and RTO <= 4 hours.
+    - Quality Gates & Release: 47 architectural specifications in `docs/architecture/ARC-12-security-scalability-reliability/`; 38 operational standards, reliability guides, and incident runbooks; 35 Architecture Decision Records (ADR-0222 to ADR-0256); **888 total automated platform tests passing with 100% pass rate** (including 150 security catalogue scenarios ARC12-T001 to T150).
+
 ---
 
 ## 🛠️ Architectural Governance & Decisions
 
-- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0221).
-- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-013).
+- **[ADR Register](docs/decisions/decision-register.md):** Permanent records of all major technical decisions (ADR-0001 through ADR-0256).
+- **[Developer Logs (Devlogs)](docs/devlogs/README.md):** Detailed engineering chronicles for all milestones (Devlog-001 through Devlog-014).
 - **[Task Execution Logs (Tasklogs)](docs/tasklogs/README.md):** Comprehensive work package execution and test verification records.
 - **[Architecture Review Policy](docs/governance/architecture-review-policy.md):** Formal decision hierarchy and review authority.
 - **[Compliance Checklist](docs/governance/architecture-compliance-checklist.md):** PR quality gates for principles and constraints.
@@ -122,6 +131,10 @@ Level 1 — System Architecture
 - **[Menu Rendering Architecture Suite](docs/architecture/ARC-09-menu-rendering-architecture/):** Complete specifications for pure rendering engine, deterministic composition, 5 mandatory slots, and 120-test scenario matrix.
 - **[Publishing & Versioning Architecture Suite](docs/architecture/ARC-10-publishing-versioning-architecture/):** Complete specifications for draft revisions, validation, immutable snapshots, rollback, outbox events, and 120-test scenario matrix.
 - **[Infrastructure & Deployment Architecture Suite](docs/architecture/ARC-11-infrastructure-deployment/):** Complete specifications for container packaging, Compose orchestration, Nginx reverse proxy, disaster recovery, runbooks, and 120-test scenario matrix.
+- **[Security, Scalability & Reliability Suite](docs/architecture/ARC-12-security-scalability-reliability/):** Complete 47-document specification suite covering defense-in-depth, RBAC, RLS, circuit breakers, caching, DLQ, DR, and 150-test scenario matrix.
+- **[Security Standards](docs/security/):** 15 system-wide security standards and policies.
+- **[Reliability & SRE Guides](docs/reliability/):** 13 reliability standards, SLO catalogue, and capacity planning guides.
+- **[Security Incident Runbooks](docs/security/incidents/):** 10 detailed operational response runbooks for security anomalies and outages.
 - **[Shared Contracts](packages/contracts/):** JSON schemas for Theme Tokens, Component Registry, Published Snapshots, and Publishing Workflows.
 
 ---

@@ -1,0 +1,18 @@
+version: 1
+retry_policies:
+  transactional_outbox:
+    base_delay_seconds: 2.0
+    maximum_delay_seconds: 60.0
+    maximum_attempts: 5
+    jitter_factor: 0.2
+    dead_letter_on_exhaustion: true
+  object_storage_read:
+    base_delay_seconds: 1.0
+    maximum_delay_seconds: 10.0
+    maximum_attempts: 3
+    jitter_factor: 0.1
+  webhook_delivery:
+    base_delay_seconds: 5.0
+    maximum_delay_seconds: 300.0
+    maximum_attempts: 5
+    jitter_factor: 0.2

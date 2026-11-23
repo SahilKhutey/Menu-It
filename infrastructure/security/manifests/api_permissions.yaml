@@ -1,0 +1,47 @@
+version: 1
+routes:
+  - method: POST
+    path: /api/v1/auth/login
+    authentication: none
+    permission: public.auth.login
+    tenant_scope: global
+    rate_limit: auth_strict
+    audit: required
+    idempotency: not_required
+
+  - method: POST
+    path: /api/v1/auth/logout
+    authentication: required
+    permission: auth.logout
+    tenant_scope: user
+    rate_limit: standard
+    audit: required
+    idempotency: not_required
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/publish
+    authentication: required
+    permission: menu.publish
+    tenant_scope: organization
+    rate_limit: publication
+    audit: required
+    idempotency: required
+
+  - method: POST
+    path: /api/v1/menus/{menu_id}/rollback
+    authentication: required
+    permission: menu.rollback
+    tenant_scope: organization
+    rate_limit: publication
+    audit: required
+    idempotency: required
+
+  - method: GET
+    path: /api/v1/public/restaurants/{restaurant_slug}/menus/{menu_slug}
+    authentication: none
+    permission: public.menu.read
+    tenant_scope: published_resource
+    rate_limit: public_read
+    audit: not_required
+    idempotency: not_required
+    cache: public_versioned

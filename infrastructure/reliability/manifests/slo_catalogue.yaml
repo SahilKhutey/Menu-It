@@ -1,0 +1,31 @@
+version: 1
+slos:
+  - id: SLO-01
+    name: "API Service Availability"
+    target_percentage: 99.5
+    window: "30d"
+    error_budget: 0.005
+    description: "Proportion of valid non-5xx API requests over 30 days"
+  - id: SLO-02
+    name: "Public Menu QR Availability"
+    target_percentage: 99.5
+    window: "30d"
+    error_budget: 0.005
+    description: "Proportion of successful public guest menu reads"
+  - id: SLO-03
+    name: "API Response Latency"
+    target_percentage: 95.0
+    p95_threshold_ms: 500
+    p99_threshold_ms: 1000
+    description: "Authenticated API latency thresholds"
+  - id: SLO-04
+    name: "Public Cached Menu Latency"
+    target_percentage: 95.0
+    p95_threshold_ms: 300
+    p99_threshold_ms: 750
+    description: "Public guest menu latency thresholds"
+  - id: SLO-05
+    name: "Publication Transaction Success"
+    target_percentage: 99.9
+    window: "30d"
+    description: "Atomic commit success for non-conflicting publication requests"

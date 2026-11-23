@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ModularMenu Rate Limit Policy Schema",
+  "type": "object",
+  "required": [
+    "version",
+    "zones"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "zones": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "rate",
+          "burst",
+          "key_type"
+        ],
+        "properties": {
+          "rate": {
+            "type": "string"
+          },
+          "burst": {
+            "type": "integer"
+          },
+          "key_type": {
+            "type": "string",
+            "enum": [
+              "client_ip",
+              "session_id",
+              "tenant_id",
+              "api_key"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

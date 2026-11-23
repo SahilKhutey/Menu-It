@@ -84,6 +84,41 @@ This register records all formal Architectural Decision Records (ADRs) governing
 | **ADR-0219** | Automated 30-Day TLS Certificate Expiry Alerting (ARC11-D28) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-11 §6.3 |
 | **ADR-0220** | Semi-Annual Simulated Disaster Recovery Restore Drills (ARC11-D29) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-11 §12.3 |
 | **ADR-0221** | Automated Release Verification Smoke Suite Post-Deployment (ARC11-D30) | **Accepted** | 2026-11-23 | P-01, P-08 | ARC-11 §13.3 |
+| **ADR-0222** | Argon2id for Password Storage Hashing (ARC12-D01) | **Accepted** | 2026-11-23 | P-09, SEC-01 | ARC-12 §5.1 |
+| **ADR-0223** | Cryptographic 256-bit CSPRNG Session Identifiers (ARC12-D02) | **Accepted** | 2026-11-23 | P-09, SEC-01 | ARC-12 §5.1 |
+| **ADR-0224** | Immediate Session Rotation on Privilege Elevation (ARC12-D03) | **Accepted** | 2026-11-23 | P-09, SEC-01 | ARC-12 §5.1 |
+| **ADR-0225** | __Host- Cookie Prefixes in Production Environments (ARC12-D04) | **Accepted** | 2026-11-23 | P-09, SEC-01 | ARC-12 §5.1 |
+| **ADR-0226** | Centralized RBAC Permission Table Mapping (ARC12-D05) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-12 §5.2 |
+| **ADR-0227** | Organization-Scoped Tenant Context Resolution (ARC12-D06) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-12 §5.3 |
+| **ADR-0228** | Force Row Level Security on Tenant Database Tables (ARC12-D07) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-12 §5.3 |
+| **ADR-0229** | Non-Bypass Application Database Runtime Role (ARC12-D08) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-12 §5.3 |
+| **ADR-0230** | Dual-Layer Tenant Isolation Guardrails (App + DB) (ARC12-D09) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-12 §5.3 |
+| **ADR-0231** | Anti-CSRF Token Validation with Bearer Exemption (ARC12-D10) | **Accepted** | 2026-11-23 | P-09, SEC-02 | ARC-12 §5.4 |
+| **ADR-0232** | Strict Content Security Policy (CSP) Rules (ARC12-D11) | **Accepted** | 2026-11-23 | P-09, SEC-02 | ARC-12 §5.4 |
+| **ADR-0233** | Automated Security Response Headers Standard (ARC12-D12) | **Accepted** | 2026-11-23 | P-09, SEC-02 | ARC-12 §5.4 |
+| **ADR-0234** | SSRF Outbound Network Request Guard (ARC12-D13) | **Accepted** | 2026-11-23 | P-09, SEC-02 | ARC-12 §5.4 |
+| **ADR-0235** | Strict Media Magic Byte File Signature Verification (ARC12-D14) | **Accepted** | 2026-11-23 | P-09, SEC-03 | ARC-12 §5.5 |
+| **ADR-0236** | 25 Megapixel Limit for Decompression Bomb Defense (ARC12-D15) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-12 §5.5 |
+| **ADR-0237** | Canonical Object Key Isolation for Tenant Media (ARC12-D16) | **Accepted** | 2026-11-23 | P-04, P-09 | ARC-12 §5.5 |
+| **ADR-0238** | Webhook HMAC SHA-256 Cryptographic Verification (ARC12-D17) | **Accepted** | 2026-11-23 | P-09, SEC-04 | ARC-12 §5.6 |
+| **ADR-0239** | Webhook Timestamp Drift Tolerance Limit (300s) (ARC12-D18) | **Accepted** | 2026-11-23 | P-09, SEC-04 | ARC-12 §5.6 |
+| **ADR-0240** | Webhook Idempotency & Replay Attack Defense (ARC12-D19) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-12 §5.6 |
+| **ADR-0241** | Immutable Append-Only Audit Logging Ledger (ARC12-D20) | **Accepted** | 2026-11-23 | P-09, SEC-05 | ARC-12 §5.7 |
+| **ADR-0242** | Automated Regex Credential Masking in Logs and Traces (ARC12-D21) | **Accepted** | 2026-11-23 | P-09, SEC-05 | ARC-12 §5.7 |
+| **ADR-0243** | Non-Root Application Container Execution (UID 1001) (ARC12-D22) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-12 §5.8 |
+| **ADR-0244** | Dropped Linux Capabilities in Production Containers (ARC12-D23) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-12 §5.8 |
+| **ADR-0245** | Isolated Internal Bridge Networks for Data Stores (ARC12-D24) | **Accepted** | 2026-11-23 | P-08, P-09 | ARC-12 §5.8 |
+| **ADR-0246** | Multi-Tier Token Bucket Rate Limiting (ARC12-D25) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-12 §6.1 |
+| **ADR-0247** | Public Menu Immutable Pre-Rendered CDN Snapshot Caching (ARC12-D26) | **Accepted** | 2026-11-23 | P-06, P-07 | ARC-12 §6.1 |
+| **ADR-0248** | Frontend 120 kB Gzip Initial JavaScript Budget (ARC12-D27) | **Accepted** | 2026-11-23 | P-02, P-07 | ARC-12 §6.4 |
+| **ADR-0249** | Database Connection Pool Boundaries (20 Pool, 10 Overflow) (ARC12-D28) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-12 §6.2 |
+| **ADR-0250** | Composite Indexing on Multi-Tenant Database Columns (ARC12-D29) | **Accepted** | 2026-11-23 | P-04, P-07 | ARC-12 §6.2 |
+| **ADR-0251** | Transactional Outbox Pattern for Durable Asynchronous Events (ARC12-D30) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-12 §6.3 |
+| **ADR-0252** | Bounded Exponential Backoff with Full Uniform Jitter (ARC12-D31) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-12 §6.3 |
+| **ADR-0253** | Poison Pill Dead-Letter Queue Quarantine after 8 Attempts (ARC12-D32) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-12 §6.3 |
+| **ADR-0254** | Three-State Circuit Breakers for External Integrations (ARC12-D33) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-12 §7.1 |
+| **ADR-0255** | Ephemeral Redis Resilient Graceful Degradation (ARC12-D34) | **Accepted** | 2026-11-23 | P-07, P-08 | ARC-12 §7.2 |
+| **ADR-0256** | Disaster Recovery RPO <= 1h and RTO <= 4h Standards (ARC12-D35) | **Accepted** | 2026-11-23 | P-07, P-09 | ARC-12 §7.4 |
 
 ---
 
@@ -1200,3 +1235,178 @@ ow_version column incremented on every update and checked on save.
 - **Context:** Successful container startup does not guarantee that frontend UI, backend API, and database are collaborating properly.
 - **Decision:** Run automated smoke tests immediately following deployments, validating health probes, API routes, and static assets.
 - **Consequences:** Fast detection of release regressions and immediate trigger for rollback if smoke tests fail.
+
+### ADR-0222: Argon2id for Password Storage Hashing (ARC12-D01)
+- **Context:** Standard password hashing algorithms like bcrypt have fixed memory requirements, whereas Argon2id provides configurable memory, time, and parallelism hardness against modern GPU/ASIC cracking.
+- **Decision:** Mandate Argon2id as the exclusive password hashing algorithm with memory cost >= 64 MB, time cost >= 3 iterations, and parallelism >= 4 threads.
+- **Consequences:** Maximum resistance against offline dictionary and brute force attacks.
+
+### ADR-0223: Cryptographic 256-bit CSPRNG Session Identifiers (ARC12-D02)
+- **Context:** Weak session identifiers can be predicted or brute-forced by malicious actors.
+- **Decision:** Generate session tokens using cryptographically secure pseudorandom numbers (256-bit entropy) and store only their SHA-256 hashes server-side.
+- **Consequences:** Session token exposure in database breaches does not reveal the bearer secret.
+
+### ADR-0224: Immediate Session Rotation on Privilege Elevation (ARC12-D03)
+- **Context:** Session fixation attacks allow an adversary to pre-set a session identifier that persists after user authentication.
+- **Decision:** Rotate session tokens immediately upon login, password reset, or role changes, revoking the previous identifier.
+- **Consequences:** Total elimination of session fixation risks.
+
+### ADR-0225: __Host- Cookie Prefixes in Production Environments (ARC12-D04)
+- **Context:** Standard cookies can be overwritten by insecure subdomains or altered via non-root path paths.
+- **Decision:** Enforce the `__Host-` cookie name prefix in production with `Secure`, `HttpOnly`, and `SameSite=Lax`.
+- **Consequences:** Browser enforces origin integrity, preventing cross-subdomain cookie hijacking.
+
+### ADR-0226: Centralized RBAC Permission Table Mapping (ARC12-D05)
+- **Context:** Scattered role checks in API routes lead to inconsistent authorization boundaries and privilege escalation bugs.
+- **Decision:** Implement a centralized role-to-permission mapping dictionary and enforce authorization via `require_permission` dependency.
+- **Consequences:** Uniform, auditable access control policies across all API endpoints.
+
+### ADR-0227: Organization-Scoped Tenant Context Resolution (ARC12-D06)
+- **Context:** Client-supplied organization headers or query parameters cannot be trusted as authoritative proof of access.
+- **Decision:** Resolve tenant context server-side from authenticated session membership records.
+- **Consequences:** Guaranteed tenant isolation preventing cross-tenant access.
+
+### ADR-0228: Force Row Level Security on Tenant Database Tables (ARC12-D07)
+- **Context:** Application bugs or query omissions can leak tenant records if isolation depends solely on application code.
+- **Decision:** Enable `FORCE ROW LEVEL SECURITY` on all tenant-owned tables in PostgreSQL.
+- **Consequences:** Database engine enforces isolation invariants even if table owner or application bugs occur.
+
+### ADR-0229: Non-Bypass Application Database Runtime Role (ARC12-D08)
+- **Context:** Database roles possessing `BYPASSRLS` or superuser privileges bypass all RLS policies.
+- **Decision:** The runtime application database role must explicitly NOT possess `BYPASSRLS` or superuser privileges.
+- **Consequences:** Application connections cannot circumvent row-level security.
+
+### ADR-0230: Dual-Layer Tenant Isolation Guardrails (App + DB) (ARC12-D09)
+- **Context:** Single-layer isolation models fail completely if a single component suffers a vulnerability.
+- **Decision:** Enforce defense-in-depth: Application queries filter by tenant context, and PostgreSQL RLS filters as an independent safety net.
+- **Consequences:** Redundant isolation guarantees preventing data leakage.
+
+### ADR-0231: Anti-CSRF Token Validation with Bearer Exemption (ARC12-D10)
+- **Context:** Cookie-authenticated browser sessions are vulnerable to cross-site request forgery on unsafe HTTP verbs.
+- **Decision:** Enforce anti-CSRF token verification on cookie session mutations, while exempting Bearer token API calls.
+- **Consequences:** Robust CSRF defense without breaking API integrations.
+
+### ADR-0232: Strict Content Security Policy (CSP) Rules (ARC12-D11)
+- **Context:** Cross-site scripting vulnerabilities can execute malicious scripts if CSP headers are permissive.
+- **Decision:** Enforce strict CSP rules disallowing `unsafe-eval` and `unsafe-inline` scripts.
+- **Consequences:** Defense against stored, reflected, and DOM-based XSS attacks.
+
+### ADR-0233: Automated Security Response Headers Standard (ARC12-D12)
+- **Context:** Missing security headers expose clients to clickjacking, MIME sniffing, and downgrade attacks.
+- **Decision:** Inject HSTS, X-Content-Type-Options, X-Frame-Options, and Referrer-Policy on all HTTP responses.
+- **Consequences:** Automated hardening across all web and API responses.
+
+### ADR-0234: SSRF Outbound Network Request Guard (ARC12-D13)
+- **Context:** Outbound HTTP requests can be abused to probe internal networks or cloud metadata services (169.254.169.254).
+- **Decision:** Validate all outbound destination URLs and reject private, loopback, and link-local IP addresses.
+- **Consequences:** Neutralization of SSRF vulnerabilities.
+
+### ADR-0235: Strict Media Magic Byte File Signature Verification (ARC12-D14)
+- **Context:** Attackers disguise malicious executables or scripts with image extensions.
+- **Decision:** Inspect both MIME headers and file magic bytes, allowing only genuine JPEG, PNG, and WebP payloads.
+- **Consequences:** Prevention of executable upload attacks.
+
+### ADR-0236: 25 Megapixel Limit for Decompression Bomb Defense (ARC12-D15)
+- **Context:** Highly compressed images (decompression bombs) cause memory exhaustion and denial of service when decompressed.
+- **Decision:** Reject any image with total pixels exceeding 25,000,000 prior to memory buffer decompression.
+- **Consequences:** Protection against image processing memory exhaustion attacks.
+
+### ADR-0237: Canonical Object Key Isolation for Tenant Media (ARC12-D16)
+- **Context:** Poorly partitioned media storage paths risk cross-tenant file overwrites or unauthorized reads.
+- **Decision:** Enforce canonical keys strictly prefixed with `organizations/{org_id}/restaurants/{rest_id}/`.
+- **Consequences:** Strict multi-tenant namespace isolation across storage adapters.
+
+### ADR-0238: Webhook HMAC SHA-256 Cryptographic Verification (ARC12-D17)
+- **Context:** Forged webhook payloads can simulate payments or state updates from external services.
+- **Decision:** Verify inbound webhooks using constant-time HMAC SHA-256 comparison against shared secrets.
+- **Consequences:** Cryptographic certainty of webhook authenticity and integrity.
+
+### ADR-0239: Webhook Timestamp Drift Tolerance Limit (300s) (ARC12-D18)
+- **Context:** Replay attacks utilize captured legitimate webhook payloads outside their operational window.
+- **Decision:** Reject webhook events with timestamps drifting more than 300 seconds from server clock.
+- **Consequences:** Mitigation of stale and replayed webhook events.
+
+### ADR-0240: Webhook Idempotency & Replay Attack Defense (ARC12-D19)
+- **Context:** Network retransmissions or replay attempts cause duplicate business executions (e.g. double subscriptions).
+- **Decision:** Track processed webhook event IDs with 24-hour expiration and enforce idempotent processing.
+- **Consequences:** Duplicate webhook events are safely acknowledged without re-execution.
+
+### ADR-0241: Immutable Append-Only Audit Logging Ledger (ARC12-D20)
+- **Context:** Audit logs can be altered or erased by compromised administrative accounts if mutation is permitted.
+- **Decision:** Implement append-only audit tables with no update or delete operations exposed in application interfaces.
+- **Consequences:** Non-repudiation and tamper-evident administrative history.
+
+### ADR-0242: Automated Regex Credential Masking in Logs and Traces (ARC12-D21)
+- **Context:** Accidental logging of passwords, tokens, or authorization headers exposes secrets in log aggregation tools.
+- **Decision:** Implement automated regex sanitization masking sensitive keywords with `***` across all logging sinks.
+- **Consequences:** Prevention of credential leakage into log storage.
+
+### ADR-0243: Non-Root Application Container Execution (UID 1001) (ARC12-D22)
+- **Context:** Containers running as root risk host system takeover in the event of a container breakout vulnerability.
+- **Decision:** Run all application containers under unprivileged non-root users (`appuser` UID 1001, node UID 1000).
+- **Consequences:** Hardened isolation and mitigation of container breakout risks.
+
+### ADR-0244: Dropped Linux Capabilities in Production Containers (ARC12-D23)
+- **Context:** Unnecessary Linux kernel capabilities provide vectors for privilege escalation inside containers.
+- **Decision:** Configure Compose production profiles with `cap_drop: [ALL]` and `security_opt: [no-new-privileges:true]`.
+- **Consequences:** Drastically reduced attack surface within runtime environments.
+
+### ADR-0245: Isolated Internal Bridge Networks for Data Stores (ARC12-D24)
+- **Context:** Database and cache ports exposed to public host interfaces risk unauthorized access.
+- **Decision:** Place PostgreSQL and Redis on internal bridge networks with no host port bindings.
+- **Consequences:** Data stores accessible exclusively to authenticated application backend containers.
+
+### ADR-0246: Multi-Tier Token Bucket Rate Limiting (ARC12-D25)
+- **Context:** API endpoints without rate limiting are susceptible to denial of service and brute force credential guessing.
+- **Decision:** Enforce token bucket rate limits in Redis with automatic fallback to local memory counters.
+- **Consequences:** Predictable API performance and protection against volumetric abuse.
+
+### ADR-0247: Public Menu Immutable Pre-Rendered CDN Snapshot Caching (ARC12-D26)
+- **Context:** Guest menu visits surge during dining hours and must not overload database compute capacity.
+- **Decision:** Serve published menus as immutable pre-rendered snapshots via CDN edge caches with ETags and Stale-While-Revalidate.
+- **Consequences:** Sub-300ms p95 latency for public menu consumers with near-zero database load.
+
+### ADR-0248: Frontend 120 kB Gzip Initial JavaScript Budget (ARC12-D27)
+- **Context:** Heavy JavaScript bundles degrade mobile diner experience on spotty cellular connections.
+- **Decision:** Enforce a strict 120 kB gzip budget on initial client-side JavaScript for guest menu viewers.
+- **Consequences:** Instant mobile load times and high Core Web Vitals performance scores.
+
+### ADR-0249: Database Connection Pool Boundaries (20 Pool, 10 Overflow) (ARC12-D28)
+- **Context:** Unconstrained database connection pooling exhausts PostgreSQL memory and leads to query queuing.
+- **Decision:** Constrain asyncpg connection pools to `pool_size=20, max_overflow=10, pool_recycle=1800`.
+- **Consequences:** Predictable database resource utilization and prevention of connection starvation.
+
+### ADR-0250: Composite Indexing on Multi-Tenant Database Columns (ARC12-D29)
+- **Context:** Multi-tenant queries filtering by restaurant and organization require rapid index lookups.
+- **Decision:** Index tenant tables with composite keys starting with `organization_id, restaurant_id`.
+- **Consequences:** O(log N) index scan efficiency and prevention of full table scans.
+
+### ADR-0251: Transactional Outbox Pattern for Durable Asynchronous Events (ARC12-D30)
+- **Context:** Asynchronous event publishing can fail after database commit, causing data inconsistency across services.
+- **Decision:** Write events to a PostgreSQL `outbox` table within the same transaction as business data mutations.
+- **Consequences:** Guaranteed at-least-once event delivery and total consistency across failures.
+
+### ADR-0252: Bounded Exponential Backoff with Full Uniform Jitter (ARC12-D31)
+- **Context:** Synchronized retry intervals create thundering herd spikes when downstream services recover.
+- **Decision:** Calculate retry delays using exponential backoff with full uniform jitter.
+- **Consequences:** Smoothly distributed retry load protecting recovering services.
+
+### ADR-0253: Poison Pill Dead-Letter Queue Quarantine after 8 Attempts (ARC12-D32)
+- **Context:** Malformed or persistently failing events block background queues and burn compute cycles indefinitely.
+- **Decision:** Automatically route events failing 8 consecutive attempts to `dead_letter` status with full diagnostic context.
+- **Consequences:** Queue backlog continues processing while poison pills are safely quarantined for investigation.
+
+### ADR-0254: Three-State Circuit Breakers for External Integrations (ARC12-D33)
+- **Context:** Remote API outages (email, payment, cloud storage) cause thread exhaustion and application hangs.
+- **Decision:** Wrap outbound integrations in three-state circuit breakers (Closed, Open, Half-Open).
+- **Consequences:** Fast failure during remote outages, preserving application thread pool availability.
+
+### ADR-0255: Ephemeral Redis Resilient Graceful Degradation (ARC12-D34)
+- **Context:** Total application failure caused by an optional cache or rate-limiting cluster is unacceptable.
+- **Decision:** Treat Redis as ephemeral; automatically degrade to local in-memory sliding window counters and direct DB queries if Redis fails.
+- **Consequences:** Core menu viewing and ordering workflows remain 100% available during Redis outages.
+
+### ADR-0256: Disaster Recovery RPO <= 1h and RTO <= 4h Standards (ARC12-D35)
+- **Context:** Catastrophic host or datacenter failure requires deterministic data recovery and service restoration guarantees.
+- **Decision:** Implement continuous WAL archiving and automated off-host encrypted snapshots to ensure RPO <= 1h and RTO <= 4h.
+- **Consequences:** Verifiable business continuity and resilience against catastrophic infrastructure loss.
