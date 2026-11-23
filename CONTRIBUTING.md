@@ -28,6 +28,7 @@ All commits must adhere to the **Conventional Commits** specification:
 ```
 
 Examples:
+
 - `feat(auth): add Argon2id session hashing`
 - `fix(tenant): prevent cross-tenant parameter leakage`
 - `docs(fcd-01): update repository setup guide`
@@ -48,6 +49,7 @@ Examples:
 ## 4. Pull Request Requirements
 
 Every PR must explain:
+
 - The purpose and motivation of the change.
 - The files and modules affected.
 - Architectural and security implications.

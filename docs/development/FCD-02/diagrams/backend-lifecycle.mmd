@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    actor Uvicorn as Uvicorn Process
+    participant Main as menu_it.main
+    participant Factory as create_application()
+    participant Config as Settings & Logging
+    participant Stack as Middleware & Handlers
+    participant Lifespan as ASGI Lifespan
+    participant Ready as Runtime State
+
+    Uvicorn->>Main: Import app
+    Main->>Factory: Execute factory
+    Factory->>Config: get_settings() & configure_logging()
+    Factory->>Stack: Register RequestIDMiddleware, CORS, ExceptionHandlers
+    Factory->>Stack: Include API v1 Routers (/health, /system)
+    Uvicorn->>Lifespan: Startup event
+    Lifespan->>Ready: initialize_runtime(app)
+    Ready-->>Lifespan: app.state.runtime_ready = True
+    Note over Ready: Application accepts requests (/health/ready = 200)
+    Uvicorn->>Lifespan: Shutdown event (SIGTERM/SIGINT)
+    Lifespan->>Ready: shutdown_runtime(app)
+    Ready-->>Lifespan: app.state.runtime_ready = False
+    Note over Uvicorn: Resources released, process terminates

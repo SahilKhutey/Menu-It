@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant Browser as Browser / Mobile Client
+    participant Frontend as Next.js Service (api-client.ts)
+    participant Middleware as RequestIDMiddleware & CORS
+    participant Handler as API Endpoint & Handlers
+
+    Browser->>Frontend: User action / health poll
+    Frontend->>Middleware: fetch('/api/v1/...') [Optional X-Request-ID]
+    Middleware->>Middleware: Validate / Generate UUID request_id
+    Middleware->>Handler: Dispatch endpoint handler
+    alt Successful Execution
+        Handler-->>Middleware: Business DTO / Payload
+        Middleware-->>Frontend: HTTP 200 + Enveloped APIResponse<T> + X-Request-ID header
+    else Managed Error / Validation
+        Handler-->>Middleware: HTTPException / RequestValidationError
+        Middleware-->>Frontend: HTTP 4xx + Sanitized APIResponse<null>
+    else Uncaught Exception
+        Handler-->>Middleware: Exception
+        Middleware-->>Frontend: HTTP 500 + INTERNAL_SERVER_ERROR (Masked diagnostic)
+    end
+    Frontend-->>Browser: Render UI / State Update

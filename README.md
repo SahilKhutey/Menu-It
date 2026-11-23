@@ -1,4 +1,5 @@
 # Menu-It (ModularMenu™)
+
 ### Enterprise-Grade Configurable Multi-Tenant Digital Restaurant Menu Platform
 
 [![Version](https://img.shields.io/badge/version-1.0.0--arc11-blue.svg?style=for-the-badge)](https://github.com/SahilKhutey/Menu-It/releases/tag/v1.0.0-arc11)
@@ -54,6 +55,7 @@
 ## ✨ Key Platform Features
 
 ### 🎨 1. Configuration-Driven Theme & Layout Engine (Zero-Fork Invariant)
+
 - **Zero Bespoke Code:** Visual styling (color palettes, typography pairings, spacing density, card styles) is 100% driven by JSON design token configurations validated via JSON Schema (`packages/contracts/theme_schema.json`).
 - **6 Pre-Built Visual Presets:**
   - **Luxury:** Dark obsidian surface (`#0D0E12`), Cinzel serif typography, gold accents (`#D4AF37`), elevated card styling.
@@ -65,17 +67,20 @@
 - **Instant 60fps Preview:** Design tokens compile directly to CSS Custom Properties (`--theme-*`) on the preview container without expensive React DOM re-renders.
 
 ### 🛡️ 2. Defense-in-Depth Multi-Tenancy
+
 - **Perimeter 1 (Ingress Gateway):** JWT session validation and bearer signature checks.
 - **Perimeter 2 (Application Boundary):** `verify_restaurant_access` dependency ensures callers hold active administrative membership for the targeted tenant before any action.
 - **Perimeter 3 (Kernel Persistence):** PostgreSQL Row-Level Security (RLS) policies prevent data leakage across restaurants coexisting within a shared database.
 
 ### ⚡ 3. CQRS-Lite Immutable Snapshot Publishing
+
 - **Extreme Read/Write Asymmetry:** Dining guests scanning QR codes at tables demand instant load times. Administrative relational tables (`menus`, `categories`, `menu_items`) are separated from the public read path.
 - **Atomic Compilation:** Publishing serializes active dishes, variants, allergens, theme tokens, and layouts into a frozen JSON snapshot stamped with a cryptographic **SHA-256 checksum** and incrementing version integer (`v1`, `v2`, ...).
 - **Zero Relational Joins:** Public diners read pre-compiled snapshot payloads directly in <5ms.
 - **Instant Rollback:** Reverting to a previous menu version merely updates the active publication pointer.
 
 ### 📱 4. Diner-First Mobile Ergonomics (India-First & Web-First)
+
 - **Zero App Download & Zero Login:** Dining guests access the menu immediately upon scanning a table QR code.
 - **Strict Mobile Bundle Budget:** Total First Load JavaScript is **95.2 kB** (well below the 120 kB ceiling).
 - **FSSAI Dietary Classification:** High-contrast, standardized badges for **Veg** (green dot in green square), **Non-Veg** (red dot in red square), **Egg** (amber dot in amber square), **Vegan**, and **Jain**.
@@ -83,6 +88,7 @@
 - **Integrated Table QR Sharing:** On-the-fly QR code generation (`image/png`) for table card printing and instant diner sharing.
 
 ### 🐳 5. Dual-Model Binary Portability
+
 - **Profile A (Managed Multi-Tenant Cloud SaaS):** Centralized cloud infrastructure managed for onboarded restaurants.
 - **Profile B (Customer-Hosted Appliance):** Single-tenant / dedicated container appliance running on customer-owned on-premises servers.
 - **Invariant:** Both profiles compile from the **identical codebase and container image**; deployment modes are activated via pluggable environment variable adapters.
@@ -93,20 +99,20 @@
 
 The engineering specifications of ModularMenu are formally documented in the 12-part architecture series located in [`documentation/03_System_Architecture/`](documentation/03_System_Architecture/):
 
-| Architecture Doc | Title | Status | Scope |
-| :--- | :--- | :--- | :--- |
-| **ARC-01** | [System Architecture Overview](documentation/03_System_Architecture/ARC-01_System_Architecture_Overview.md) | **Approved** | 7-layer architecture, 7 external actors, system boundaries, and 10 non-negotiables. |
-| **ARC-02** | [Principles, Standards & Constraints](documentation/03_System_Architecture/ARC-02_Architectural_Principles_Standards_Constraints.md) | **Approved & Implemented** | Principles P-01 to P-10, Constraints CON-01 to CON-16, 10 Work Packages, and 32 tests. |
-| **ARC-03** | [Application Architecture](documentation/03_System_Architecture/ARC-03_Application_Architecture.md) | **Approved & Implemented** | Modular monolith, Next.js 14 + FastAPI, Layered boundaries, Repository & UoW, 46 tests. |
-| **ARC-04** | [Modular Domain Architecture](documentation/03_System_Architecture/ARC-04_Modular_Domain_Architecture.md) | **Approved & Implemented** | 16 discrete domain modules, 18 domain events, pure domain entities, AST checks, 94 tests. |
-| **ARC-05** | [Multi-Tenant Architecture](documentation/03_System_Architecture/ARC-05_Multi_Tenant_Architecture.md) | **Approved & Implemented** | Organization primary tenancy, 8-layer defense in depth, PostgreSQL RLS, storage/cache isolation, 144 tests. |
-| **ARC-06** | [Data Architecture](documentation/03_System_Architecture/ARC-06_Data_Architecture.md) | **Approved & Implemented** | Relational schema, composite FKs, 30+ SQLAlchemy models, immutable published snapshots, 199 tests. |
-| **ARC-07** | [API & Integration Architecture](documentation/03_System_Architecture/ARC-07_API_Integration_Architecture.md) | **Approved & Implemented** | REST API (/api/v1), 66 endpoints, OpenAPI 3.1, TypeScript SDK, server-derived tenancy, outbox webhooks, 274 tests. |
-| **ARC-08** | [Theme & Customization Architecture](documentation/03_System_Architecture/ARC-08_Theme_Customization_Architecture.md) | **Approved & Implemented** | Configuration-driven, token taxonomy, 6 themes, 4 layouts, 13 components, dual-editor parity, 378 tests. |
-| **ARC-09** | Menu Rendering Architecture | *Roadmap* | Mobile webview optimization, category jump scrolling, and SSR caching. |
-| **ARC-10** | Publishing & Versioning Lifecycle | *Roadmap* | Snapshot compiling, SHA-256 digest validation, and zero-downtime rollback. |
-| **ARC-11** | Infrastructure & Deployment | *Roadmap* | Docker compose, multi-profile environment handling, and backup/restore. |
-| **ARC-12** | Security, Scalability & Reliability | *Roadmap* | Threat modeling, penetration verification, rate limiting, and failover. |
+| Architecture Doc | Title                                                                                                                                | Status                     | Scope                                                                                                              |
+| :--------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| **ARC-01**       | [System Architecture Overview](documentation/03_System_Architecture/ARC-01_System_Architecture_Overview.md)                          | **Approved**               | 7-layer architecture, 7 external actors, system boundaries, and 10 non-negotiables.                                |
+| **ARC-02**       | [Principles, Standards & Constraints](documentation/03_System_Architecture/ARC-02_Architectural_Principles_Standards_Constraints.md) | **Approved & Implemented** | Principles P-01 to P-10, Constraints CON-01 to CON-16, 10 Work Packages, and 32 tests.                             |
+| **ARC-03**       | [Application Architecture](documentation/03_System_Architecture/ARC-03_Application_Architecture.md)                                  | **Approved & Implemented** | Modular monolith, Next.js 14 + FastAPI, Layered boundaries, Repository & UoW, 46 tests.                            |
+| **ARC-04**       | [Modular Domain Architecture](documentation/03_System_Architecture/ARC-04_Modular_Domain_Architecture.md)                            | **Approved & Implemented** | 16 discrete domain modules, 18 domain events, pure domain entities, AST checks, 94 tests.                          |
+| **ARC-05**       | [Multi-Tenant Architecture](documentation/03_System_Architecture/ARC-05_Multi_Tenant_Architecture.md)                                | **Approved & Implemented** | Organization primary tenancy, 8-layer defense in depth, PostgreSQL RLS, storage/cache isolation, 144 tests.        |
+| **ARC-06**       | [Data Architecture](documentation/03_System_Architecture/ARC-06_Data_Architecture.md)                                                | **Approved & Implemented** | Relational schema, composite FKs, 30+ SQLAlchemy models, immutable published snapshots, 199 tests.                 |
+| **ARC-07**       | [API & Integration Architecture](documentation/03_System_Architecture/ARC-07_API_Integration_Architecture.md)                        | **Approved & Implemented** | REST API (/api/v1), 66 endpoints, OpenAPI 3.1, TypeScript SDK, server-derived tenancy, outbox webhooks, 274 tests. |
+| **ARC-08**       | [Theme & Customization Architecture](documentation/03_System_Architecture/ARC-08_Theme_Customization_Architecture.md)                | **Approved & Implemented** | Configuration-driven, token taxonomy, 6 themes, 4 layouts, 13 components, dual-editor parity, 378 tests.           |
+| **ARC-09**       | Menu Rendering Architecture                                                                                                          | _Roadmap_                  | Mobile webview optimization, category jump scrolling, and SSR caching.                                             |
+| **ARC-10**       | Publishing & Versioning Lifecycle                                                                                                    | _Roadmap_                  | Snapshot compiling, SHA-256 digest validation, and zero-downtime rollback.                                         |
+| **ARC-11**       | Infrastructure & Deployment                                                                                                          | _Roadmap_                  | Docker compose, multi-profile environment handling, and backup/restore.                                            |
+| **ARC-12**       | Security, Scalability & Reliability                                                                                                  | _Roadmap_                  | Threat modeling, penetration verification, rate limiting, and failover.                                            |
 
 ---
 
@@ -210,11 +216,13 @@ Menu-it/
 ## 🚀 Quickstart & Local Setup
 
 ### Prerequisites
+
 - **Python:** 3.12+
 - **Node.js:** 20+ (with `pnpm` installed: `npm i -g pnpm`)
 - **Docker & Docker Compose:** Optional for containerized deployment
 
 ### 1. Backend Service Setup
+
 ```bash
 # Navigate to backend directory
 cd backend
@@ -238,11 +246,13 @@ pytest -v
 # Launch the FastAPI application server
 uvicorn app.main:app --reload --port 8000
 ```
+
 - **API Swagger Documentation:** [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc Contract View:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
 - **Service Health Probe:** [http://localhost:8000/health](http://localhost:8000/health)
 
 ### 2. Frontend Web Application Setup
+
 ```bash
 # Navigate to frontend directory
 cd frontend
@@ -256,12 +266,14 @@ pnpm run build
 # Start local Next.js development server
 pnpm run dev
 ```
+
 - **Portal Launcher & Showcase:** [http://localhost:3000](http://localhost:3000)
 - **3-Panel Visual Studio:** [http://localhost:3000/app](http://localhost:3000/app)
 - **Platform Administration:** [http://localhost:3000/platform](http://localhost:3000/platform)
 - **Public Diner QR Menu (Demo):** [http://localhost:3000/r/the-bombay-canteen](http://localhost:3000/r/the-bombay-canteen)
 
 ### 3. Full-Stack Docker Compose Deployment
+
 ```bash
 # Build and start all services (PostgreSQL 16, FastAPI backend, Next.js frontend)
 docker compose up -d --build
@@ -277,10 +289,12 @@ docker compose logs -f
 The repository enforces strict automated quality gates prior to any pull request merge:
 
 ### 1. Pytest Test Suites (618 Tests Passing — 100% Pass Rate)
+
 ```bash
 pytest tests/ -v
 # ======================== 618 passed in 60.63s ========================
 ```
+
 - **Architecture Boundaries (`tests/architecture/`):** Uses Python AST parsing to guarantee domain models never import the API layer or HTTP frameworks, verifies zero circular dependencies between all 16 modules, and mandates `lazy="raise"` on all SQLAlchemy relationships.
 - **Security & Tenancy (`tests/security/`):** 50 multi-tenant test scenarios (`ARC05-T001` to `ARC05-T050`) verifying that Tenant A is rejected with `HTTP 403 Forbidden` when attempting to access Tenant B's catalog or design settings, verifying transaction-local PostgreSQL RLS context, and preventing IDOR attacks.
 - **Database & Persistence Integrity (`tests/database/`):** 55 test scenarios (`ARC06-T001` to `ARC06-T055`) proving composite foreign key enforcement, default price uniqueness via partial indexes, JSONB configuration validation, and optimistic concurrency locking.
@@ -291,17 +305,21 @@ pytest tests/ -v
 - **Publishing & Versioning Engine (`tests/publishing/`):** 120 test scenarios (`ARC10-T001` to `ARC10-T120`) verifying draft revisioning, validation readiness, atomic activation, non-destructive rollback, and transactional outbox events.
 
 ### 2. Formal End-to-End Product Validation Script
+
 Execute the formal multi-step validation scenario:
+
 ```bash
 python scripts/validate_arc02_e2e.py
 ```
-*Output validates:* Restaurant provisioning ➔ Catalog creation ➔ Theme preset selection ➔ Design token overrides ➔ Layout custom configuration ➔ Component registry toggles ➔ Studio draft preview ➔ Atomic snapshot publication with SHA-256 digest ➔ Anonymous zero-auth diner read ➔ Dynamic QR PNG generation.
+
+_Output validates:_ Restaurant provisioning ➔ Catalog creation ➔ Theme preset selection ➔ Design token overrides ➔ Layout custom configuration ➔ Component registry toggles ➔ Studio draft preview ➔ Atomic snapshot publication with SHA-256 digest ➔ Anonymous zero-auth diner read ➔ Dynamic QR PNG generation.
 
 ---
 
 ## 📚 Engineering Chronicles: Devlogs & Tasklogs
 
 Detailed milestone execution and developer journals are documented in dedicated archives:
+
 - **[Developer Logs (Devlogs)](docs/devlogs/README.md):** 13 comprehensive engineering chronicles:
   - [Devlog-001: Project Initialization & Blueprint Baseline](docs/devlogs/devlog-001-project-initialization-and-blueprint.md)
   - [Devlog-002: ARC-01 System Architecture Overview](docs/devlogs/devlog-002-arc01-system-architecture-overview.md)
@@ -336,6 +354,7 @@ Detailed milestone execution and developer journals are documented in dedicated 
 ## 📜 Architectural Decision Records (ADRs)
 
 All core engineering choices are tracked in [`docs/decisions/decision-register.md`](docs/decisions/decision-register.md) (256 decisions recorded):
+
 - **ADR-0001 to ADR-0012:** System Architecture Principles & Non-Negotiable Standards (ARC-01 / ARC-02)
 - **ADR-0013 to ADR-0027:** Application Architecture, Layering & Monolith Boundaries (ARC-03)
 - **ADR-0028 to ADR-0043:** Modular Domain Architecture, 16 Discrete Modules & Domain Events (ARC-04)
@@ -357,6 +376,7 @@ Copyright © 2026 Sahil Khutey. All Rights Reserved.
 This software is released under a **Commercial Software License Agreement**. Unauthorized copying, modification, distribution, public hosting as a competing SaaS offering, or sublicensing of this software, via any medium, is strictly prohibited.
 
 For commercial licensing, enterprise self-hosted appliances, or white-label partnerships, please refer to [LICENSE](LICENSE) or contact:
+
 - **Author & Copyright Holder:** Sahil Khutey
 - **Repository:** [https://github.com/SahilKhutey/Menu-It.git](https://github.com/SahilKhutey/Menu-It.git)
 

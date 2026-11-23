@@ -23,6 +23,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **ARC-11** | Infrastructure & Deployment Architecture | WP-ARC11-01 to WP-ARC11-14 | 738 Tests (120 Infrastructure) | **Approved & Implemented** | **[Tasklog-ARC11](tasklog-arc11-infrastructure.md)** |
 | **ARC-12** | Security, Scalability & Reliability Architecture | WP-ARC12-01 to WP-ARC12-15 | 888 Tests (150 Security) | **Approved & Implemented** | **[Tasklog-ARC12](tasklog-arc12-security.md)** |
 | **FCD-01** | Development Environment & Repository Foundation | WP-01 to WP-12 | 8 Environment Checks + Acceptance | **Approved & Implemented** | **[Tasklog-FCD01](tasklog-fcd01-development-foundation.md)** |
+| **FCD-02** | Application Skeleton & Runtime Foundation | WP-01 to WP-12 | 22 API Tests + RT-001–RT-040 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD02](tasklog-fcd02-application-runtime.md)** |
 
 ---
 

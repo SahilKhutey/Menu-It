@@ -1,0 +1,24 @@
+{
+  "name": "menu-it",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.11.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @menu-it/web dev",
+    "dev:admin": "pnpm --filter @menu-it/admin dev",
+    "dev:api": "python -m uvicorn menu_it.main:app --app-dir apps/api/src --host 127.0.0.1 --port 8000 --reload",
+    "dev": "concurrently -k -n API,WEB,ADMIN \"pnpm dev:api\" \"pnpm dev:web\" \"pnpm dev:admin\"",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  }
+}
