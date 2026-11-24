@@ -82,23 +82,24 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17
+    container_name: menu-it-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: modularmenu
-      POSTGRES_USER: modularmenu
-      POSTGRES_PASSWORD: devpassword123
+      POSTGRES_DB: menu_it
+      POSTGRES_USER: menu_it
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword123}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - menu_it_postgres_data:/var/lib/postgresql/data
     ports:
       - '127.0.0.1:5432:5432'
     healthcheck:
       test:
         - CMD-SHELL
-        - pg_isready -U modularmenu -d modularmenu
+        - pg_isready -U menu_it -d menu_it
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -114,5 +115,6 @@ services:
       retries: 5
 
 volumes:
+  menu_it_postgres_data:
   postgres_data:
   modularmenu_media:

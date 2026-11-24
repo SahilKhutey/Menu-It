@@ -30,3 +30,30 @@ def test_empty_cors_origins():
         cors_origins_raw="",
     )
     assert settings.cors_origins == []
+
+
+def test_database_settings_defaults():
+    """Verify default database configuration parameters (FCD-03 §6.3)."""
+    settings = Settings(_env_file=None)
+    assert "postgresql+asyncpg" in settings.database_url
+    assert settings.database_test_url is None
+    assert settings.database_pool_size == 5
+    assert settings.database_max_overflow == 10
+    assert settings.database_pool_timeout == 30
+    assert settings.database_pool_recycle == 1800
+    assert settings.database_echo is False
+
+
+def test_database_custom_settings():
+    """Verify custom environment-provided database parameters."""
+    settings = Settings(
+        _env_file=None,
+        database_url="postgresql+asyncpg://user:pass@db:5432/custom_db",
+        database_pool_size=15,
+        database_max_overflow=25,
+        database_echo=True,
+    )
+    assert settings.database_url == "postgresql+asyncpg://user:pass@db:5432/custom_db"
+    assert settings.database_pool_size == 15
+    assert settings.database_max_overflow == 25
+    assert settings.database_echo is True

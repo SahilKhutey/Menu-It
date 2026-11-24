@@ -25,6 +25,7 @@ This directory contains chronological engineering chronicles capturing the archi
 | **[Devlog-014](devlog-014-arc12-security-scalability-reliability.md)** | **ARC-12 Security, Scalability & Reliability Architecture** | 2026-11-23 | `v1.0.0-arc12` | Argon2id auth, centralized RBAC, PostgreSQL RLS defense, circuit breakers, outbox DLQ, 888 platform tests (150 security tests). |
 | **[Devlog-015](devlog-015-fcd01-development-environment-foundation.md)** | **FCD-01 Development Environment & Repository Foundation** | 2026-11-23 | `v1.0.0-fcd01` | Workstation toolchain verification, monorepo standards, code quality, developer automation, and 10-document technical foundation suite. |
 | **[Devlog-016](devlog-016-fcd02-application-skeleton-and-runtime-foundation.md)** | **FCD-02 Application Skeleton & Runtime Foundation** | 2026-11-23 | `v1.0.0-fcd02` | Independent FastAPI & Next.js shells (apps/web, apps/admin, apps/api), runtime lifecycles, health probes, PWA manifest, and 22-test catalogue. |
+| **[Devlog-017](devlog-017-fcd03-database-foundation-and-data-access-layer.md)** | **FCD-03 Database Foundation & Data Access Layer** | 2026-11-24 | `v1.0.0-fcd03` | Persistent relational data layer, asyncpg engine, connection pooling, Alembic reversible migrations, repositories, and atomic transactions. |
 
 ---
 

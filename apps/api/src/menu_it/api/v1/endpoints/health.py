@@ -48,6 +48,21 @@ async def readiness_check(request: Request) -> ReadinessResponse:
             status_code=503,
             detail="Application runtime is not ready.",
         )
+
+    if getattr(request.app.state, "require_database", False):
+        from sqlalchemy import text
+
+        from menu_it.database.session import AsyncSessionFactory
+
+        try:
+            async with AsyncSessionFactory() as session:
+                await session.execute(text("SELECT 1"))
+        except Exception as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="Database dependency is unreachable.",
+            ) from exc
+
     return ReadinessResponse(
         status="ready",
         ready=True,

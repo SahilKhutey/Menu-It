@@ -32,6 +32,44 @@ class Settings(BaseSettings):
         validation_alias="CORS_ORIGINS",
     )
 
+    # Database configuration (FCD-03)
+    database_url: str = Field(
+        default="postgresql+asyncpg://menu_it:change_this_local_password@localhost:5432/menu_it",
+        validation_alias="DATABASE_URL",
+    )
+    database_test_url: str | None = Field(
+        default=None,
+        validation_alias="DATABASE_TEST_URL",
+    )
+    database_pool_size: int = Field(
+        default=5,
+        validation_alias="DATABASE_POOL_SIZE",
+        ge=1,
+        le=50,
+    )
+    database_max_overflow: int = Field(
+        default=10,
+        validation_alias="DATABASE_MAX_OVERFLOW",
+        ge=0,
+        le=100,
+    )
+    database_pool_timeout: int = Field(
+        default=30,
+        validation_alias="DATABASE_POOL_TIMEOUT",
+        ge=1,
+        le=300,
+    )
+    database_pool_recycle: int = Field(
+        default=1800,
+        validation_alias="DATABASE_POOL_RECYCLE",
+        ge=60,
+        le=7200,
+    )
+    database_echo: bool = Field(
+        default=False,
+        validation_alias="DATABASE_ECHO",
+    )
+
     @property
     def cors_origins(self) -> list[str]:
         """Parse comma-separated CORS origins into a list of strings."""
@@ -44,3 +82,7 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Return cached application settings singleton."""
     return Settings()
+
+
+# Convenient global settings reference
+settings: Settings = get_settings()

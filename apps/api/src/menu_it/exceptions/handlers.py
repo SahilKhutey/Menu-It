@@ -7,6 +7,13 @@ from uuid import UUID, uuid4
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
+
+from menu_it.exceptions.domain import (
+    DatabaseUnavailableError,
+    PersistenceError,
+    ResourceConflictError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +85,50 @@ def register_exception_handlers(app: FastAPI) -> None:
             message="Request validation failed.",
             status_code=422,
             details=errors,
+        )
+
+    @app.exception_handler(ResourceConflictError)
+    async def resource_conflict_handler(
+        request: Request, exc: ResourceConflictError
+    ) -> JSONResponse:
+        return error_response(
+            request=request,
+            code="RESOURCE_CONFLICT",
+            message=str(exc),
+            status_code=409,
+        )
+
+    @app.exception_handler(DatabaseUnavailableError)
+    async def database_unavailable_handler(
+        request: Request, exc: DatabaseUnavailableError
+    ) -> JSONResponse:
+        return error_response(
+            request=request,
+            code="DATABASE_UNAVAILABLE",
+            message="Database service is temporarily unavailable.",
+            status_code=503,
+        )
+
+    @app.exception_handler(PersistenceError)
+    async def persistence_error_handler(request: Request, exc: PersistenceError) -> JSONResponse:
+        request_id = get_request_id(request)
+        logger.error("Persistence error occurred. Request ID: %s", request_id, exc_info=exc)
+        return error_response(
+            request=request,
+            code="PERSISTENCE_ERROR",
+            message="A database persistence error occurred.",
+            status_code=500,
+        )
+
+    @app.exception_handler(SQLAlchemyError)
+    async def sqlalchemy_error_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
+        request_id = get_request_id(request)
+        logger.error("Database driver/ORM error occurred. Request ID: %s", request_id, exc_info=exc)
+        return error_response(
+            request=request,
+            code="DATABASE_ERROR",
+            message="A database operational error occurred.",
+            status_code=500,
         )
 
     @app.exception_handler(Exception)
