@@ -55,3 +55,20 @@ export interface RestaurantProfileUpdateRequest {
   logo_asset_id?: UUID | null;
   banner_asset_id?: UUID | null;
 }
+
+export interface RestaurantSummary {
+  id: UUID;
+  organization_id: UUID;
+  name: string;
+  slug: string;
+  timezone: string;
+  status: RestaurantLifecycleStatus | string;
+  created_at: ISO8601String;
+  updated_at: ISO8601String;
+}
+
+export interface CreateRestaurantRequest {
+  name: string;
+  slug: string;
+  timezone: string;
+}

@@ -24,6 +24,20 @@ export interface AddressDTO {
   postal_code?: string | null;
 }
 
+export type ErrorCode =
+  | 'VALIDATION_ERROR'
+  | 'AUTHENTICATION_REQUIRED'
+  | 'INVALID_CREDENTIALS'
+  | 'PERMISSION_DENIED'
+  | 'RESOURCE_NOT_FOUND'
+  | 'RESOURCE_CONFLICT'
+  | 'INVALID_STATE_TRANSITION'
+  | 'PRECONDITION_FAILED'
+  | 'RATE_LIMIT_EXCEEDED'
+  | 'IDEMPOTENCY_CONFLICT'
+  | 'SERVICE_UNAVAILABLE'
+  | 'INTERNAL_ERROR';
+
 export interface APIErrorDetail {
   field?: string | null;
   message: string;
@@ -31,9 +45,9 @@ export interface APIErrorDetail {
 }
 
 export interface APIError {
-  code: string;
+  code: ErrorCode | string;
   message: string;
-  details: Array<Record<string, unknown>>;
+  details: APIErrorDetail[];
 }
 
 export interface APIResponse<T> {
@@ -50,6 +64,11 @@ export interface PaginationMeta {
   total_pages: number;
   has_next: boolean;
   has_previous: boolean;
+}
+
+export interface PaginatedData<T> {
+  items: T[];
+  pagination: PaginationMeta;
 }
 
 export interface PaginatedResponse<T> {

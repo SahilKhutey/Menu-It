@@ -28,6 +28,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **FCD-04** | Multi-Tenant Core Foundation | WP-01 to WP-14 | 72 API Tests + AC-01–AC-15 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD04](tasklog-fcd04-multi-tenant-core.md)** |
 | **FCD-05** | Identity, Authentication & Authorization Core | WP-01 to WP-18 | 147 API Tests + AC-01–AC-20 (100% Pass, 90% Cov) | **Approved & Implemented** | **[Tasklog-FCD05](tasklog-fcd05-identity-auth-core.md)** |
 | **FCD-06** | Domain Models & Shared Business Foundation | WP-01 to WP-18 | 219 API Tests + AC-01–AC-20 (100% Pass, 92% Cov) | **Approved & Implemented** | **[Tasklog-FCD06](tasklog-fcd06-domain-models-foundation.md)** |
+| **FCD-07** | API & Communication Infrastructure | WP-01 to WP-16 | 251 API Tests + AC-01–AC-20 (100% Pass, 90% Cov) | **Approved & Implemented** | **[Tasklog-FCD07](tasklog-fcd07-api-communication-infrastructure.md)** |
 
 ---
 

@@ -11,6 +11,7 @@ from menu_it.api.v1.endpoints import (
     sessions,
     system,
 )
+from menu_it.api.v1.modules.restaurants.router import router as restaurants_router
 
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["Health"])
@@ -20,3 +21,4 @@ api_router.include_router(auth.router, tags=["Authentication"])
 api_router.include_router(identity.router, tags=["Identity"])
 api_router.include_router(sessions.router, tags=["Sessions"])
 api_router.include_router(organizations.router, tags=["Organizations"])
+api_router.include_router(restaurants_router, prefix="/restaurants", tags=["Restaurants"])
