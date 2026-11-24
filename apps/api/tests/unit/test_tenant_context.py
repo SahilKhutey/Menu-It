@@ -103,3 +103,27 @@ def test_system_and_job_context():
     )
     assert sys_ctx.organization_id == org_id
     assert sys_ctx.system_actor == "report-worker"
+
+
+@pytest.mark.asyncio
+async def test_tenant_dependency_error_mappings(db_session) -> None:
+    """Verify HTTP exception mapping for tenant resolution dependencies."""
+    from fastapi import HTTPException
+
+    import menu_it.identity.enums  # noqa: F401
+    import menu_it.identity.models  # noqa: F401
+    import menu_it.sessions.models  # noqa: F401
+    from menu_it.auth.principal import AuthenticatedPrincipal
+    from menu_it.tenancy.dependencies import get_restaurant_tenant_context, get_tenant_context
+
+    principal = AuthenticatedPrincipal(user_id=uuid4(), is_authenticated=True)
+    org_id = uuid4()
+    rest_id = uuid4()
+
+    with pytest.raises(HTTPException) as exc:
+        await get_tenant_context(org_id, principal, db_session)
+    assert exc.value.status_code == 404
+
+    with pytest.raises(HTTPException) as exc:
+        await get_restaurant_tenant_context(org_id, rest_id, principal, db_session)
+    assert exc.value.status_code == 404

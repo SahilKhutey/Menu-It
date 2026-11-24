@@ -10,7 +10,6 @@ from sqlalchemy import (
     Index,
     UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from menu_it.database.base import Base
@@ -21,6 +20,7 @@ from menu_it.database.models.mixins import (
 
 if TYPE_CHECKING:
     from menu_it.database.models.organization import Organization
+    from menu_it.database.models.user import User
 
 
 class MembershipStatus(enum.StrEnum):
@@ -65,7 +65,7 @@ class OrganizationMembership(
         index=True,
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
     role: Mapped[OrganizationRole] = mapped_column(
@@ -82,4 +82,8 @@ class OrganizationMembership(
     organization: Mapped["Organization"] = relationship(
         "Organization",
         back_populates="memberships",
+    )
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="organization_memberships",
     )

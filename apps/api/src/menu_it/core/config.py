@@ -70,6 +70,76 @@ class Settings(BaseSettings):
         validation_alias="DATABASE_ECHO",
     )
 
+    # Authentication & Security configuration (FCD-05)
+    auth_issuer: str = Field(
+        default="menu-it",
+        validation_alias="AUTH_ISSUER",
+    )
+    auth_audience: str = Field(
+        default="menu-it-api",
+        validation_alias="AUTH_AUDIENCE",
+    )
+    auth_access_token_ttl_seconds: int = Field(
+        default=600,
+        validation_alias="AUTH_ACCESS_TOKEN_TTL_SECONDS",
+    )
+    auth_refresh_token_ttl_seconds: int = Field(
+        default=2592000,
+        validation_alias="AUTH_REFRESH_TOKEN_TTL_SECONDS",
+    )
+    auth_password_reset_ttl_seconds: int = Field(
+        default=1800,
+        validation_alias="AUTH_PASSWORD_RESET_TTL_SECONDS",
+    )
+    auth_email_verification_ttl_seconds: int = Field(
+        default=86400,
+        validation_alias="AUTH_EMAIL_VERIFICATION_TTL_SECONDS",
+    )
+    auth_max_failed_logins: int = Field(
+        default=5,
+        validation_alias="AUTH_MAX_FAILED_LOGINS",
+    )
+    auth_lockout_seconds: int = Field(
+        default=900,
+        validation_alias="AUTH_LOCKOUT_SECONDS",
+    )
+    auth_session_idle_timeout_seconds: int = Field(
+        default=604800,
+        validation_alias="AUTH_SESSION_IDLE_TIMEOUT_SECONDS",
+    )
+    auth_jwt_algorithm: str = Field(
+        default="HS256",
+        validation_alias="AUTH_JWT_ALGORITHM",
+    )
+    auth_secret_key: str = Field(
+        default="menu-it-dev-insecure-secret-key-32b-length-at-least",
+        validation_alias="AUTH_SECRET_KEY",
+    )
+    auth_private_key: str | None = Field(
+        default=None,
+        validation_alias="AUTH_PRIVATE_KEY",
+    )
+    auth_public_key: str | None = Field(
+        default=None,
+        validation_alias="AUTH_PUBLIC_KEY",
+    )
+    auth_key_id: str = Field(
+        default="menu-it-k1",
+        validation_alias="AUTH_KEY_ID",
+    )
+    auth_cookie_secure: bool = Field(
+        default=False,
+        validation_alias="AUTH_COOKIE_SECURE",
+    )
+    auth_cookie_samesite: str = Field(
+        default="lax",
+        validation_alias="AUTH_COOKIE_SAMESITE",
+    )
+    auth_cookie_domain: str | None = Field(
+        default=None,
+        validation_alias="AUTH_COOKIE_DOMAIN",
+    )
+
     @property
     def cors_origins(self) -> list[str]:
         """Parse comma-separated CORS origins into a list of strings."""

@@ -26,6 +26,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **FCD-02** | Application Skeleton & Runtime Foundation | WP-01 to WP-12 | 22 API Tests + RT-001–RT-040 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD02](tasklog-fcd02-application-runtime.md)** |
 | **FCD-03** | Database Foundation & Data Access Layer | WP-01 to WP-13 | 40 API Tests + AC-01–AC-12 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD03](tasklog-fcd03-database-foundation.md)** |
 | **FCD-04** | Multi-Tenant Core Foundation | WP-01 to WP-14 | 72 API Tests + AC-01–AC-15 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD04](tasklog-fcd04-multi-tenant-core.md)** |
+| **FCD-05** | Identity, Authentication & Authorization Core | WP-01 to WP-18 | 147 API Tests + AC-01–AC-20 (100% Pass, 90% Cov) | **Approved & Implemented** | **[Tasklog-FCD05](tasklog-fcd05-identity-auth-core.md)** |
 
 ---
 

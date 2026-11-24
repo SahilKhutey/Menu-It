@@ -15,6 +15,7 @@ from menu_it.database.models.organization_membership import (
     OrganizationMembership,
     OrganizationRole,
 )
+from menu_it.database.models.user import User, UserStatus
 from menu_it.database.session import get_db_session
 
 
@@ -79,6 +80,17 @@ async def test_endpoint_suspended_org_returns_403(
 ):
     """Verify member of suspended organization is denied access with HTTP 403."""
     user_id = uuid4()
+    u = User(
+        id=user_id,
+        email="suspended_mem@org.com",
+        normalized_email="suspended_mem@org.com",
+        display_name="Suspended Member",
+        status=UserStatus.ACTIVE,
+        email_verified=True,
+    )
+    db_session.add(u)
+    await db_session.commit()
+
     org = Organization(
         name="Suspended Org API",
         slug="suspended-org-api",
@@ -110,6 +122,17 @@ async def test_endpoint_authorized_member_returns_context(
 ):
     """Verify authorized member retrieves resolved TenantContext enveloped response."""
     user_id = uuid4()
+    u = User(
+        id=user_id,
+        email="auth_mem@org.com",
+        normalized_email="auth_mem@org.com",
+        display_name="Authorized Member",
+        status=UserStatus.ACTIVE,
+        email_verified=True,
+    )
+    db_session.add(u)
+    await db_session.commit()
+
     org = Organization(
         name="Success Org",
         slug="success-org",

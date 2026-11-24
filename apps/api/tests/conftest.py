@@ -33,6 +33,20 @@ def client(app):
         yield test_client
 
 
+@pytest.fixture
+def authed_client(app, db_session: AsyncSession):
+    """Provide a TestClient with get_db_session wired to the active test database session."""
+    from menu_it.database.session import get_db_session
+
+    async def _override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db_session] = _override_get_db
+    with TestClient(app) as tc:
+        yield tc
+    app.dependency_overrides.clear()
+
+
 @pytest_asyncio.fixture
 async def test_engine() -> AsyncIterator[AsyncEngine]:
     """Provide an isolated asynchronous database engine for integration tests.

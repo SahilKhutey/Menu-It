@@ -19,6 +19,7 @@ from menu_it.database.models.restaurant import (
     Restaurant,
     RestaurantStatus,
 )
+from menu_it.database.models.user import User, UserStatus
 from menu_it.exceptions.domain import ResourceConflictError
 from menu_it.services.organization_provisioning import OrganizationProvisioningService
 
@@ -28,6 +29,16 @@ async def test_atomic_provisioning_success(db_session: AsyncSession):
     """Verify atomic provisioning creates organization, membership, and restaurant."""
     service = OrganizationProvisioningService(db_session)
     owner_id = uuid4()
+    owner_user = User(
+        id=owner_id,
+        email="owner@bella.com",
+        normalized_email="owner@bella.com",
+        display_name="Owner User",
+        status=UserStatus.ACTIVE,
+        email_verified=True,
+    )
+    db_session.add(owner_user)
+    await db_session.commit()
 
     org, owner_mem, initial_rest = await service.provision_organization(
         name="Trattoria Bella",
@@ -67,6 +78,25 @@ async def test_duplicate_slug_provisioning_rollback(db_session: AsyncSession):
     """Verify duplicate slug rejection rolls back completely leaving zero orphaned records."""
     service = OrganizationProvisioningService(db_session)
     owner_1 = uuid4()
+    owner_2 = uuid4()
+    u1 = User(
+        id=owner_1,
+        email="owner1@org.com",
+        normalized_email="owner1@org.com",
+        display_name="Owner 1",
+        status=UserStatus.ACTIVE,
+        email_verified=True,
+    )
+    u2 = User(
+        id=owner_2,
+        email="owner2@org.com",
+        normalized_email="owner2@org.com",
+        display_name="Owner 2",
+        status=UserStatus.ACTIVE,
+        email_verified=True,
+    )
+    db_session.add_all([u1, u2])
+    await db_session.commit()
 
     # 1. Provision baseline organization
     await service.provision_organization(
@@ -76,7 +106,6 @@ async def test_duplicate_slug_provisioning_rollback(db_session: AsyncSession):
     )
 
     # 2. Attempt duplicate provisioning
-    owner_2 = uuid4()
     with pytest.raises(ResourceConflictError) as exc_info:
         await service.provision_organization(
             name="Conflicting Org Attempt",

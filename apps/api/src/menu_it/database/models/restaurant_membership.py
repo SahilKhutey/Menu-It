@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Enum,
+    ForeignKey,
     ForeignKeyConstraint,
     Index,
     UniqueConstraint,
@@ -21,6 +22,7 @@ from menu_it.database.models.mixins import (
 
 if TYPE_CHECKING:
     from menu_it.database.models.restaurant import Restaurant
+    from menu_it.database.models.user import User
 
 
 class RestaurantRole(enum.StrEnum):
@@ -64,7 +66,7 @@ class RestaurantMembership(
         nullable=False,
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
     role: Mapped[RestaurantRole] = mapped_column(
@@ -77,4 +79,8 @@ class RestaurantMembership(
     restaurant: Mapped["Restaurant"] = relationship(
         "Restaurant",
         back_populates="memberships",
+    )
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="restaurant_memberships",
     )

@@ -1,6 +1,6 @@
 """Integration tests for TenantResolver (FCD-04 §9.4, §18.3)."""
 
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,6 +23,7 @@ from menu_it.database.models.restaurant_membership import (
     RestaurantMembership,
     RestaurantRole,
 )
+from menu_it.database.models.user import User, UserStatus
 from menu_it.tenancy.exceptions import (
     RestaurantAccessDeniedError,
     TenantAccessDeniedError,
@@ -30,6 +31,24 @@ from menu_it.tenancy.exceptions import (
     TenantSuspendedError,
 )
 from menu_it.tenancy.resolver import TenantResolver
+
+
+async def _create_test_user(
+    session: AsyncSession,
+    user_id: UUID | None = None,
+) -> User:
+    uid = user_id or uuid4()
+    u = User(
+        id=uid,
+        email=f"u_{uid}@test.internal",
+        normalized_email=f"u_{uid}@test.internal",
+        display_name="Test User",
+        status=UserStatus.ACTIVE,
+        email_verified=True,
+    )
+    session.add(u)
+    await session.commit()
+    return u
 
 
 @pytest.mark.asyncio
@@ -57,7 +76,8 @@ async def test_user_cannot_resolve_unrelated_organization(db_session: AsyncSessi
 @pytest.mark.asyncio
 async def test_active_member_resolves_organization(db_session: AsyncSession):
     """Verify active organization member resolves immutable TenantContext."""
-    user_id = uuid4()
+    user = await _create_test_user(db_session)
+    user_id = user.id
     org = Organization(
         name="Org Beta",
         slug="org-beta-res",
@@ -108,7 +128,8 @@ async def test_membership_statuses_rejected(db_session: AsyncSession):
         MembershipStatus.SUSPENDED,
         MembershipStatus.REVOKED,
     ]:
-        user_id = uuid4()
+        user = await _create_test_user(db_session)
+        user_id = user.id
         mem = OrganizationMembership(
             organization_id=org.id,
             user_id=user_id,
@@ -132,7 +153,8 @@ async def test_organization_statuses_enforced(db_session: AsyncSession):
     resolver = TenantResolver(db_session)
 
     # 1. Suspended organization
-    user_a = uuid4()
+    user_a_obj = await _create_test_user(db_session)
+    user_a = user_a_obj.id
     org_suspended = Organization(
         name="Suspended Org",
         slug="org-suspended-res",
@@ -157,7 +179,8 @@ async def test_organization_statuses_enforced(db_session: AsyncSession):
         )
 
     # 2. Provisioning organization
-    user_b = uuid4()
+    user_b_obj = await _create_test_user(db_session)
+    user_b = user_b_obj.id
     org_prov = Organization(
         name="Prov Org",
         slug="org-prov-res",
@@ -215,8 +238,10 @@ async def test_restaurant_resolution_and_scope(db_session: AsyncSession):
     db_session.add_all([rest_a, rest_b])
     await db_session.commit()
 
-    owner_user = uuid4()
-    staff_user = uuid4()
+    owner_u = await _create_test_user(db_session)
+    staff_u = await _create_test_user(db_session)
+    owner_user = owner_u.id
+    staff_user = staff_u.id
 
     db_session.add(
         OrganizationMembership(

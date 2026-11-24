@@ -37,24 +37,40 @@ def test_alembic_migration_lifecycle(tmp_path: Path):
     assert "tenants" in tables_v1
     assert "restaurants" in tables_v1
 
-    # 2. Upgrade to head (0002_org_foundation)
+    # 2. Upgrade to head (0003_identity_foundation)
     command.upgrade(alembic_cfg, "head")
     inspector = inspect(sync_engine)
-    tables_v2 = inspector.get_table_names()
-    assert "organizations" in tables_v2
-    assert "tenants" not in tables_v2
-    assert "restaurants" in tables_v2
-    assert "organization_memberships" in tables_v2
-    assert "restaurant_memberships" in tables_v2
-    assert "organization_audit_events" in tables_v2
+    tables_v3 = inspector.get_table_names()
+    assert "organizations" in tables_v3
+    assert "tenants" not in tables_v3
+    assert "restaurants" in tables_v3
+    assert "organization_memberships" in tables_v3
+    assert "restaurant_memberships" in tables_v3
+    assert "organization_audit_events" in tables_v3
+    assert "users" in tables_v3
+    assert "user_credentials" in tables_v3
+    assert "user_sessions" in tables_v3
+    assert "refresh_token_records" in tables_v3
+    assert "email_verification_tokens" in tables_v3
+    assert "password_reset_tokens" in tables_v3
+    assert "platform_memberships" in tables_v3
 
     # Verify column rename in restaurants
     rest_cols = [c["name"] for c in inspector.get_columns("restaurants")]
     assert "organization_id" in rest_cols
     assert "tenant_id" not in rest_cols
 
-    # 3. Downgrade to 0001_initial_tables (-1)
-    command.downgrade(alembic_cfg, "-1")
+    # 3. Downgrade to 0002_org_foundation (-1)
+    command.downgrade(alembic_cfg, "0002_org_foundation")
+    inspector = inspect(sync_engine)
+    tables_v2 = inspector.get_table_names()
+    assert "users" not in tables_v2
+    assert "user_credentials" not in tables_v2
+    assert "user_sessions" not in tables_v2
+    assert "organizations" in tables_v2
+
+    # 4. Downgrade to 0001_initial_tables
+    command.downgrade(alembic_cfg, "0001_initial_tables")
     inspector = inspect(sync_engine)
     tables_downgraded = inspector.get_table_names()
     assert "tenants" in tables_downgraded
@@ -63,14 +79,14 @@ def test_alembic_migration_lifecycle(tmp_path: Path):
     assert "restaurant_memberships" not in tables_downgraded
     assert "organization_audit_events" not in tables_downgraded
 
-    # 4. Downgrade to base
+    # 5. Downgrade to base
     command.downgrade(alembic_cfg, "base")
     inspector = inspect(sync_engine)
     tables_base = inspector.get_table_names()
     assert "tenants" not in tables_base
     assert "restaurants" not in tables_base
 
-    # 5. Upgrade back to head
+    # 6. Upgrade back to head
     command.upgrade(alembic_cfg, "head")
     inspector = inspect(sync_engine)
     tables_restored = inspector.get_table_names()
@@ -79,5 +95,8 @@ def test_alembic_migration_lifecycle(tmp_path: Path):
     assert "organization_memberships" in tables_restored
     assert "restaurant_memberships" in tables_restored
     assert "organization_audit_events" in tables_restored
+    assert "users" in tables_restored
+    assert "user_credentials" in tables_restored
+    assert "user_sessions" in tables_restored
 
     sync_engine.dispose()
