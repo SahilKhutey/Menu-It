@@ -27,6 +27,7 @@ from menu_it.database.models.restaurant_membership import (
     RestaurantMembership,
     RestaurantRole,
 )
+from menu_it.database.models.restaurant_profile import RestaurantProfileRecord
 from menu_it.database.models.session import (
     RefreshTokenRecord,
     SessionStatus,
@@ -54,6 +55,7 @@ __all__ = [
     "RefreshTokenRecord",
     "Restaurant",
     "RestaurantMembership",
+    "RestaurantProfileRecord",
     "RestaurantRole",
     "RestaurantStatus",
     "SessionStatus",

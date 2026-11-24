@@ -1,19 +1,7 @@
-export type UUID = string;
+/**
+ * @menu-it/shared-types entry point (FCD-06 §13).
+ */
 
-export interface RequestMetadata {
-  request_id: UUID;
-  timestamp: string;
-}
-
-export interface APIError {
-  code: string;
-  message: string;
-  details: Array<Record<string, unknown>>;
-}
-
-export interface APIResponse<T> {
-  success: boolean;
-  data: T | null;
-  error: APIError | null;
-  meta: RequestMetadata;
-}
+export * from './common.js';
+export * from './organization.js';
+export * from './restaurant.js';

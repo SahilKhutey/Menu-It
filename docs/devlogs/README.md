@@ -28,6 +28,7 @@ This directory contains chronological engineering chronicles capturing the archi
 | **[Devlog-017](devlog-017-fcd03-database-foundation-and-data-access-layer.md)** | **FCD-03 Database Foundation & Data Access Layer** | 2026-11-24 | `v1.0.0-fcd03` | Persistent relational data layer, asyncpg engine, connection pooling, Alembic reversible migrations, repositories, and atomic transactions. |
 | **[Devlog-018](devlog-018-fcd04-multi-tenant-core-foundation.md)** | **FCD-04 Multi-Tenant Core Foundation** | 2026-11-24 | `v1.0.0-fcd04` | Canonical organization ownership, membership models, immutable TenantContext, TenantResolver, PostgreSQL RLS, lifecycle machines, and provisioning service. |
 | **[Devlog-019](devlog-019-fcd05-identity-authentication-authorization-core.md)** | **FCD-05 Identity, Authentication & Authorization Core** | 2026-11-24 | `v1.0.0-fcd05` | Decoupled identity accounts, Argon2id hashing, timing defenses, rotating refresh tokens with reuse detection, email verification, password reset, fine-grained RBAC, and platform privilege separation. |
+| **[Devlog-020](devlog-020-fcd06-domain-models-shared-business-foundation.md)** | **FCD-06 Domain Models & Shared Business Foundation** | 2026-11-24 | `v1.0.0-fcd06` | Pure zero-dependency domain models, exact Decimal Money & Currency registry, operating schedules with overnight shift intervals, RestaurantProfile aggregate, synchronized TypeScript contracts, composite tenant FK & PostgreSQL RLS. |
 
 ---
 
