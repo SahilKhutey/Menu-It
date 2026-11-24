@@ -20,9 +20,9 @@ class RestaurantRepository(BaseRepository[Restaurant]):
         tenant_id: UUID,
         slug: str,
     ) -> Restaurant | None:
-        """Look up a restaurant by tenant UUID and restaurant slug."""
+        """Look up a restaurant by organization/tenant UUID and restaurant slug."""
         statement = select(Restaurant).where(
-            Restaurant.tenant_id == tenant_id,
+            Restaurant.organization_id == tenant_id,
             Restaurant.slug == slug,
         )
         result = await self.session.execute(statement)
@@ -35,9 +35,12 @@ class RestaurantRepository(BaseRepository[Restaurant]):
         offset: int = 0,
         limit: int = 100,
     ) -> list[Restaurant]:
-        """List restaurants belonging to a specific tenant."""
+        """List restaurants belonging to a specific organization/tenant."""
         statement = (
-            select(Restaurant).where(Restaurant.tenant_id == tenant_id).offset(offset).limit(limit)
+            select(Restaurant)
+            .where(Restaurant.organization_id == tenant_id)
+            .offset(offset)
+            .limit(limit)
         )
         result = await self.session.execute(statement)
         return list(result.scalars().all())
@@ -47,9 +50,9 @@ class RestaurantRepository(BaseRepository[Restaurant]):
         tenant_id: UUID,
         slug: str,
     ) -> bool:
-        """Check if a restaurant slug is already registered within a tenant."""
+        """Check if a restaurant slug is already registered within an organization/tenant."""
         statement = select(Restaurant.id).where(
-            Restaurant.tenant_id == tenant_id,
+            Restaurant.organization_id == tenant_id,
             Restaurant.slug == slug,
         )
         result = await self.session.execute(statement)

@@ -1,4 +1,4 @@
-"""Integration tests for Alembic migration lifecycle (FCD-03 §15.8)."""
+"""Integration tests for Alembic migration lifecycle (FCD-03 §15.8, FCD-04 §6.3, §18)."""
 
 from pathlib import Path
 
@@ -8,13 +8,15 @@ from sqlalchemy import create_engine, inspect
 
 
 def test_alembic_migration_lifecycle(tmp_path: Path):
-    """Verify clean database can be migrated to head, inspected, downgraded, and upgraded again.
+    """Verify clean database can be migrated through all revisions, downgraded, and upgraded again.
 
     Tests:
-    1. Upgrade empty database to head.
-    2. Inspect schema: assert 'tenants', 'restaurants', and 'alembic_version' exist.
-    3. Downgrade by 1 revision to base: assert application tables are dropped.
-    4. Upgrade back to head: assert application tables are cleanly restored.
+    1. Upgrade empty database to 0001_initial_tables: assert 'tenants', 'restaurants'.
+    2. Upgrade to head (0002_org_foundation): assert 'organizations',
+       'restaurants' (organization_id), memberships, and audit events.
+    3. Downgrade by 1 revision to 0001: assert 'organizations' reverses to 'tenants'.
+    4. Downgrade to base: assert all application tables are dropped.
+    5. Upgrade back to head: assert all canonical FCD-04 tables are cleanly restored.
     """
     api_dir = Path(__file__).resolve().parents[2]
     alembic_ini_path = api_dir / "alembic.ini"
@@ -25,44 +27,57 @@ def test_alembic_migration_lifecycle(tmp_path: Path):
     alembic_cfg.set_main_option("sqlalchemy.url", test_db_url)
     alembic_cfg.set_main_option("script_location", str(api_dir / "alembic"))
 
-    # 1. Upgrade from empty database to head
-    command.upgrade(alembic_cfg, "head")
-
     sync_engine = create_engine(test_db_url)
+
+    # 1. Upgrade to 0001_initial_tables
+    command.upgrade(alembic_cfg, "0001_initial_tables")
     inspector = inspect(sync_engine)
-    tables = inspector.get_table_names()
+    tables_v1 = inspector.get_table_names()
+    assert "alembic_version" in tables_v1
+    assert "tenants" in tables_v1
+    assert "restaurants" in tables_v1
 
-    assert "alembic_version" in tables
-    assert "tenants" in tables
-    assert "restaurants" in tables
+    # 2. Upgrade to head (0002_org_foundation)
+    command.upgrade(alembic_cfg, "head")
+    inspector = inspect(sync_engine)
+    tables_v2 = inspector.get_table_names()
+    assert "organizations" in tables_v2
+    assert "tenants" not in tables_v2
+    assert "restaurants" in tables_v2
+    assert "organization_memberships" in tables_v2
+    assert "restaurant_memberships" in tables_v2
+    assert "organization_audit_events" in tables_v2
 
-    # Verify column structures
-    tenant_cols = [c["name"] for c in inspector.get_columns("tenants")]
-    assert "id" in tenant_cols
-    assert "name" in tenant_cols
-    assert "slug" in tenant_cols
-    assert "status" in tenant_cols
-    assert "created_at" in tenant_cols
-    assert "updated_at" in tenant_cols
+    # Verify column rename in restaurants
+    rest_cols = [c["name"] for c in inspector.get_columns("restaurants")]
+    assert "organization_id" in rest_cols
+    assert "tenant_id" not in rest_cols
 
-    restaurant_cols = [c["name"] for c in inspector.get_columns("restaurants")]
-    assert "id" in restaurant_cols
-    assert "tenant_id" in restaurant_cols
-    assert "slug" in restaurant_cols
-    assert "timezone" in restaurant_cols
-
-    # 2. Downgrade to base (-1)
+    # 3. Downgrade to 0001_initial_tables (-1)
     command.downgrade(alembic_cfg, "-1")
     inspector = inspect(sync_engine)
-    downgraded_tables = inspector.get_table_names()
-    assert "tenants" not in downgraded_tables
-    assert "restaurants" not in downgraded_tables
+    tables_downgraded = inspector.get_table_names()
+    assert "tenants" in tables_downgraded
+    assert "organizations" not in tables_downgraded
+    assert "organization_memberships" not in tables_downgraded
+    assert "restaurant_memberships" not in tables_downgraded
+    assert "organization_audit_events" not in tables_downgraded
 
-    # 3. Upgrade back to head
+    # 4. Downgrade to base
+    command.downgrade(alembic_cfg, "base")
+    inspector = inspect(sync_engine)
+    tables_base = inspector.get_table_names()
+    assert "tenants" not in tables_base
+    assert "restaurants" not in tables_base
+
+    # 5. Upgrade back to head
     command.upgrade(alembic_cfg, "head")
     inspector = inspect(sync_engine)
-    reupgraded_tables = inspector.get_table_names()
-    assert "tenants" in reupgraded_tables
-    assert "restaurants" in reupgraded_tables
+    tables_restored = inspector.get_table_names()
+    assert "organizations" in tables_restored
+    assert "restaurants" in tables_restored
+    assert "organization_memberships" in tables_restored
+    assert "restaurant_memberships" in tables_restored
+    assert "organization_audit_events" in tables_restored
 
     sync_engine.dispose()

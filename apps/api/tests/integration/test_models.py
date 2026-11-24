@@ -16,6 +16,7 @@ async def test_create_tenant(db_session: AsyncSession):
     tenant = Tenant(
         name="Demo Hospitality Group",
         slug="demo-hospitality-group",
+        status=TenantStatus.ACTIVE,
     )
     db_session.add(tenant)
     await db_session.commit()

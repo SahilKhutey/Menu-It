@@ -26,6 +26,7 @@ This directory contains chronological engineering chronicles capturing the archi
 | **[Devlog-015](devlog-015-fcd01-development-environment-foundation.md)** | **FCD-01 Development Environment & Repository Foundation** | 2026-11-23 | `v1.0.0-fcd01` | Workstation toolchain verification, monorepo standards, code quality, developer automation, and 10-document technical foundation suite. |
 | **[Devlog-016](devlog-016-fcd02-application-skeleton-and-runtime-foundation.md)** | **FCD-02 Application Skeleton & Runtime Foundation** | 2026-11-23 | `v1.0.0-fcd02` | Independent FastAPI & Next.js shells (apps/web, apps/admin, apps/api), runtime lifecycles, health probes, PWA manifest, and 22-test catalogue. |
 | **[Devlog-017](devlog-017-fcd03-database-foundation-and-data-access-layer.md)** | **FCD-03 Database Foundation & Data Access Layer** | 2026-11-24 | `v1.0.0-fcd03` | Persistent relational data layer, asyncpg engine, connection pooling, Alembic reversible migrations, repositories, and atomic transactions. |
+| **[Devlog-018](devlog-018-fcd04-multi-tenant-core-foundation.md)** | **FCD-04 Multi-Tenant Core Foundation** | 2026-11-24 | `v1.0.0-fcd04` | Canonical organization ownership, membership models, immutable TenantContext, TenantResolver, PostgreSQL RLS, lifecycle machines, and provisioning service. |
 
 ---
 

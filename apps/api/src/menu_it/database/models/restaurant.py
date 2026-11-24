@@ -1,4 +1,4 @@
-"""Restaurant database model (FCD-03 §9.3)."""
+"""Restaurant database model (FCD-04 §6.1, §7.2)."""
 
 import enum
 import uuid
@@ -10,7 +10,7 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, synonym
 
 from menu_it.database.base import Base
 from menu_it.database.models.mixins import (
@@ -19,15 +19,17 @@ from menu_it.database.models.mixins import (
 )
 
 if TYPE_CHECKING:
-    from menu_it.database.models.tenant import Tenant
+    from menu_it.database.models.organization import Organization
+    from menu_it.database.models.restaurant_membership import RestaurantMembership
 
 
 class RestaurantStatus(enum.StrEnum):
-    """Lifecycle status of a restaurant."""
+    """Lifecycle status of a restaurant location."""
 
     ACTIVE = "active"
     INACTIVE = "inactive"
-    CLOSED = "closed"
+    SUSPENDED = "suspended"
+    ARCHIVED = "archived"
 
 
 class Restaurant(
@@ -35,20 +37,25 @@ class Restaurant(
     TimestampMixin,
     Base,
 ):
-    """Restaurant belonging to a tenant."""
+    """Subordinate restaurant location owned by an organization."""
 
     __tablename__ = "restaurants"
     __table_args__ = (
         UniqueConstraint(
-            "tenant_id",
+            "organization_id",
             "slug",
-            name="uq_restaurants_tenant_id_slug",
+            name="uq_restaurants_organization_id_slug",
+        ),
+        UniqueConstraint(
+            "organization_id",
+            "id",
+            name="uq_restaurants_org_id",
         ),
     )
 
-    tenant_id: Mapped[uuid.UUID] = mapped_column(
+    organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey(
-            "tenants.id",
+            "organizations.id",
             ondelete="RESTRICT",
         ),
         nullable=False,
@@ -73,7 +80,16 @@ class Restaurant(
         nullable=False,
     )
 
-    tenant: Mapped["Tenant"] = relationship(
-        "Tenant",
+    # Relationships
+    organization: Mapped["Organization"] = relationship(
+        "Organization",
         back_populates="restaurants",
     )
+    memberships: Mapped[list["RestaurantMembership"]] = relationship(
+        "RestaurantMembership",
+        back_populates="restaurant",
+        passive_deletes="all",
+    )
+
+    # Compatibility synonym for FCD-03 code referencing tenant_id
+    tenant_id = synonym("organization_id")
