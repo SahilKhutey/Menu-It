@@ -7,3 +7,5 @@ export * from './organization.js';
 export * from './restaurant.js';
 export * from './platform/files.js';
 export * from './platform/notifications.js';
+export * from './platform/jobs.js';
+export * from './platform/events.js';

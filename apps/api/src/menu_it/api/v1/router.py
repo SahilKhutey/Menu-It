@@ -8,6 +8,7 @@ from menu_it.api.v1.endpoints import (
     files,
     health,
     identity,
+    internal_jobs,
     notifications,
     organizations,
     sessions,
@@ -21,6 +22,7 @@ api_router.include_router(system.router, tags=["System"])
 api_router.include_router(database_health.router, tags=["Database"])
 api_router.include_router(files.router, tags=["Files"])
 api_router.include_router(notifications.router, tags=["Notifications"])
+api_router.include_router(internal_jobs.router, tags=["Internal Jobs & DLQ"])
 api_router.include_router(auth.router, tags=["Authentication"])
 api_router.include_router(identity.router, tags=["Identity"])
 api_router.include_router(sessions.router, tags=["Sessions"])

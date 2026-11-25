@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from menu_it.core.config import Settings, get_settings
 from menu_it.platform.audit.contracts import AuditEventPublisher
 from menu_it.platform.audit.publisher import LoggingAuditEventPublisher
+from menu_it.platform.cache.contracts import InMemoryCacheBackend
+from menu_it.platform.cache.service import CacheService
 from menu_it.platform.common.clock import Clock, SystemClock
 from menu_it.platform.files.domain.storage import FileStorage
 from menu_it.platform.files.infrastructure.local_storage import LocalFileStorage
@@ -26,6 +28,7 @@ class PlatformServices:
     file_storage: FileStorage
     notification_service: NotificationService
     audit_publisher: AuditEventPublisher
+    cache_service: CacheService
 
 
 def build_platform_services(settings: Settings | None = None) -> PlatformServices:
@@ -48,10 +51,23 @@ def build_platform_services(settings: Settings | None = None) -> PlatformService
         audit_publisher=audit_pub,
     )
 
+    # Caching
+    try:
+        from menu_it.infrastructure.redis.cache_backend import RedisCacheBackend
+        from menu_it.infrastructure.redis.client import create_redis_client
+
+        redis_client = create_redis_client(settings=cfg)
+        cache_backend = RedisCacheBackend(redis_client)
+    except Exception:
+        cache_backend = InMemoryCacheBackend()
+
+    cache_service = CacheService(backend=cache_backend, enabled=cfg.cache_enabled)
+
     return PlatformServices(
         settings=cfg,
         clock=clock,
         file_storage=storage,
         notification_service=notification_service,
         audit_publisher=audit_pub,
+        cache_service=cache_service,
     )

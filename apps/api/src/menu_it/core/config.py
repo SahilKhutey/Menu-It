@@ -177,6 +177,84 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     log_format: Literal["text", "json"] = "text"
 
+    # Redis & Infrastructure configuration (FCD-10 WP-01)
+    redis_url: str = Field(
+        default="redis://localhost:6379/0",
+        validation_alias="REDIS_URL",
+    )
+    redis_key_prefix: str = Field(
+        default="menu-it:dev",
+        validation_alias="REDIS_KEY_PREFIX",
+    )
+    redis_connect_timeout: int = Field(
+        default=5,
+        ge=1,
+        le=60,
+        validation_alias="REDIS_CONNECT_TIMEOUT",
+    )
+    redis_socket_timeout: int = Field(
+        default=5,
+        ge=1,
+        le=60,
+        validation_alias="REDIS_SOCKET_TIMEOUT",
+    )
+    redis_max_connections: int = Field(
+        default=30,
+        ge=1,
+        le=500,
+        validation_alias="REDIS_MAX_CONNECTIONS",
+    )
+
+    # Cache configuration (FCD-10 WP-02)
+    cache_enabled: bool = Field(
+        default=True,
+        validation_alias="CACHE_ENABLED",
+    )
+    cache_default_ttl: int = Field(
+        default=300,
+        ge=1,
+        le=86400,
+        validation_alias="CACHE_DEFAULT_TTL",
+    )
+
+    # Background Worker configuration (FCD-10 WP-03)
+    worker_enabled: bool = Field(
+        default=True,
+        validation_alias="WORKER_ENABLED",
+    )
+    worker_max_jobs: int = Field(
+        default=10,
+        ge=1,
+        le=1000,
+        validation_alias="WORKER_MAX_JOBS",
+    )
+    worker_job_timeout: int = Field(
+        default=300,
+        ge=5,
+        le=3600,
+        validation_alias="WORKER_JOB_TIMEOUT",
+    )
+    worker_max_tries: int = Field(
+        default=5,
+        ge=1,
+        le=50,
+        validation_alias="WORKER_MAX_TRIES",
+    )
+
+    # Event Outbox configuration (FCD-10 WP-05)
+    outbox_batch_size: int = Field(
+        default=100,
+        ge=1,
+        le=1000,
+        validation_alias="OUTBOX_BATCH_SIZE",
+    )
+    outbox_poll_interval: int = Field(
+        default=2,
+        ge=1,
+        le=60,
+        validation_alias="OUTBOX_POLL_INTERVAL",
+    )
+
     # Validators
     @field_validator("default_currency", mode="before")
     @classmethod

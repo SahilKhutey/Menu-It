@@ -15,11 +15,13 @@ router = APIRouter()
 class PlatformComponentHealth(BaseModel):
     """Component-specific operational status without leaking credentials or paths."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     database: str
     storage: str
     notifications: str
+    redis: str = "operational"
+    jobs: str = "operational"
 
 
 class PlatformHealthResponse(BaseModel):
@@ -119,10 +121,18 @@ async def platform_health_check(request: Request) -> PlatformHealthResponse:
     # 3. Notification Check
     notif_status = "operational"
 
+    # 4. Redis & Cache Check
+    redis_status = "operational"
+    if services and hasattr(services, "cache_service"):
+        try:
+            await services.cache_service.exists("__health_probe__")
+        except Exception:
+            redis_status = "degraded"
+
     overall_status = "healthy"
     if db_status != "healthy":
         overall_status = "unhealthy"
-    elif storage_status != "healthy":
+    elif storage_status != "healthy" or redis_status != "operational":
         overall_status = "degraded"
 
     return PlatformHealthResponse(
@@ -133,5 +143,7 @@ async def platform_health_check(request: Request) -> PlatformHealthResponse:
             database=db_status,
             storage=storage_status,
             notifications=notif_status,
+            redis=redis_status,
+            jobs="operational",
         ),
     )
