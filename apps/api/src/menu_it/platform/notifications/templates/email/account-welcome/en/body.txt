@@ -1,0 +1,7 @@
+Hello {{ user_name }},
+
+Welcome to {{ app_name }}! Your account has been successfully created.
+You can now access your restaurant workspace.
+
+Best regards,
+The {{ app_name }} Team

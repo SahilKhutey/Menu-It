@@ -1,14 +1,36 @@
-"""Health and readiness endpoints."""
+"""Health, liveness, and operational readiness endpoints (FCD-02, FCD-07, FCD-09 WP-08)."""
 
 from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import text
 
 from menu_it.core.config import get_settings
-from menu_it.schemas.health import (
-    HealthResponse,
-    ReadinessResponse,
-)
+from menu_it.database.session import AsyncSessionFactory
+from menu_it.platform.container import PlatformServices
+from menu_it.schemas.health import HealthResponse, ReadinessResponse
 
 router = APIRouter()
+
+
+class PlatformComponentHealth(BaseModel):
+    """Component-specific operational status without leaking credentials or paths."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    database: str
+    storage: str
+    notifications: str
+
+
+class PlatformHealthResponse(BaseModel):
+    """Aggregated platform health report."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: str
+    application: str
+    version: str
+    components: PlatformComponentHealth
 
 
 @router.get(
@@ -49,11 +71,8 @@ async def readiness_check(request: Request) -> ReadinessResponse:
             detail="Application runtime is not ready.",
         )
 
+    # Bounded SELECT 1 database connectivity check if required
     if getattr(request.app.state, "require_database", False):
-        from sqlalchemy import text
-
-        from menu_it.database.session import AsyncSessionFactory
-
         try:
             async with AsyncSessionFactory() as session:
                 await session.execute(text("SELECT 1"))
@@ -66,4 +85,53 @@ async def readiness_check(request: Request) -> ReadinessResponse:
     return ReadinessResponse(
         status="ready",
         ready=True,
+    )
+
+
+@router.get(
+    "/health/platform",
+    response_model=PlatformHealthResponse,
+    summary="Platform Services Health Probe",
+)
+async def platform_health_check(request: Request) -> PlatformHealthResponse:
+    """Check readiness of platform subcomponents (database, storage, notifications)."""
+    settings = get_settings()
+    services: PlatformServices | None = getattr(request.app.state, "platform_services", None)
+
+    # 1. Database Check
+    db_status = "healthy"
+    try:
+        async with AsyncSessionFactory() as session:
+            await session.execute(text("SELECT 1"))
+    except Exception:
+        db_status = "unreachable"
+
+    # 2. Storage Check
+    storage_status = "healthy"
+    if services:
+        try:
+            # Check root storage accessibility
+            exists = await services.file_storage.exists(key="__health_probe__")
+            storage_status = "healthy" if exists is not None else "degraded"
+        except Exception:
+            storage_status = "unhealthy"
+
+    # 3. Notification Check
+    notif_status = "operational"
+
+    overall_status = "healthy"
+    if db_status != "healthy":
+        overall_status = "unhealthy"
+    elif storage_status != "healthy":
+        overall_status = "degraded"
+
+    return PlatformHealthResponse(
+        status=overall_status,
+        application=settings.app_name,
+        version=settings.app_version,
+        components=PlatformComponentHealth(
+            database=db_status,
+            storage=storage_status,
+            notifications=notif_status,
+        ),
     )

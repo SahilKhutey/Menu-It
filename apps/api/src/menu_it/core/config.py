@@ -1,9 +1,10 @@
-"""Centralized backend runtime configuration."""
+"""Centralized backend runtime configuration (FCD-09 WP-01)."""
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # apps/api/src/menu_it/core/config.py -> repository root
@@ -11,7 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[5]
 
 
 class Settings(BaseSettings):
-    """Validated application settings."""
+    """Validated, immutable application settings."""
 
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env" if (PROJECT_ROOT / ".env").exists() else None,
@@ -19,18 +20,31 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",
         populate_by_name=True,
+        frozen=True,
     )
 
+    # Application identity
     app_name: str = "Menu-It"
-    app_env: str = "development"
+    app_env: Literal["development", "test", "staging", "production"] = "development"
+    app_debug: bool = False
     app_version: str = "0.1.0"
-    log_level: str = "INFO"
+
+    # API Server
+    api_host: str = "127.0.0.1"
+    api_port: int = Field(default=8000, ge=1, le=65535)
     api_prefix: str = "/api/v1"
     docs_enabled: bool = True
+
+    # CORS
     cors_origins_raw: str = Field(
         default="http://localhost:3000,http://localhost:3001",
         validation_alias="CORS_ORIGINS",
     )
+
+    # Localization defaults
+    default_locale: str = "en"
+    default_timezone: str = "Asia/Kolkata"
+    default_currency: str = "INR"
 
     # Database configuration (FCD-03)
     database_url: str = Field(
@@ -140,12 +154,78 @@ class Settings(BaseSettings):
         validation_alias="AUTH_COOKIE_DOMAIN",
     )
 
+    # File Storage configuration (FCD-09 WP-02)
+    file_storage_backend: Literal["local", "s3"] = "local"
+    file_storage_root: str = "./storage"
+    file_max_upload_bytes: int = Field(
+        default=10485760,  # 10 MB
+        ge=1024,
+        le=104857600,  # 100 MB max bound
+        validation_alias="FILE_MAX_UPLOAD_BYTES",
+    )
+    file_allowed_mime_types_raw: str = Field(
+        default="image/jpeg,image/png,image/webp,application/pdf",
+        validation_alias="FILE_ALLOWED_MIME_TYPES",
+    )
+
+    # Notification configuration (FCD-09 WP-03)
+    notification_email_enabled: bool = False
+    notification_email_provider: Literal["console", "memory", "smtp"] = "console"
+    notification_default_from: str = "noreply@menu-it.com"
+
+    # Application Logging (FCD-09 WP-04)
+    log_level: str = "INFO"
+    log_format: Literal["text", "json"] = "text"
+
+    # Validators
+    @field_validator("default_currency", mode="before")
+    @classmethod
+    def normalize_currency(cls, v: str) -> str:
+        code = str(v).strip().upper()
+        if len(code) != 3 or not code.isalpha():
+            raise ValueError(f"Invalid 3-letter currency code: '{v}'.")
+        return code
+
+    @field_validator("cors_origins_raw")
+    @classmethod
+    def validate_cors_origins(cls, v: str) -> str:
+        origins = [o.strip() for o in v.split(",") if o.strip()]
+        if "*" in origins:
+            raise ValueError(
+                "Wildcard '*' CORS origin is strictly forbidden for credentialed multi-tenant security."
+            )
+        return v
+
+    @model_validator(mode="after")
+    def validate_production_guards(self) -> "Settings":
+        if self.app_env == "production" and self.app_debug:
+            raise ValueError("app_debug must be False in production environments.")
+        return self
+
     @property
     def cors_origins(self) -> list[str]:
         """Parse comma-separated CORS origins into a list of strings."""
         if not self.cors_origins_raw:
             return []
         return [origin.strip() for origin in self.cors_origins_raw.split(",") if origin.strip()]
+
+    @property
+    def file_allowed_mime_types(self) -> set[str]:
+        """Parse comma-separated allowed MIME types into a set."""
+        if not self.file_allowed_mime_types_raw:
+            return set()
+        return {
+            mime.strip().lower()
+            for mime in self.file_allowed_mime_types_raw.split(",")
+            if mime.strip()
+        }
+
+    def __repr__(self) -> str:
+        """Prevent sensitive secrets from leaking into debug prints or logs."""
+        return (
+            f"Settings(app_name={self.app_name!r}, app_env={self.app_env!r}, "
+            f"api_port={self.api_port}, auth_secret_key='[REDACTED]')"
+        )
 
 
 @lru_cache

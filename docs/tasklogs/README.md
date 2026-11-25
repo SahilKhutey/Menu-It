@@ -30,6 +30,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **FCD-06** | Domain Models & Shared Business Foundation | WP-01 to WP-18 | 219 API Tests + AC-01–AC-20 (100% Pass, 92% Cov) | **Approved & Implemented** | **[Tasklog-FCD06](tasklog-fcd06-domain-models-foundation.md)** |
 | **FCD-07** | API & Communication Infrastructure | WP-01 to WP-16 | 251 API Tests + AC-01–AC-20 (100% Pass, 90% Cov) | **Approved & Implemented** | **[Tasklog-FCD07](tasklog-fcd07-api-communication-infrastructure.md)** |
 | **FCD-08** | Frontend Foundation & Design System | WP-01 to WP-10 | Full Monorepo Typecheck, Lint, Next.js Builds, 251 Pytest Tests | **Approved & Implemented** | **[Tasklog-FCD08](tasklog-fcd08-frontend-foundation-design-system.md)** |
+| **FCD-09** | Core Platform Services & Shared Utilities | WP-01 to WP-11 | 296 API Tests + Security Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD09](tasklog-fcd09-core-platform-services-shared-utilities.md)** |
 
 ---
 

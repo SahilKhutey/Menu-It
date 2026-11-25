@@ -46,6 +46,20 @@ def get_requested_organization_id(
     return resolved
 
 
+def get_optional_organization_id(
+    organization_id: Annotated[
+        UUID | None,
+        Query(description="Optional target tenant organization ID"),
+    ] = None,
+    x_organization_id: Annotated[
+        UUID | None,
+        Header(alias="X-Organization-ID", description="Optional target tenant organization ID header"),
+    ] = None,
+) -> UUID | None:
+    """Resolve target organization ID optionally from query parameter or request header."""
+    return organization_id or x_organization_id
+
+
 async def get_tenant_context_from_request(
     principal: Annotated[AuthenticatedPrincipal, Depends(get_current_principal)],
     session: Annotated[AsyncSession, Depends(get_db_session)],
@@ -79,6 +93,7 @@ async def get_tenant_context_from_request(
 
 __all__ = [
     "TenantContext",
+    "get_optional_organization_id",
     "get_requested_organization_id",
     "get_restaurant_tenant_context",
     "get_tenant_context",

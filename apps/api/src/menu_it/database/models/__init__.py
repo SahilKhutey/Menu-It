@@ -2,7 +2,12 @@
 
 from menu_it.database.models.audit import OrganizationAuditEvent
 from menu_it.database.models.credential import UserCredential
+from menu_it.database.models.file import FileModel
 from menu_it.database.models.idempotency import IdempotencyRecord
+from menu_it.database.models.notification import (
+    NotificationDeliveryModel,
+    NotificationModel,
+)
 from menu_it.database.models.organization import (
     Organization,
     OrganizationStatus,
@@ -43,8 +48,11 @@ from menu_it.database.models.verification import EmailVerificationToken
 
 __all__ = [
     "EmailVerificationToken",
+    "FileModel",
     "IdempotencyRecord",
     "MembershipStatus",
+    "NotificationDeliveryModel",
+    "NotificationModel",
     "Organization",
     "OrganizationAuditEvent",
     "OrganizationMembership",
