@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
+import '@menu-it/design-tokens/index.css';
 import './globals.css';
+import { ThemeProvider } from '@menu-it/theme-engine';
 
 export const metadata: Metadata = {
   title: {
@@ -28,9 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <main>{children}</main>
+        <ThemeProvider defaultMode="system">
+          <main>{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -20,9 +20,18 @@ importers:
 
   apps/admin:
     dependencies:
+      '@menu-it/design-tokens':
+        specifier: workspace:*
+        version: link:../../packages/design-tokens
       '@menu-it/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
+      '@menu-it/theme-engine':
+        specifier: workspace:*
+        version: link:../../packages/theme-engine
+      '@menu-it/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
         specifier: ^14.1.4
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -54,9 +63,18 @@ importers:
 
   apps/web:
     dependencies:
+      '@menu-it/design-tokens':
+        specifier: workspace:*
+        version: link:../../packages/design-tokens
       '@menu-it/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
+      '@menu-it/theme-engine':
+        specifier: workspace:*
+        version: link:../../packages/theme-engine
+      '@menu-it/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
         specifier: ^14.1.4
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -86,8 +104,61 @@ importers:
         specifier: ^5.4.3
         version: 5.9.3
 
+  packages/design-tokens:
+    devDependencies:
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+
   packages/shared-types:
     devDependencies:
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+
+  packages/theme-engine:
+    dependencies:
+      '@menu-it/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.70
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: ^18.2.22
+        version: 18.3.7(@types/react@18.3.31)
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+
+  packages/ui:
+    dependencies:
+      '@menu-it/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
+      '@menu-it/theme-engine':
+        specifier: workspace:*
+        version: link:../theme-engine
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.70
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: ^18.2.22
+        version: 18.3.7(@types/react@18.3.31)
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
       typescript:
         specifier: ^5.8.2
         version: 5.9.3

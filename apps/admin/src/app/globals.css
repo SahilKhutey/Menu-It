@@ -1,21 +1,12 @@
-:root {
-  --admin-background: #f5f6f8;
-  --admin-surface: #ffffff;
-  --admin-text: #191c24;
-  --admin-muted: #707786;
-  --admin-border: #e5e7ec;
-  --admin-accent: #394b83;
-}
-
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  color: var(--admin-text);
-  background: var(--admin-background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-family-sans);
 }
 
 .admin-shell {
@@ -29,12 +20,12 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  background: var(--admin-surface);
-  border-bottom: 1px solid var(--admin-border);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
 }
 
 .admin-header span {
-  color: var(--admin-muted);
+  color: var(--muted-foreground);
 }
 
 .environment-label {
@@ -49,7 +40,7 @@ body {
 }
 
 .eyebrow {
-  color: var(--admin-accent);
+  color: var(--primary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -58,10 +49,11 @@ body {
 .admin-content h1 {
   font-size: clamp(32px, 5vw, 52px);
   letter-spacing: -2px;
+  color: var(--foreground);
 }
 
 .description {
-  color: var(--admin-muted);
+  color: var(--muted-foreground);
   line-height: 1.7;
 }
 
@@ -71,13 +63,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: var(--admin-surface);
-  border: 1px solid var(--admin-border);
-  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 
 .foundation-card span {
-  color: var(--admin-muted);
+  color: var(--muted-foreground);
   font-size: 14px;
 }
 

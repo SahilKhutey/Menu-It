@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Badge, Card, CardHeader, CardTitle, CardContent, Container } from '@menu-it/ui';
 
 export default function HomePage() {
   return (
@@ -19,7 +20,9 @@ export default function HomePage() {
 
       <section className="hero">
         <div className="hero-content">
-          <span className="eyebrow">MENU-IT PLATFORM</span>
+          <Badge variant="primary" style={{ marginBottom: '16px' }}>
+            MENU-IT PLATFORM
+          </Badge>
           <h1>
             A better way to <br /> experience dining.
           </h1>
@@ -34,6 +37,44 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <Container size="lg" style={{ padding: '48px 24px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+          }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Digital QR Menus</CardTitle>
+            </CardHeader>
+            <CardContent>
+              Instant, contactless digital ordering experience with full multi-lingual and theming
+              support.
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Multi-Tenant Operations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              Dedicated tenant isolation, localized menus, and live order synchronization across
+              branches.
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Accessible & Responsive</CardTitle>
+            </CardHeader>
+            <CardContent>
+              WCAG 2.2 AA compliant typography, high-contrast tokens, and fluid layouts for all
+              devices.
+            </CardContent>
+          </Card>
+        </div>
+      </Container>
 
       <footer className="app-footer">
         <span>Menu-It</span>
