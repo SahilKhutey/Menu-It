@@ -65,6 +65,16 @@ pythonpath = ["src"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 addopts = "-ra -p no:langsmith_plugin"
+markers = [
+    "unit: isolated unit tests",
+    "integration: tests requiring external infrastructure",
+    "api: API endpoint tests",
+    "security: security and authorization tests",
+    "database: PostgreSQL tests",
+    "tenant: tenant isolation tests",
+    "e2e: end-to-end tests",
+    "slow: long-running tests",
+]
 
 [tool.pyright]
 include = ["src", "tests"]

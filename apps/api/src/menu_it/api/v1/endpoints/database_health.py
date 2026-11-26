@@ -25,7 +25,7 @@ async def database_health():
             "status": "healthy",
             "database": "reachable",
         }
-    except SQLAlchemyError as exc:
+    except (SQLAlchemyError, OSError, Exception) as exc:
         raise HTTPException(
             status_code=503,
             detail={

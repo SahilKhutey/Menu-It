@@ -1,0 +1,42 @@
+name: End-to-End Testing
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "tests/e2e/**"
+      - ".github/workflows/e2e.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  playwright-e2e:
+    name: Playwright Browser Workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.11.0 --activate
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E Test Suite
+        run: npx playwright test
+        env:
+          CI: "true"
