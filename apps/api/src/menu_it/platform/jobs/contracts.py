@@ -2,12 +2,12 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
 
-class JobStatus(str, Enum):
+class JobStatus(StrEnum):
     """Lifecycle states of a background job."""
 
     QUEUED = "queued"

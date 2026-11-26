@@ -48,7 +48,7 @@ def test_render_email_locale_fallback():
         variables={"app_name": "Menu-It", "user_name": "Pierre"},
         locale="fr",  # Not provided, should fallback to 'en'
     )
-    assert "Welcome to Menu-It, Pierre!" == subject
+    assert subject == "Welcome to Menu-It, Pierre!"
 
 
 def test_render_in_app_order_status():

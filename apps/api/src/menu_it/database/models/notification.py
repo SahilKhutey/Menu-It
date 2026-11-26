@@ -1,8 +1,8 @@
 """SQLAlchemy database models for in-app notifications and delivery tracking (FCD-09 WP-03)."""
 
+import uuid
 from datetime import datetime
 from typing import Any
-import uuid
 
 from sqlalchemy import (
     JSON,

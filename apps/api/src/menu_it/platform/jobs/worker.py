@@ -33,6 +33,7 @@ class WorkerSettings:
     async def on_startup(cls, ctx: dict) -> None:
         """Initialize worker platform services and database connection pools."""
         from menu_it.platform.container import build_platform_services
+
         ctx["services"] = build_platform_services()
 
     @classmethod

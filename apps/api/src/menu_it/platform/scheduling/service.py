@@ -1,7 +1,7 @@
 """Scheduling management service (FCD-10 WP-07)."""
 
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import desc, select
@@ -32,7 +32,7 @@ class SchedulingService:
         organization_id: UUID | None = None,
     ) -> ScheduledJobModel:
         """Define and persist a new scheduled job."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         next_run = compute_next_run_at(
             schedule_type=schedule_type,
             expression=schedule_expression,
@@ -56,9 +56,7 @@ class SchedulingService:
         )
         self.session.add(schedule)
         await self.session.flush()
-        logger.info(
-            f"Created schedule {schedule.id} for '{job_type}', next run: {next_run}"
-        )
+        logger.info(f"Created schedule {schedule.id} for '{job_type}', next run: {next_run}")
         return schedule
 
     async def list_schedules(
@@ -94,7 +92,7 @@ class SchedulingService:
         if not schedule:
             return False
         schedule.enabled = False
-        schedule.updated_at = datetime.now(timezone.utc)
+        schedule.updated_at = datetime.now(UTC)
         await self.session.flush()
         return True
 
@@ -104,13 +102,11 @@ class SchedulingService:
         job_id: UUID | None = None,
     ) -> bool:
         """Atomically record execution occurrence and advance next_run_at."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         run_key = f"{schedule.id}:{schedule.next_run_at.isoformat()}"
 
         # Prevent duplicate execution of the exact same slot
-        check_stmt = select(ScheduledJobRunModel).where(
-            ScheduledJobRunModel.run_key == run_key
-        )
+        check_stmt = select(ScheduledJobRunModel).where(ScheduledJobRunModel.run_key == run_key)
         existing = await self.session.execute(check_stmt)
         if existing.scalars().first() is not None:
             logger.warning(f"Occurrence {run_key} already executed. Skipping.")
@@ -134,7 +130,7 @@ class SchedulingService:
         else:
             base_time = schedule.next_run_at
             if base_time.tzinfo is None:
-                base_time = base_time.replace(tzinfo=timezone.utc)
+                base_time = base_time.replace(tzinfo=UTC)
             schedule.next_run_at = compute_next_run_at(
                 schedule_type=schedule.schedule_type,
                 expression=schedule.schedule_expression,

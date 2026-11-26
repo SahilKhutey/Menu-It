@@ -1,7 +1,8 @@
 """Event consumer registry and dispatcher (FCD-10 WP-05)."""
 
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 logger = logging.getLogger("menu_it.platform.events.registry")
 

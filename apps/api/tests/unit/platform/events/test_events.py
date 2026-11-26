@@ -1,7 +1,8 @@
 """Unit tests for transactional outbox, publisher, dispatcher, and inbox (FCD-10 WP-05)."""
 
-from datetime import datetime, timezone
 import uuid
+from datetime import UTC, datetime
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,7 +22,7 @@ async def test_evt_01_and_02_outbox_publish_and_transaction_rollback(db_session:
         event_id=event_id,
         event_type="UserRegistered",
         schema_version=1,
-        occurred_at=datetime.now(timezone.utc),
+        occurred_at=datetime.now(UTC),
         organization_id=None,
         actor_user_id=None,
         correlation_id="corr-evt-1",
@@ -56,7 +57,7 @@ async def test_evt_03_dispatcher_processes_pending_events(db_session: AsyncSessi
         event_id=event_id,
         event_type="CustomEventTest",
         schema_version=1,
-        occurred_at=datetime.now(timezone.utc),
+        occurred_at=datetime.now(UTC),
         organization_id=None,
         actor_user_id=None,
         correlation_id="corr-custom",
@@ -112,7 +113,7 @@ async def test_evt_06_dispatcher_retry_on_consumer_error(db_session: AsyncSessio
         event_id=event_id,
         event_type="FailingEventTest",
         schema_version=1,
-        occurred_at=datetime.now(timezone.utc),
+        occurred_at=datetime.now(UTC),
         organization_id=None,
         actor_user_id=None,
         correlation_id="corr-fail",

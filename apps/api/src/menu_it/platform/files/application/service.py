@@ -1,7 +1,7 @@
-"""File application service managing uploads, validation, authorization, and retrieval (FCD-09 WP-02)."""
+"""File application service managing uploads, validation, and retrieval (FCD-09 WP-02)."""
 
-from datetime import UTC, datetime
 import io
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import BinaryIO
 from uuid import UUID, uuid4
@@ -148,7 +148,9 @@ class FileService:
             return
 
         if metadata.visibility == FileVisibility.PLATFORM_PRIVATE:
-            raise FileAccessDeniedError("Access to platform-private file requires platform administrative privileges.")
+            raise FileAccessDeniedError(
+                "Access to platform-private file requires platform administrative privileges."
+            )
 
     async def get_metadata(
         self,

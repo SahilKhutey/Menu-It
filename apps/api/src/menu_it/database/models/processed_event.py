@@ -1,7 +1,7 @@
 """SQLAlchemy model for consumer inbox event deduplication (FCD-10 WP-05)."""
 
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from sqlalchemy import DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID

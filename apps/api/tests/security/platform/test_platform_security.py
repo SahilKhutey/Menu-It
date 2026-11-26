@@ -1,6 +1,5 @@
 """Security tests for platform services boundaries (FCD-09 WP-09)."""
 
-import io
 from pathlib import Path
 from uuid import uuid4
 
@@ -8,7 +7,7 @@ import pytest
 
 from menu_it.platform.files.application.service import FileAccessDeniedError, FileService
 from menu_it.platform.files.application.validation import FileValidationError, validate_file_content
-from menu_it.platform.files.domain.models import FileMetadata, FileVisibility
+from menu_it.platform.files.domain.models import FileVisibility
 from menu_it.platform.files.infrastructure.local_storage import LocalFileStorage
 
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n" + b"\x00" * 30

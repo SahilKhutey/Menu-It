@@ -1,7 +1,7 @@
 """Security tests for worker tenant propagation, DLQ isolation, and RLS (FCD-10 WP-06)."""
 
-from datetime import datetime, timezone
 import uuid
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 

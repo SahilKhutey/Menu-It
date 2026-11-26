@@ -1,13 +1,13 @@
 """Integration tests for Internal Jobs and DLQ APIs (FCD-10 WP-09)."""
 
 import uuid
-from fastapi.testclient import TestClient
+
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from menu_it.api.dependencies.authentication import get_authenticated_principal
 from menu_it.auth.principal import AuthenticatedPrincipal
-from menu_it.database.models.background_job import BackgroundJobModel
 from menu_it.database.models.organization import Organization, OrganizationStatus
 from menu_it.database.models.user import User, UserStatus
 from menu_it.database.session import get_db_session

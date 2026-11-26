@@ -1,7 +1,7 @@
 """SQLAlchemy database model for file metadata (FCD-09 WP-02)."""
 
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, Index, String, func
 from sqlalchemy.dialects.postgresql import UUID

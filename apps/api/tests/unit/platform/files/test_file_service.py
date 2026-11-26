@@ -1,6 +1,5 @@
 """Unit tests for FileService orchestration and authorization (FCD-09 WP-02)."""
 
-import io
 from pathlib import Path
 from uuid import uuid4
 

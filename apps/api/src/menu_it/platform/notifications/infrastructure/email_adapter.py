@@ -1,13 +1,12 @@
 """Email provider protocol and channel adapter (FCD-09 WP-03)."""
 
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 from uuid import uuid4
 
 from menu_it.platform.notifications.application.renderer import TemplateRenderer
 from menu_it.platform.notifications.domain.contracts import (
-    NotificationChannelAdapter,
     NotificationMessage,
     NotificationResult,
     NotificationStatus,

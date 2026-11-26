@@ -32,6 +32,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **FCD-08** | Frontend Foundation & Design System | WP-01 to WP-10 | Full Monorepo Typecheck, Lint, Next.js Builds, 251 Pytest Tests | **Approved & Implemented** | **[Tasklog-FCD08](tasklog-fcd08-frontend-foundation-design-system.md)** |
 | **FCD-09** | Core Platform Services & Shared Utilities | WP-01 to WP-11 | 296 API Tests + Security Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD09](tasklog-fcd09-core-platform-services-shared-utilities.md)** |
 | **FCD-10** | Caching, Background Jobs & Event Infrastructure | WP-00 to WP-11 | 331 API Tests + Security Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD10](tasklog-fcd10-caching-background-jobs-event-infrastructure.md)** |
+| **FCD-11** | Security, Reliability & Observability Foundation | WP-00 to WP-17 | 361 API Tests + Full Quality Gates (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD11](tasklog-fcd11-security-reliability-observability.md)** |
 
 ---
 
@@ -49,6 +50,7 @@ ARC-09 Rendering: [=============================================================
 ARC-10 Publishing:[========================================================================================================================================================================================================================================================================================] 618 Tests Passing (100%)
 ARC-11 Infrastructure:[====================================================================================================================================================================================================================================================================================================================] 738 Tests Passing (100%)
 ARC-12 Security:  [====================================================================================================================================================================================================================================================================================================================================================] 888 Tests Passing (100%)
+FCD-11 Platform:  [====================================================================================================================================================================================================================================================================================================================================================+] 361 Tests Passing (100%)
 ```
 
 ---

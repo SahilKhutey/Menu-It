@@ -42,6 +42,7 @@ from menu_it.database.models.scheduled_job import (
     ScheduledJobModel,
     ScheduledJobRunModel,
 )
+from menu_it.database.models.security_audit import SecurityAuditEventModel
 from menu_it.database.models.session import (
     RefreshTokenRecord,
     SessionStatus,
@@ -82,6 +83,7 @@ __all__ = [
     "RestaurantStatus",
     "ScheduledJobModel",
     "ScheduledJobRunModel",
+    "SecurityAuditEventModel",
     "SessionStatus",
     "Tenant",
     "TenantStatus",

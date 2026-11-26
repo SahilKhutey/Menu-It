@@ -1,7 +1,7 @@
 """Job submission and lifecycle management service (FCD-10 WP-03)."""
 
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import select
@@ -34,7 +34,7 @@ class JobService:
         if not isinstance(payload, dict):
             raise ValueError("Job payload must be a dictionary.")
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         job_id = uuid4()
         idem_key = idempotency_key or f"{job_type}:{job_id}"
 
@@ -106,6 +106,6 @@ class JobService:
         if not job or job.status != JobStatus.QUEUED.value:
             return False
         job.status = JobStatus.CANCELLED.value
-        job.updated_at = datetime.now(timezone.utc)
+        job.updated_at = datetime.now(UTC)
         await self.session.flush()
         return True

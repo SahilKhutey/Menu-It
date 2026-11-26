@@ -1,7 +1,7 @@
 """SQLAlchemy model for transactional event outbox (FCD-10 WP-05)."""
 
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID

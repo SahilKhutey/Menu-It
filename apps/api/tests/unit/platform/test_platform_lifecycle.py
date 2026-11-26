@@ -1,7 +1,7 @@
 """Unit tests for platform service container and health probes (FCD-09 WP-07, WP-08)."""
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from menu_it.application import create_application
 from menu_it.core.config import Settings

@@ -33,7 +33,9 @@ def upgrade() -> None:
         sa.Column("mime_type", sa.String(length=120), nullable=False),
         sa.Column("size_bytes", sa.BigInteger(), nullable=False),
         sa.Column("checksum_sha256", sa.String(length=64), nullable=False),
-        sa.Column("visibility", sa.String(length=32), nullable=False, server_default="tenant_private"),
+        sa.Column(
+            "visibility", sa.String(length=32), nullable=False, server_default="tenant_private"
+        ),
         sa.Column("status", sa.String(length=20), nullable=False, server_default="stored"),
         sa.Column(
             "created_at",
@@ -103,7 +105,9 @@ def upgrade() -> None:
 
     op.create_index("ix_notifications_org_id", "notifications", ["organization_id"])
     op.create_index("ix_notifications_recipient_id", "notifications", ["recipient_user_id"])
-    op.create_index("ix_notifications_recipient_read", "notifications", ["recipient_user_id", "read_at"])
+    op.create_index(
+        "ix_notifications_recipient_read", "notifications", ["recipient_user_id", "read_at"]
+    )
     op.create_index("ix_notifications_created_at", "notifications", ["created_at"])
 
     # 3. notification_deliveries table
@@ -138,8 +142,14 @@ def upgrade() -> None:
         sa.UniqueConstraint("idempotency_key", name="uq_notification_deliveries_idempotency_key"),
     )
 
-    op.create_index("ix_notification_deliveries_notification_id", "notification_deliveries", ["notification_id"])
-    op.create_index("ix_notification_deliveries_channel_status", "notification_deliveries", ["channel", "status"])
+    op.create_index(
+        "ix_notification_deliveries_notification_id", "notification_deliveries", ["notification_id"]
+    )
+    op.create_index(
+        "ix_notification_deliveries_channel_status",
+        "notification_deliveries",
+        ["channel", "status"],
+    )
 
     # 4. Enable Row Level Security (RLS) on PostgreSQL
     if is_pg:

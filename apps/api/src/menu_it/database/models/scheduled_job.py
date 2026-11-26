@@ -1,9 +1,9 @@
 """SQLAlchemy models for persistent scheduled jobs and run history (FCD-10 WP-07)."""
 
-from datetime import datetime
 import uuid
+from datetime import datetime
 
-from sqlalchemy import Boolean, JSON, DateTime, ForeignKey, Index, String, func
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 

@@ -4,7 +4,6 @@ import json
 import logging
 
 from menu_it.core.logging import (
-    ContextLoggerAdapter,
     JsonFormatter,
     get_context_logger,
 )

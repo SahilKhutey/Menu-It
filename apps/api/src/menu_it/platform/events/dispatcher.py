@@ -1,9 +1,8 @@
 """Transactional outbox dispatcher service (FCD-10 WP-05)."""
 
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
 from typing import Any
-from uuid import UUID
 
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,7 +24,7 @@ class OutboxDispatcher:
 
     async def claim_batch(self, batch_size: int = 100) -> list[EventOutboxModel]:
         """Claim a batch of pending events using FOR UPDATE SKIP LOCKED where supported."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         stmt = (
             select(EventOutboxModel)
             .where(
@@ -49,7 +48,7 @@ class OutboxDispatcher:
 
     async def dispatch_event(self, record: EventOutboxModel) -> bool:
         """Deliver outbox event to registered consumer handlers."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         envelope = EventEnvelope(
             event_id=record.event_id,
             event_type=record.event_type,
@@ -81,17 +80,21 @@ class OutboxDispatcher:
 
             record.published_at = now
             await self.session.flush()
-            logger.info(f"Successfully published outbox event {record.event_id} ({record.event_type})")
+            logger.info(
+                f"Successfully published outbox event {record.event_id} ({record.event_type})"
+            )
             return True
         except Exception as exc:
             record.attempts += 1
             delay = calculate_retry_delay(record.attempts, initial_delay=5, maximum_delay=600)
-            record.next_attempt_at = datetime.fromtimestamp(now.timestamp() + delay, tz=timezone.utc)
+            record.next_attempt_at = datetime.fromtimestamp(now.timestamp() + delay, tz=UTC)
             record.last_error_code = type(exc).__name__
             await self.session.flush()
-            logger.warning(
-                f"Failed to publish event {record.event_id}: {exc}. Next retry scheduled at {record.next_attempt_at}"
+            msg = (
+                f"Failed to publish event {record.event_id}: {exc}. "
+                f"Next retry scheduled at {record.next_attempt_at}"
             )
+            logger.warning(msg)
             return False
 
     async def process_batch(self, batch_size: int = 100) -> int:

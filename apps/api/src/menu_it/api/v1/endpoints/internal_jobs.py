@@ -239,7 +239,9 @@ async def get_dead_letter_endpoint(
     service = DeadLetterService(session)
     record = await service.get_dead_letter(record_id, organization_id)
     if not record:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dead-letter record not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Dead-letter record not found."
+        )
 
     return APIResponse(
         success=True,
@@ -278,7 +280,9 @@ async def replay_dead_letter_endpoint(
     dl_service = DeadLetterService(session)
     record = await dl_service.get_dead_letter(record_id, organization_id)
     if not record:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dead-letter record not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Dead-letter record not found."
+        )
 
     job_service = JobService(session)
     context = JobContext(

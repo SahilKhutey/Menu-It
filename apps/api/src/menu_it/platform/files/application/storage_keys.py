@@ -15,10 +15,5 @@ def build_storage_key(
 
     ext = extension.lower().strip()
     random_entropy = uuid4().hex
-
-    if organization_id:
-        prefix = f"organizations/{organization_id}"
-    else:
-        prefix = "platform"
-
+    prefix = f"organizations/{organization_id}" if organization_id else "platform"
     return f"{prefix}/files/{file_id}/{random_entropy}{ext}"

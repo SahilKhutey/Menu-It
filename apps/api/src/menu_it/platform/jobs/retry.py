@@ -1,16 +1,18 @@
 """Exponential backoff, jitter calculation and failure classification (FCD-10 WP-04)."""
 
 import random
-from typing import Callable
+from collections.abc import Callable
 
 
 class PermanentJobError(Exception):
     """Exception indicating non-retryable failure (dead-letter immediately)."""
+
     pass
 
 
 class RetryableJobError(Exception):
     """Exception indicating transient failure that should be retried."""
+
     pass
 
 
@@ -72,7 +74,4 @@ def is_retryable_error(exc: Exception) -> bool:
 
     # Check error message for transient keywords
     msg = str(exc).lower()
-    if "connection refused" in msg or "timeout" in msg or "rate limit" in msg:
-        return True
-
-    return False
+    return any(term in msg for term in ("connection refused", "timeout", "rate limit"))

@@ -1,9 +1,8 @@
 """SQLAlchemy model for background job status and execution metadata (FCD-10 WP-03)."""
 
-from datetime import datetime
 import uuid
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text, func
+from sqlalchemy import JSON, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 

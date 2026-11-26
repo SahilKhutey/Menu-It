@@ -1,6 +1,7 @@
 """Job registry for validating permitted job types and handlers (FCD-10 WP-03)."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 # Global registered job types mapping job_type to handler function
 JOB_REGISTRY: dict[str, Callable[..., Any]] = {}

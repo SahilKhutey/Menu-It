@@ -1,6 +1,6 @@
 """File upload, metadata, retrieval, and deletion API endpoints (FCD-09 WP-02)."""
 
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -9,8 +9,8 @@ from fastapi import (
     Depends,
     File,
     Form,
-    HTTPException,
     Header,
+    HTTPException,
     Response,
     UploadFile,
     status,
@@ -106,7 +106,9 @@ async def upload_file(
 async def get_file_metadata(
     file_id: UUID,
     service: Annotated[FileService, Depends(get_file_service)],
-    principal: Annotated[AuthenticatedPrincipal | None, Depends(get_authenticated_principal)] = None,
+    principal: Annotated[
+        AuthenticatedPrincipal | None, Depends(get_authenticated_principal)
+    ] = None,
     organization_id: Annotated[UUID | None, Depends(get_optional_organization_id)] = None,
     x_request_id: Annotated[str | None, Header(alias="X-Request-ID")] = None,
 ) -> APIResponse[FileResponseData]:
@@ -145,7 +147,9 @@ async def get_file_metadata(
 async def get_file_content(
     file_id: UUID,
     service: Annotated[FileService, Depends(get_file_service)],
-    principal: Annotated[AuthenticatedPrincipal | None, Depends(get_authenticated_principal)] = None,
+    principal: Annotated[
+        AuthenticatedPrincipal | None, Depends(get_authenticated_principal)
+    ] = None,
     organization_id: Annotated[UUID | None, Depends(get_optional_organization_id)] = None,
 ) -> Response:
     """Stream authorized file binary content."""

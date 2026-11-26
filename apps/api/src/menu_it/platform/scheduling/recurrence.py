@@ -1,7 +1,7 @@
 """Recurrence calculation and timezone handling for scheduled jobs (FCD-10 WP-07)."""
 
-from datetime import datetime, time, timedelta, timezone
 import zoneinfo
+from datetime import UTC, datetime, time, timedelta
 
 
 def compute_next_run_at(
@@ -16,7 +16,7 @@ def compute_next_run_at(
     except Exception:
         tz = zoneinfo.ZoneInfo("UTC")
 
-    now_utc = from_time or datetime.now(timezone.utc)
+    now_utc = from_time or datetime.now(UTC)
     local_now = now_utc.astimezone(tz)
 
     if schedule_type == "interval":
@@ -52,7 +52,7 @@ def compute_next_run_at(
         )
         if candidate <= local_now:
             candidate += timedelta(days=1)
-        return candidate.astimezone(timezone.utc)
+        return candidate.astimezone(UTC)
 
     elif schedule_type == "once":
         # Run once in 5 minutes by default if no expression given
@@ -60,7 +60,7 @@ def compute_next_run_at(
             dt = datetime.fromisoformat(expression)
             if dt.tzinfo is None:
                 dt = dt.replace(tzinfo=tz)
-            return dt.astimezone(timezone.utc)
+            return dt.astimezone(UTC)
         return now_utc + timedelta(minutes=5)
 
     # Fallback default

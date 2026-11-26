@@ -1,6 +1,7 @@
 """Transactional outbox event publisher (FCD-10 WP-05)."""
 
 import logging
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from menu_it.database.models.event_outbox import EventOutboxModel

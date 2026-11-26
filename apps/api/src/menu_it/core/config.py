@@ -269,9 +269,11 @@ class Settings(BaseSettings):
     def validate_cors_origins(cls, v: str) -> str:
         origins = [o.strip() for o in v.split(",") if o.strip()]
         if "*" in origins:
-            raise ValueError(
-                "Wildcard '*' CORS origin is strictly forbidden for credentialed multi-tenant security."
+            msg = (
+                "Wildcard '*' CORS origin is strictly forbidden for "
+                "credentialed multi-tenant security."
             )
+            raise ValueError(msg)
         return v
 
     @model_validator(mode="after")

@@ -107,7 +107,9 @@ def upgrade() -> None:
     op.create_index("ix_dead_letter_jobs_organization_id", "dead_letter_jobs", ["organization_id"])
     op.create_index("ix_dead_letter_jobs_job_id", "dead_letter_jobs", ["job_id"])
     op.create_index("ix_dead_letter_jobs_job_type", "dead_letter_jobs", ["job_type"])
-    op.create_index("ix_dead_letter_jobs_dead_lettered_at", "dead_letter_jobs", ["dead_lettered_at"])
+    op.create_index(
+        "ix_dead_letter_jobs_dead_lettered_at", "dead_letter_jobs", ["dead_lettered_at"]
+    )
 
     # 3. event_outbox table
     op.create_table(

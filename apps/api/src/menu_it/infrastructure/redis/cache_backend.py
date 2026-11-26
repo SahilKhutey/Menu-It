@@ -1,6 +1,7 @@
 """Redis cache backend implementation (FCD-10 WP-02)."""
 
 import logging
+
 from redis.asyncio import Redis
 
 logger = logging.getLogger("menu_it.infrastructure.redis.cache")

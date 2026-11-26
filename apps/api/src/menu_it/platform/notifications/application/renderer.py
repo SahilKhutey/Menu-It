@@ -47,9 +47,10 @@ class TemplateRenderer:
         direct = Path(channel) / template_id / filename
         if (self.root / direct).is_file():
             return direct.as_posix()
-        raise TemplateNotFoundError(
-            f"Template '{template_id}/{filename}' not found for channel '{channel}' and locale '{locale}'."
+        msg = (
+            f"Template '{template_id}/{filename}' not found for '{channel}' and locale '{locale}'."
         )
+        raise TemplateNotFoundError(msg)
 
     def render_email(
         self,

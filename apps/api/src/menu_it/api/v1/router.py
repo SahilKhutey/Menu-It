@@ -9,6 +9,7 @@ from menu_it.api.v1.endpoints import (
     health,
     identity,
     internal_jobs,
+    metrics,
     notifications,
     organizations,
     sessions,
@@ -18,6 +19,7 @@ from menu_it.api.v1.modules.restaurants.router import router as restaurants_rout
 
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["Health"])
+api_router.include_router(metrics.router, tags=["Observability"])
 api_router.include_router(system.router, tags=["System"])
 api_router.include_router(database_health.router, tags=["Database"])
 api_router.include_router(files.router, tags=["Files"])

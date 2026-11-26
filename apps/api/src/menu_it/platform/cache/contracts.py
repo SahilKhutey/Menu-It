@@ -70,9 +70,7 @@ class InMemoryCacheBackend:
         self._store.pop(key, None)
 
     async def delete_pattern(self, pattern: str) -> int:
-        keys_to_delete = [
-            k for k in list(self._store.keys()) if fnmatch.fnmatch(k, pattern)
-        ]
+        keys_to_delete = [k for k in list(self._store.keys()) if fnmatch.fnmatch(k, pattern)]
         count = 0
         for k in keys_to_delete:
             del self._store[k]

@@ -53,7 +53,9 @@ def get_optional_organization_id(
     ] = None,
     x_organization_id: Annotated[
         UUID | None,
-        Header(alias="X-Organization-ID", description="Optional target tenant organization ID header"),
+        Header(
+            alias="X-Organization-ID", description="Optional target tenant organization ID header"
+        ),
     ] = None,
 ) -> UUID | None:
     """Resolve target organization ID optionally from query parameter or request header."""

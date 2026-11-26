@@ -1,7 +1,7 @@
 """SQLAlchemy model for dead-letter background job failures (FCD-10 WP-04)."""
 
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID

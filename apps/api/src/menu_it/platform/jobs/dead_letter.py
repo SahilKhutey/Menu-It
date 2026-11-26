@@ -1,14 +1,13 @@
 """Dead-letter queue persistence, inspection, and replay service (FCD-10 WP-04)."""
 
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from menu_it.database.models.dead_letter_job import DeadLetterJobModel
-from menu_it.platform.jobs.contracts import JobContext, JobEnvelope
 
 logger = logging.getLogger("menu_it.platform.jobs.dead_letter")
 
@@ -32,7 +31,7 @@ class DeadLetterService:
         first_failed_at: datetime | None = None,
     ) -> DeadLetterJobModel:
         """Persist a failed job record into the dead_letter_jobs table."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         record = DeadLetterJobModel(
             id=uuid4(),
             job_id=job_id,
@@ -48,9 +47,11 @@ class DeadLetterService:
         )
         self.session.add(record)
         await self.session.flush()
-        logger.warning(
-            f"Job {job_id} ({job_type}) dead-lettered after {attempts} attempts: {failure_code} - {failure_message}"
+        msg = (
+            f"Job {job_id} ({job_type}) dead-lettered after {attempts} attempts: "
+            f"{failure_code} - {failure_message}"
         )
+        logger.warning(msg)
         return record
 
     async def list_dead_letters(
@@ -89,7 +90,7 @@ class DeadLetterService:
         record = await self.get_dead_letter(record_id, organization_id)
         if not record:
             return None
-        record.replayed_at = datetime.now(timezone.utc)
+        record.replayed_at = datetime.now(UTC)
         record.replayed_by = replayed_by
         await self.session.flush()
         return record

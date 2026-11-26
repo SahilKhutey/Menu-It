@@ -1,8 +1,8 @@
 """Cache JSON serialization and deserialization utilities (FCD-10 WP-02)."""
 
+import json
 from datetime import date, datetime
 from decimal import Decimal
-import json
 from typing import Any
 from uuid import UUID
 

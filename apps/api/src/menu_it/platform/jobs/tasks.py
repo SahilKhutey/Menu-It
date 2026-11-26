@@ -1,10 +1,6 @@
 """Concrete worker task implementations (FCD-10 WP-03, WP-06)."""
 
 import logging
-from uuid import UUID
-
-from menu_it.database.tenant_scope import set_database_tenant_context
-from menu_it.tenancy.context import SystemTenantContext, TenantContext
 
 logger = logging.getLogger("menu_it.platform.jobs.tasks")
 
@@ -16,9 +12,11 @@ async def send_notification(
     correlation_id: str,
 ) -> dict:
     """Execute background notification dispatch."""
-    logger.info(
-        f"Processing send_notification: id={notification_id}, org={organization_id}, corr={correlation_id}"
+    msg = (
+        f"Processing send_notification: id={notification_id}, "
+        f"org={organization_id}, corr={correlation_id}"
     )
+    logger.info(msg)
     services = ctx.get("services")
     if services and hasattr(services, "notification_service"):
         # Real or mock notification dispatch

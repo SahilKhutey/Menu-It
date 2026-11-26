@@ -1,8 +1,7 @@
 """Persistent job scheduler polling and dispatch loop (FCD-10 WP-07)."""
 
-from datetime import datetime, timezone
 import logging
-from typing import Any
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +28,7 @@ class JobScheduler:
 
     async def get_due_schedules(self, limit: int = 50) -> list[ScheduledJobModel]:
         """Fetch active schedules whose next_run_at has arrived."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         stmt = (
             select(ScheduledJobModel)
             .where(

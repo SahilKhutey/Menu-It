@@ -1,7 +1,7 @@
 """Unit tests for CacheService, keys, and InMemoryCacheBackend (FCD-10 WP-02)."""
 
-import asyncio
 import uuid
+
 import pytest
 
 from menu_it.platform.cache import (

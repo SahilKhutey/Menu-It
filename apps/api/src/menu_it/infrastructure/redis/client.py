@@ -1,9 +1,9 @@
 """Redis client connection management and lifecycle (FCD-10 WP-01)."""
 
 import logging
-from redis.asyncio import ConnectionPool, Redis
 
 from menu_it.core.config import Settings, get_settings
+from redis.asyncio import ConnectionPool, Redis
 
 logger = logging.getLogger("menu_it.infrastructure.redis")
 

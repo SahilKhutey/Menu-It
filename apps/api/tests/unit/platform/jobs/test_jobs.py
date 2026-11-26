@@ -1,16 +1,14 @@
 """Unit tests for background jobs, registry, retry backoff, and DLQ (FCD-10 WP-03, WP-04)."""
 
-from datetime import datetime, timezone
 import uuid
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from menu_it.database.models.background_job import BackgroundJobModel
 from menu_it.database.models.organization import Organization, OrganizationStatus
-from menu_it.platform.jobs.contracts import JobContext, JobEnvelope, JobStatus
+from menu_it.platform.jobs.contracts import JobContext, JobStatus
 from menu_it.platform.jobs.dead_letter import DeadLetterService
 from menu_it.platform.jobs.registry import (
-    JOB_REGISTRY,
     get_job_handler,
     is_valid_job_type,
     register_job_type,
@@ -37,15 +35,23 @@ async def create_test_org(session: AsyncSession) -> Organization:
 
 def test_job_01_retry_delay_exponential_and_capped():
     # Test exponential doubling
-    d1 = calculate_retry_delay(attempt=1, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0)
+    d1 = calculate_retry_delay(
+        attempt=1, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0
+    )
     assert d1 == 5.0
-    d2 = calculate_retry_delay(attempt=2, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0)
+    d2 = calculate_retry_delay(
+        attempt=2, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0
+    )
     assert d2 == 10.0
-    d3 = calculate_retry_delay(attempt=3, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0)
+    d3 = calculate_retry_delay(
+        attempt=3, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0
+    )
     assert d3 == 20.0
 
     # Test cap at maximum_delay
-    d_capped = calculate_retry_delay(attempt=20, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0)
+    d_capped = calculate_retry_delay(
+        attempt=20, initial_delay=5, maximum_delay=900, multiplier=2, jitter_fraction=0
+    )
     assert d_capped == 900.0
 
 

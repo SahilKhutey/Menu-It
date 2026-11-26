@@ -42,7 +42,8 @@ class NotificationService:
             if existing:
                 return NotificationResult(
                     provider_reference=existing.provider_reference,
-                    accepted=existing.status in (NotificationStatus.ACCEPTED, NotificationStatus.SENT),
+                    accepted=existing.status
+                    in (NotificationStatus.ACCEPTED, NotificationStatus.SENT),
                     status=NotificationStatus(existing.status),
                     error=existing.error_code,
                 )
@@ -74,7 +75,9 @@ class NotificationService:
             await self.audit_publisher.publish(
                 AuditEvent(
                     event_id=uuid4(),
-                    event_type="notification.requested" if result.accepted else "notification.failed",
+                    event_type="notification.requested"
+                    if result.accepted
+                    else "notification.failed",
                     occurred_at=datetime.now(UTC),
                     organization_id=message.organization_id,
                     actor_user_id=None,

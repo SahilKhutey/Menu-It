@@ -39,7 +39,9 @@ async def test_audit_event_immutability_and_redaction():
     assert event.metadata["password"] == "[REDACTED]"
     assert event.metadata["auth_secret_key"] == "[REDACTED]"
 
-    with pytest.raises(Exception):
+    import dataclasses
+
+    with pytest.raises(dataclasses.FrozenInstanceError):
         event.action = "modified"  # type: ignore[misc]
 
     with pytest.raises(ValueError, match="occurred_at must be timezone-aware"):

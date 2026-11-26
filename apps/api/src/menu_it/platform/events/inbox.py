@@ -1,7 +1,7 @@
 """Consumer inbox event deduplication service (FCD-10 WP-05)."""
 
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import select
@@ -35,16 +35,14 @@ class EventInbox:
         )
         result = await self.session.execute(stmt)
         if result.scalars().first() is not None:
-            logger.info(
-                f"Duplicate event {event_id} suppressed for consumer '{consumer_name}'."
-            )
+            logger.info(f"Duplicate event {event_id} suppressed for consumer '{consumer_name}'.")
             return False
 
         # Record in inbox
         record = ProcessedEventModel(
             consumer_name=consumer_name,
             event_id=event_id,
-            processed_at=datetime.now(timezone.utc),
+            processed_at=datetime.now(UTC),
         )
         self.session.add(record)
         await self.session.flush()

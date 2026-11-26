@@ -1,6 +1,7 @@
 """Concrete event consumer handlers (FCD-10 WP-08)."""
 
 import logging
+
 from menu_it.platform.events.contracts import EventEnvelope
 
 logger = logging.getLogger("menu_it.platform.events.consumers")

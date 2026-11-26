@@ -17,6 +17,7 @@ from menu_it.platform.notifications.infrastructure.email_adapter import (
     ConsoleEmailProvider,
     EmailNotificationAdapter,
 )
+from menu_it.platform.security.rate_limit import InMemoryRateLimiter, RateLimiter, RedisRateLimiter
 
 
 @dataclass(frozen=True)
@@ -29,6 +30,7 @@ class PlatformServices:
     notification_service: NotificationService
     audit_publisher: AuditEventPublisher
     cache_service: CacheService
+    rate_limiter: RateLimiter
 
 
 def build_platform_services(settings: Settings | None = None) -> PlatformServices:
@@ -63,6 +65,15 @@ def build_platform_services(settings: Settings | None = None) -> PlatformService
 
     cache_service = CacheService(backend=cache_backend, enabled=cfg.cache_enabled)
 
+    # Rate Limiting (FCD-11 WP-06)
+    try:
+        from menu_it.infrastructure.redis.client import create_redis_client
+
+        redis_client = create_redis_client(settings=cfg)
+        rate_limiter: RateLimiter = RedisRateLimiter(redis_client=redis_client)
+    except Exception:
+        rate_limiter = InMemoryRateLimiter()
+
     return PlatformServices(
         settings=cfg,
         clock=clock,
@@ -70,4 +81,5 @@ def build_platform_services(settings: Settings | None = None) -> PlatformService
         notification_service=notification_service,
         audit_publisher=audit_pub,
         cache_service=cache_service,
+        rate_limiter=rate_limiter,
     )

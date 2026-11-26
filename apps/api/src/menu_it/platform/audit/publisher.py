@@ -3,7 +3,7 @@
 import logging
 from typing import Any
 
-from menu_it.platform.audit.contracts import AuditEvent, AuditEventPublisher
+from menu_it.platform.audit.contracts import AuditEvent
 
 logger = logging.getLogger("menu_it.platform.audit")
 

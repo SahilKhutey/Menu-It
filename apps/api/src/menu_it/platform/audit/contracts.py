@@ -1,7 +1,7 @@
 """Audit event domain contracts and publisher protocol (FCD-09 WP-05)."""
 
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any, Protocol, runtime_checkable
 from uuid import UUID
 
