@@ -66,4 +66,9 @@ jobs:
         run: alembic upgrade head
 
       - name: Run Integration Database Tests
-        run: python -m pytest tests/integration -v -m "not slow"
+        run: |
+          set -o pipefail
+          python -m pytest tests/integration -v -m "not slow" --tb=short 2>&1 | tee pytest_db.log || (
+            echo "::error::$(grep -E 'FAILED|ERROR' pytest_db.log | head -n 5 | tr '\n' ' ')"
+            exit 1
+          )
