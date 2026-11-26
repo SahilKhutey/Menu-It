@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "product": "Menu-It",
+  "release": {
+    "version": "0.1.0",
+    "name": "Foundational Platform Baseline",
+    "type": "foundational-baseline",
+    "milestone": "FCD-13",
+    "status": "verified-baseline",
+    "released_at": "2026-11-26T04:45:00Z"
+  },
+  "source": {
+    "repository": "SahilKhutey/Menu-It",
+    "branch": "develop",
+    "commit_ref": "v0.1.0"
+  },
+  "architecture": {
+    "pattern": "Multi-tenant Modular Monolith",
+    "backend": "FastAPI + SQLAlchemy 2.x Async + PostgreSQL 16",
+    "frontend": "Next.js 14 App Router + React 18 + Tailwind CSS",
+    "database_schema_head": "0008_create_security_audit_events"
+  },
+  "artifacts": {
+    "api": {
+      "image": "ghcr.io/sahilkhutey/menu-it/api:0.1.0",
+      "dockerfile": "apps/api/Dockerfile"
+    },
+    "web": {
+      "image": "ghcr.io/sahilkhutey/menu-it/web:0.1.0",
+      "dockerfile": "apps/web/Dockerfile"
+    },
+    "admin": {
+      "image": "ghcr.io/sahilkhutey/menu-it/admin:0.1.0",
+      "dockerfile": "apps/admin/Dockerfile"
+    }
+  },
+  "validation": {
+    "backend_tests": {
+      "framework": "pytest",
+      "total_tests": 385,
+      "passed": 385,
+      "failed": 0,
+      "status": "PASSED"
+    },
+    "frontend_tests": {
+      "framework": "vitest",
+      "total_suites": 3,
+      "passed": 3,
+      "failed": 0,
+      "status": "PASSED"
+    },
+    "post_deployment_smoke": {
+      "probes": 4,
+      "passed": 4,
+      "status": "PASSED"
+    },
+    "security_scans": {
+      "pip_audit": "PASSED",
+      "bandit": "PASSED",
+      "status": "PASSED"
+    },
+    "architecture_boundaries": {
+      "ast_domain_check": "PASSED",
+      "circular_dependency_check": "PASSED",
+      "status": "PASSED"
+    }
+  }
+}
