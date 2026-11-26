@@ -39,9 +39,9 @@ jobs:
           pnpm --filter @menu-it/admin build
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run E2E Test Suite
-        run: npx playwright test
+        run: pnpm exec playwright test
         env:
           CI: "true"
