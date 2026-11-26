@@ -41,7 +41,7 @@ def test_readiness_with_database_dependency(app):
     app.state.runtime_ready = True
     app.state.require_database = True
 
-    with patch("menu_it.database.session.AsyncSessionFactory") as mock_session_factory:
+    with patch("menu_it.api.v1.endpoints.health.AsyncSessionFactory") as mock_session_factory:
         mock_session = mock_session_factory.return_value.__aenter__.return_value
         mock_session.execute.side_effect = OperationalError("database offline", {}, None)
 
