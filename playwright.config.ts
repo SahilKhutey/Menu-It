@@ -12,6 +12,20 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
+  webServer: [
+    {
+      command: 'pnpm --filter @menu-it/web start',
+      port: 3000,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+    },
+    {
+      command: 'pnpm --filter @menu-it/admin start',
+      port: 3001,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+    },
+  ],
   projects: [
     {
       name: 'chromium',

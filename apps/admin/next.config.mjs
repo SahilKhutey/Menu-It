@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...(process.platform !== 'win32' || process.env.NEXT_OUTPUT_STANDALONE === 'true'
+    ? { output: 'standalone' }
+    : {}),
   reactStrictMode: true,
   transpilePackages: [
     '@menu-it/shared-types',

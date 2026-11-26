@@ -232,8 +232,7 @@ def upgrade() -> None:
     op.create_index("ix_platform_memberships_user_id", "platform_memberships", ["user_id"])
 
     # 8. Reconcile existing membership references
-    bind = op.get_bind()
-    conn = bind.connection if hasattr(bind, "connection") else bind
+    conn = op.get_bind()
 
     # Check for any existing orphaned user_ids in organization_memberships
     try:

@@ -7,6 +7,7 @@ RUN corepack enable && corepack prepare pnpm@11.11.0 --activate
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY packages/ ./packages/
 COPY apps/admin/ ./apps/admin/
+COPY apps/web/package.json ./apps/web/package.json
 
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @menu-it/admin build

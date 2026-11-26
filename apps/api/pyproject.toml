@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "menu-it-api"
 version = "0.1.0"
@@ -6,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.110.0,<1.0.0",
+    "python-multipart>=0.0.9",
     "uvicorn[standard]>=0.28.0,<1.0.0",
     "pydantic[email]>=2.6.0,<3.0.0",
     "pydantic-settings>=2.2.0,<3.0.0",
@@ -80,3 +85,6 @@ markers = [
 include = ["src", "tests"]
 pythonVersion = "3.12"
 typeCheckingMode = "basic"
+
+[tool.setuptools.packages.find]
+where = ["src"]
