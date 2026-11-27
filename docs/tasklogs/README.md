@@ -23,6 +23,20 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **ARC-11** | Infrastructure & Deployment Architecture | WP-ARC11-01 to WP-ARC11-14 | 738 Tests (120 Infrastructure) | **Approved & Implemented** | **[Tasklog-ARC11](tasklog-arc11-infrastructure.md)** |
 | **ARC-12** | Security, Scalability & Reliability Architecture | WP-ARC12-01 to WP-ARC12-15 | 888 Tests (150 Security) | **Approved & Implemented** | **[Tasklog-ARC12](tasklog-arc12-security.md)** |
 | **FCD-01** | Development Environment & Repository Foundation | WP-01 to WP-12 | 8 Environment Checks + Acceptance | **Approved & Implemented** | **[Tasklog-FCD01](tasklog-fcd01-development-foundation.md)** |
+| **FCD-02** | Application Skeleton & Runtime Foundation | WP-01 to WP-12 | 22 API Tests + RT-001–RT-040 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD02](tasklog-fcd02-application-runtime.md)** |
+| **FCD-03** | Database Foundation & Data Access Layer | WP-01 to WP-13 | 40 API Tests + AC-01–AC-12 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD03](tasklog-fcd03-database-foundation.md)** |
+| **FCD-04** | Multi-Tenant Core Foundation | WP-01 to WP-14 | 72 API Tests + AC-01–AC-15 (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD04](tasklog-fcd04-multi-tenant-core.md)** |
+| **FCD-05** | Identity, Authentication & Authorization Core | WP-01 to WP-18 | 147 API Tests + AC-01–AC-20 (100% Pass, 90% Cov) | **Approved & Implemented** | **[Tasklog-FCD05](tasklog-fcd05-identity-auth-core.md)** |
+| **FCD-06** | Domain Models & Shared Business Foundation | WP-01 to WP-18 | 219 API Tests + AC-01–AC-20 (100% Pass, 92% Cov) | **Approved & Implemented** | **[Tasklog-FCD06](tasklog-fcd06-domain-models-foundation.md)** |
+| **FCD-07** | API & Communication Infrastructure | WP-01 to WP-16 | 251 API Tests + AC-01–AC-20 (100% Pass, 90% Cov) | **Approved & Implemented** | **[Tasklog-FCD07](tasklog-fcd07-api-communication-infrastructure.md)** |
+| **FCD-08** | Frontend Foundation & Design System | WP-01 to WP-10 | Full Monorepo Typecheck, Lint, Next.js Builds, 251 Pytest Tests | **Approved & Implemented** | **[Tasklog-FCD08](tasklog-fcd08-frontend-foundation-design-system.md)** |
+| **FCD-09** | Core Platform Services & Shared Utilities | WP-01 to WP-11 | 296 API Tests + Security Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD09](tasklog-fcd09-core-platform-services-shared-utilities.md)** |
+| **FCD-10** | Caching, Background Jobs & Event Infrastructure | WP-00 to WP-11 | 331 API Tests + Security Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD10](tasklog-fcd10-caching-background-jobs-event-infrastructure.md)** |
+| **FCD-11** | Security, Reliability & Observability Foundation | WP-00 to WP-17 | 361 API Tests + Full Quality Gates (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD11](tasklog-fcd11-security-reliability-observability.md)** |
+| **FCD-12** | Automated Testing & CI/CD Foundation | WP-00 to WP-17 | 364 Monorepo Tests + Quality Orchestrator (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD12](tasklog-fcd12-automated-testing-ci-cd-foundation.md)** |
+| **FCD-13** | Foundational Integration, Validation & Release Readiness | WP-00 to WP-16 | 388 Monorepo Tests + Release Baseline (100% Pass) | **Approved & Certified** | **[Tasklog-FCD13](tasklog-fcd13-foundational-integration-validation-release-readiness.md)** |
+| **FCD-14** | Organization, Restaurant & Branch Management Module | WP-00 to WP-11 | Full Backend, Frontend & Integration Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD14](tasklog-fcd14-organization-restaurant-branch-management.md)** |
+| **FCD-15** | Restaurant Profile, Branding & Operational Configuration | WP-00 to WP-13 | Full Backend, Frontend & Integration Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD15](tasklog-fcd15-restaurant-profile-branding-configuration.md)** |
 
 ---
 
@@ -40,6 +54,8 @@ ARC-09 Rendering: [=============================================================
 ARC-10 Publishing:[========================================================================================================================================================================================================================================================================================] 618 Tests Passing (100%)
 ARC-11 Infrastructure:[====================================================================================================================================================================================================================================================================================================================] 738 Tests Passing (100%)
 ARC-12 Security:  [====================================================================================================================================================================================================================================================================================================================================================] 888 Tests Passing (100%)
+FCD-11 Platform:  [====================================================================================================================================================================================================================================================================================================================================================+] 361 Tests Passing (100%)
+FCD-12 Automation:[====================================================================================================================================================================================================================================================================================================================================================+] 364 Tests Passing (100%)
 ```
 
 ---

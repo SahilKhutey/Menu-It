@@ -1,0 +1,61 @@
+name: Release Publication & Evidence Archival
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "fcd-*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release version tag (e.g. v1.0.0 or fcd-12-v1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  publish-release:
+    name: Package Release Evidence & Publish Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Release Tag
+        id: get_tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          if [ -z "$TAG" ] || [ "$TAG" = "main" ]; then
+            TAG="${{ inputs.release_tag }}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Generate Release Evidence Package
+        run: |
+          mkdir -p release-evidence
+          cat <<EOF > release-evidence/release-metadata.json
+          {
+            "product": "Menu-It",
+            "release": "${{ steps.get_tag.outputs.tag }}",
+            "commit": "${{ steps.get_tag.outputs.commit }}",
+            "workflow_id": "${{ github.run_id }}",
+            "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "images": {
+              "api": "menu-it-api:${{ steps.get_tag.outputs.commit }}",
+              "web": "menu-it-web:${{ steps.get_tag.outputs.commit }}",
+              "admin": "menu-it-admin:${{ steps.get_tag.outputs.commit }}"
+            }
+          }
+          EOF
+
+      - name: Upload Release Evidence Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-evidence-${{ steps.get_tag.outputs.tag }}
+          path: release-evidence/

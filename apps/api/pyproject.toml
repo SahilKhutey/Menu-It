@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "menu-it-api"
+version = "0.1.0"
+description = "Menu-It FastAPI Backend API Application"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.110.0,<1.0.0",
+    "python-multipart>=0.0.9",
+    "uvicorn[standard]>=0.28.0,<1.0.0",
+    "pydantic[email]>=2.6.0,<3.0.0",
+    "pydantic-settings>=2.2.0,<3.0.0",
+    "python-dotenv>=1.0.1",
+    "sqlalchemy[asyncio]>=2.0.0",
+    "asyncpg>=0.29.0",
+    "alembic>=1.13.0",
+    "argon2-cffi>=23.1.0",
+    "pyjwt[crypto]>=2.8.0",
+    "email-validator>=2.0.0",
+    "cryptography>=42.0.0",
+    "phonenumbers>=8.13.0",
+    "tzdata>=2024.1",
+    "jinja2>=3.1.0",
+    "redis>=5.0.0",
+    "arq>=0.25.0",
+    "prometheus-client>=0.20.0",
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-sdk>=1.24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.1.0",
+    "pytest-asyncio>=0.23.5",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.27.0",
+    "ruff>=0.16.0",
+    "aiosqlite>=0.20.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "SIM",
+]
+ignore = [
+    "UP046",
+    "B008",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/*" = ["E402", "UP035"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-ra -p no:langsmith_plugin"
+markers = [
+    "unit: isolated unit tests",
+    "integration: tests requiring external infrastructure",
+    "api: API endpoint tests",
+    "security: security and authorization tests",
+    "database: PostgreSQL tests",
+    "tenant: tenant isolation tests",
+    "e2e: end-to-end tests",
+    "slow: long-running tests",
+]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+
+[tool.setuptools.packages.find]
+where = ["src"]

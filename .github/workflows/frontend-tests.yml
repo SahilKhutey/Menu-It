@@ -1,0 +1,63 @@
+name: Frontend Quality & Builds
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/frontend-tests.yml"
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-quality:
+    name: Frontend Lint, Typecheck, Vitest & Next.js Builds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack & pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.11.0 --activate
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Formatting with Prettier
+        run: pnpm format:check
+
+      - name: Lint All Workspaces with ESLint
+        run: pnpm -r lint
+
+      - name: Static Typecheck with TypeScript
+        run: pnpm -r typecheck
+
+      - name: Run Vitest Unit Tests
+        run: pnpm test
+
+      - name: Build Web Application (@menu-it/web)
+        run: pnpm --filter @menu-it/web build
+
+      - name: Build Admin Application (@menu-it/admin)
+        run: pnpm --filter @menu-it/admin build

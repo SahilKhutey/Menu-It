@@ -1,0 +1,58 @@
+name: Backend Quality & Tests
+
+on:
+  pull_request:
+    paths:
+      - "apps/api/**"
+      - ".github/workflows/backend-tests.yml"
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-quality:
+    name: Backend Lint, Typecheck & Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Check Formatting with Ruff
+        run: ruff format --check src tests
+
+      - name: Lint Code with Ruff
+        run: ruff check src tests
+
+      - name: Run Pytest Test Suite
+        run: python -m pytest tests -v --cov=menu_it --cov-report=xml:coverage.xml
+
+      - name: Upload Coverage Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-report
+          path: apps/api/coverage.xml
+          if-no-files-found: ignore

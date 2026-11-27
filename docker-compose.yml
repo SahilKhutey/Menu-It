@@ -5,10 +5,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       NODE_ENV: development
-      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_TELEMETRY_DISABLED: '1'
       NEXT_PUBLIC_API_URL: http://backend:8000
     depends_on:
       backend:
@@ -25,16 +25,16 @@ services:
       - --host
       - 0.0.0.0
       - --port
-      - "8000"
+      - '8000'
       - --reload
     ports:
-      - "8000:8000"
+      - '8000:8000'
     env_file:
       - path: .env
         required: false
     environment:
       APP_ENV: development
-      APP_DEBUG: "true"
+      APP_DEBUG: 'true'
       DATABASE_URL: postgresql+asyncpg://modularmenu:devpassword123@postgres:5432/modularmenu
       SECRET_KEY: dev-jwt-super-secret-key-32-chars-long
       FRONTEND_URL: http://localhost:3000
@@ -62,18 +62,18 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: ["python", "-m", "app.worker"]
+    command: ['python', '-m', 'app.worker']
     env_file:
       - path: .env
         required: false
     environment:
       APP_ENV: development
-      APP_DEBUG: "true"
+      APP_DEBUG: 'true'
       DATABASE_URL: postgresql+asyncpg://modularmenu:devpassword123@postgres:5432/modularmenu
       SECRET_KEY: dev-jwt-super-secret-key-32-chars-long
       STORAGE_BACKEND: local
       LOCAL_STORAGE_PATH: /app/storage
-      WORKER_POLL_INTERVAL_SECONDS: "2"
+      WORKER_POLL_INTERVAL_SECONDS: '2'
     volumes:
       - modularmenu_media:/app/storage
     depends_on:
@@ -82,37 +82,39 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17
+    container_name: menu-it-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: modularmenu
-      POSTGRES_USER: modularmenu
-      POSTGRES_PASSWORD: devpassword123
+      POSTGRES_DB: menu_it
+      POSTGRES_USER: menu_it
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword123}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - menu_it_postgres_data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5432:5432"
+      - '127.0.0.1:5432:5432'
     healthcheck:
       test:
         - CMD-SHELL
-        - pg_isready -U modularmenu -d modularmenu
+        - pg_isready -U menu_it -d menu_it
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
     profiles:
       - redis
     ports:
-      - "127.0.0.1:6379:6379"
+      - '127.0.0.1:6379:6379'
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
 
 volumes:
+  menu_it_postgres_data:
   postgres_data:
   modularmenu_media:

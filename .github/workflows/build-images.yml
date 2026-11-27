@@ -1,0 +1,57 @@
+name: Build & Verify Container Artifacts
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - "v*"
+      - "fcd-*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-containers:
+    name: Build Reproducible Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine Git Commit Digest
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build Menu-It API Image
+        uses: docker/build-push-action@v5
+        with:
+          context: apps/api
+          file: apps/api/Dockerfile
+          push: false
+          tags: menu-it-api:${{ steps.vars.outputs.sha_short }}
+          load: true
+
+      - name: Build Menu-It Web Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: false
+          tags: menu-it-web:${{ steps.vars.outputs.sha_short }}
+          load: true
+
+      - name: Build Menu-It Admin Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/admin/Dockerfile
+          push: false
+          tags: menu-it-admin:${{ steps.vars.outputs.sha_short }}
+          load: true

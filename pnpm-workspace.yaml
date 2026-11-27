@@ -1,0 +1,6 @@
+packages:
+  - 'apps/*'
+  - 'packages/shared-types'
+  - 'packages/design-tokens'
+  - 'packages/theme-engine'
+  - 'packages/ui'
