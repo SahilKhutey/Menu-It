@@ -2,6 +2,8 @@
 
 from menu_it.database.models.audit import OrganizationAuditEvent
 from menu_it.database.models.background_job import BackgroundJobModel
+from menu_it.database.models.branch import Branch, BranchStatus
+from menu_it.database.models.branch_assignment import BranchAssignment, BranchRole
 from menu_it.database.models.credential import UserCredential
 from menu_it.database.models.dead_letter_job import DeadLetterJobModel
 from menu_it.database.models.event_outbox import EventOutboxModel
@@ -17,6 +19,7 @@ from menu_it.database.models.organization import (
     Tenant,
     TenantStatus,
 )
+from menu_it.database.models.organization_invitation import OrganizationInvitation
 from menu_it.database.models.organization_membership import (
     MembershipStatus,
     OrganizationMembership,
@@ -48,6 +51,7 @@ from menu_it.database.models.session import (
     SessionStatus,
     UserSession,
 )
+from menu_it.database.models.settings import OrganizationSettings, RestaurantSettings
 from menu_it.database.models.user import (
     User,
     UserStatus,
@@ -57,6 +61,10 @@ from menu_it.database.models.verification import EmailVerificationToken
 
 __all__ = [
     "BackgroundJobModel",
+    "Branch",
+    "BranchAssignment",
+    "BranchRole",
+    "BranchStatus",
     "DeadLetterJobModel",
     "EmailVerificationToken",
     "EventOutboxModel",
@@ -67,8 +75,10 @@ __all__ = [
     "NotificationModel",
     "Organization",
     "OrganizationAuditEvent",
+    "OrganizationInvitation",
     "OrganizationMembership",
     "OrganizationRole",
+    "OrganizationSettings",
     "OrganizationStatus",
     "PasswordResetToken",
     "PlatformMembership",
@@ -80,6 +90,7 @@ __all__ = [
     "RestaurantMembership",
     "RestaurantProfileRecord",
     "RestaurantRole",
+    "RestaurantSettings",
     "RestaurantStatus",
     "ScheduledJobModel",
     "ScheduledJobRunModel",

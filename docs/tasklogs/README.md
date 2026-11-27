@@ -35,6 +35,7 @@ This directory tracks the detailed execution, deliverables, verification runs, t
 | **FCD-11** | Security, Reliability & Observability Foundation | WP-00 to WP-17 | 361 API Tests + Full Quality Gates (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD11](tasklog-fcd11-security-reliability-observability.md)** |
 | **FCD-12** | Automated Testing & CI/CD Foundation | WP-00 to WP-17 | 364 Monorepo Tests + Quality Orchestrator (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD12](tasklog-fcd12-automated-testing-ci-cd-foundation.md)** |
 | **FCD-13** | Foundational Integration, Validation & Release Readiness | WP-00 to WP-16 | 388 Monorepo Tests + Release Baseline (100% Pass) | **Approved & Certified** | **[Tasklog-FCD13](tasklog-fcd13-foundational-integration-validation-release-readiness.md)** |
+| **FCD-14** | Organization, Restaurant & Branch Management Module | WP-00 to WP-11 | Full Backend, Frontend & Integration Suite (100% Pass) | **Approved & Implemented** | **[Tasklog-FCD14](tasklog-fcd14-organization-restaurant-branch-management.md)** |
 
 ---
 

@@ -28,6 +28,10 @@ OPENAPI_TAGS = [
         "description": "Multi-tenant restaurant location management and discovery.",
     },
     {
+        "name": "Branches",
+        "description": "Physical restaurant branch locations and staff assignments.",
+    },
+    {
         "name": "Profiles",
         "description": "Restaurant public profile, schedules, and branding management.",
     },

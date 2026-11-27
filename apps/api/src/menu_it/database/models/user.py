@@ -112,6 +112,7 @@ class User(
     organization_memberships: Mapped[list["OrganizationMembership"]] = relationship(
         "OrganizationMembership",
         back_populates="user",
+        foreign_keys="[OrganizationMembership.user_id]",
         cascade="all, delete-orphan",
     )
     restaurant_memberships: Mapped[list["RestaurantMembership"]] = relationship(

@@ -1,4 +1,4 @@
-"""Modular restaurant domain API router (FCD-07 §7.2)."""
+"""Modular restaurant domain API router (FCD-07 §7.2, FCD-14 §7.2)."""
 
 from typing import Annotated
 from uuid import UUID
@@ -22,17 +22,52 @@ from menu_it.api.schemas.pagination import (
 )
 from menu_it.api.v1.modules.restaurants.schemas import (
     CreateRestaurantRequest,
+    RestaurantMemberAssignRequest,
+    RestaurantMemberResponse,
+    RestaurantSettingsResponse,
+    RestaurantSettingsUpdateRequest,
     RestaurantSummaryResponse,
+    UpdateRestaurantRequest,
 )
+from menu_it.authorization.permissions import Permission
+from menu_it.authorization.policies import ORGANIZATION_ROLE_PERMISSIONS
 from menu_it.database.models.restaurant import Restaurant, RestaurantStatus
+from menu_it.database.models.restaurant_membership import RestaurantRole
 from menu_it.database.session import get_db_session
+from menu_it.domain.base.errors import DomainError, EntityNotFoundError
+from menu_it.exceptions.domain import ResourceConflictError
 from menu_it.infrastructure.idempotency.dependency import (
     IdempotencyContext,
     check_idempotency,
 )
 from menu_it.repositories.tenant_restaurants import TenantRestaurantRepository
+from menu_it.schemas.branches import BranchCreateRequest, BranchResponse
+from menu_it.services.branch_management import BranchManagementService
+from menu_it.services.restaurant_lifecycle import InvalidRestaurantTransition
+from menu_it.services.restaurant_management import RestaurantManagementService
 
 router = APIRouter()
+
+
+def _check_perm(tenant: TenantContext, permission: Permission) -> None:
+    perms = ORGANIZATION_ROLE_PERMISSIONS.get(tenant.organization_role, set())
+    if permission not in perms:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Permission '{permission.value}' required.",
+        )
+
+
+def _handle_error(exc: Exception) -> None:
+    if isinstance(exc, EntityNotFoundError):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    if isinstance(exc, ResourceConflictError):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+    if isinstance(exc, (DomainError, InvalidRestaurantTransition)):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
+        ) from exc
+    raise exc
 
 
 @router.get(
@@ -54,7 +89,6 @@ async def list_restaurants(
         limit=pagination.page_size,
     )
 
-    # Count total items within tenant boundary
     count_stmt = (
         select(func.count())
         .select_from(Restaurant)
@@ -63,19 +97,7 @@ async def list_restaurants(
     count_result = await session.execute(count_stmt)
     total_items = count_result.scalar_one()
 
-    summaries = [
-        RestaurantSummaryResponse(
-            id=r.id,
-            organization_id=r.organization_id,
-            name=r.name,
-            slug=r.slug,
-            timezone=r.timezone,
-            status=r.status.value,
-            created_at=r.created_at,
-            updated_at=r.updated_at,
-        )
-        for r in items
-    ]
+    summaries = [RestaurantSummaryResponse.model_validate(r) for r in items]
 
     meta = PaginationMeta.build(
         page=pagination.page,
@@ -110,18 +132,8 @@ async def get_restaurant(
             detail=f"Restaurant '{restaurant_id}' not found.",
         )
 
-    summary = RestaurantSummaryResponse(
-        id=restaurant.id,
-        organization_id=restaurant.organization_id,
-        name=restaurant.name,
-        slug=restaurant.slug,
-        timezone=restaurant.timezone,
-        status=restaurant.status.value,
-        created_at=restaurant.created_at,
-        updated_at=restaurant.updated_at,
-    )
     return success_response(
-        data=summary,
+        data=RestaurantSummaryResponse.model_validate(restaurant),
         request_id=get_request_id(request),
     )
 
@@ -140,36 +152,30 @@ async def create_restaurant(
     idempotency: Annotated[IdempotencyContext | None, Depends(check_idempotency)] = None,
 ) -> APIResponse[RestaurantSummaryResponse]:
     """Create a new restaurant location strictly scoped to the active tenant."""
-    repo = TenantRestaurantRepository(session, tenant)
-
-    # Check for duplicate slug within organization
-    existing = await repo.get_by_slug(payload.slug)
-    if existing is not None:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"Restaurant with slug '{payload.slug}' already exists in this organization.",
+    _check_perm(tenant, Permission.RESTAURANT_CREATE)
+    svc = RestaurantManagementService(session)
+    try:
+        created = await svc.create_restaurant(
+            organization_id=tenant.organization_id,
+            actor_user_id=tenant.user_id,
+            name=payload.name,
+            slug=payload.slug,
+            timezone=payload.timezone,
+            description=payload.description,
+            email=payload.email,
+            phone=payload.phone,
+            website=payload.website,
+            cuisine_type=payload.cuisine_type,
+            correlation_id=str(get_request_id(request)),
         )
+        await session.commit()
+        await session.refresh(created)
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
 
-    restaurant = Restaurant(
-        organization_id=tenant.organization_id,
-        name=payload.name,
-        slug=payload.slug,
-        timezone=payload.timezone,
-        status=RestaurantStatus.ACTIVE,
-    )
-    created = await repo.create(restaurant)
-    await session.commit()
-
-    summary = RestaurantSummaryResponse(
-        id=created.id,
-        organization_id=created.organization_id,
-        name=created.name,
-        slug=created.slug,
-        timezone=created.timezone,
-        status=created.status.value,
-        created_at=created.created_at,
-        updated_at=created.updated_at,
-    )
+    summary = RestaurantSummaryResponse.model_validate(created)
     response_data = success_response(
         data=summary,
         request_id=get_request_id(request),
@@ -183,3 +189,326 @@ async def create_restaurant(
         )
 
     return response_data
+
+
+@router.patch(
+    "/{restaurant_id}",
+    response_model=APIResponse[RestaurantSummaryResponse],
+    summary="Update restaurant details",
+)
+async def update_restaurant(
+    restaurant_id: UUID,
+    payload: UpdateRestaurantRequest,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[RestaurantSummaryResponse]:
+    """Update restaurant profile fields."""
+    _check_perm(tenant, Permission.RESTAURANT_UPDATE)
+    svc = RestaurantManagementService(session)
+    try:
+        updated = await svc.update_restaurant(
+            organization_id=tenant.organization_id,
+            restaurant_id=restaurant_id,
+            actor_user_id=tenant.user_id,
+            name=payload.name,
+            timezone=payload.timezone,
+            description=payload.description,
+            email=payload.email,
+            phone=payload.phone,
+            website=payload.website,
+            cuisine_type=payload.cuisine_type,
+            correlation_id=str(get_request_id(request)),
+        )
+        await session.commit()
+        await session.refresh(updated)
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=RestaurantSummaryResponse.model_validate(updated),
+        request_id=get_request_id(request),
+    )
+
+
+@router.post(
+    "/{restaurant_id}/activate",
+    response_model=APIResponse[RestaurantSummaryResponse],
+    summary="Activate restaurant",
+)
+async def activate_restaurant(
+    restaurant_id: UUID,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[RestaurantSummaryResponse]:
+    """Activate a suspended or inactive restaurant."""
+    _check_perm(tenant, Permission.RESTAURANT_UPDATE)
+    svc = RestaurantManagementService(session)
+    try:
+        updated = await svc.transition_status(
+            organization_id=tenant.organization_id,
+            restaurant_id=restaurant_id,
+            target_status=RestaurantStatus.ACTIVE,
+            actor_user_id=tenant.user_id,
+            correlation_id=str(get_request_id(request)),
+        )
+        await session.commit()
+        await session.refresh(updated)
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=RestaurantSummaryResponse.model_validate(updated),
+        request_id=get_request_id(request),
+    )
+
+
+@router.post(
+    "/{restaurant_id}/suspend",
+    response_model=APIResponse[RestaurantSummaryResponse],
+    summary="Suspend restaurant",
+)
+async def suspend_restaurant(
+    restaurant_id: UUID,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[RestaurantSummaryResponse]:
+    """Suspend an active restaurant."""
+    _check_perm(tenant, Permission.RESTAURANT_UPDATE)
+    svc = RestaurantManagementService(session)
+    try:
+        updated = await svc.transition_status(
+            organization_id=tenant.organization_id,
+            restaurant_id=restaurant_id,
+            target_status=RestaurantStatus.SUSPENDED,
+            actor_user_id=tenant.user_id,
+            correlation_id=str(get_request_id(request)),
+        )
+        await session.commit()
+        await session.refresh(updated)
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=RestaurantSummaryResponse.model_validate(updated),
+        request_id=get_request_id(request),
+    )
+
+
+@router.get(
+    "/{restaurant_id}/settings",
+    response_model=APIResponse[RestaurantSettingsResponse],
+    summary="Get restaurant settings",
+)
+async def get_restaurant_settings(
+    restaurant_id: UUID,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[RestaurantSettingsResponse]:
+    """Retrieve restaurant-specific operational settings."""
+    _check_perm(tenant, Permission.RESTAURANT_READ)
+    svc = RestaurantManagementService(session)
+    try:
+        rec = await svc.get_settings(
+            organization_id=tenant.organization_id, restaurant_id=restaurant_id
+        )
+        await session.commit()
+    except Exception as exc:
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=RestaurantSettingsResponse.model_validate(rec),
+        request_id=get_request_id(request),
+    )
+
+
+@router.patch(
+    "/{restaurant_id}/settings",
+    response_model=APIResponse[RestaurantSettingsResponse],
+    summary="Update restaurant settings",
+)
+async def update_restaurant_settings(
+    restaurant_id: UUID,
+    payload: RestaurantSettingsUpdateRequest,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[RestaurantSettingsResponse]:
+    """Update restaurant-specific operational settings."""
+    _check_perm(tenant, Permission.RESTAURANT_UPDATE)
+    svc = RestaurantManagementService(session)
+    try:
+        rec = await svc.update_settings(
+            organization_id=tenant.organization_id,
+            restaurant_id=restaurant_id,
+            actor_user_id=tenant.user_id,
+            settings_payload=payload.settings_payload,
+        )
+        await session.commit()
+        await session.refresh(rec)
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=RestaurantSettingsResponse.model_validate(rec),
+        request_id=get_request_id(request),
+    )
+
+
+@router.get(
+    "/{restaurant_id}/members",
+    response_model=APIResponse[list[RestaurantMemberResponse]],
+    summary="List restaurant members",
+)
+async def list_restaurant_members(
+    restaurant_id: UUID,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[list[RestaurantMemberResponse]]:
+    """List restaurant-scoped role assignments."""
+    _check_perm(tenant, Permission.RESTAURANT_READ)
+    svc = RestaurantManagementService(session)
+    try:
+        items = await svc.list_members(
+            organization_id=tenant.organization_id, restaurant_id=restaurant_id
+        )
+    except Exception as exc:
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=[RestaurantMemberResponse.model_validate(m) for m in items],
+        request_id=get_request_id(request),
+    )
+
+
+@router.put(
+    "/{restaurant_id}/members/{user_id}",
+    response_model=APIResponse[RestaurantMemberResponse],
+    summary="Assign or update restaurant member role",
+)
+async def assign_restaurant_member(
+    restaurant_id: UUID,
+    user_id: UUID,
+    payload: RestaurantMemberAssignRequest,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[RestaurantMemberResponse]:
+    """Assign an organization member to a restaurant-specific role."""
+    _check_perm(tenant, Permission.STAFF_UPDATE)
+    svc = RestaurantManagementService(session)
+    try:
+        role_enum = RestaurantRole(payload.role)
+        membership = await svc.assign_member(
+            organization_id=tenant.organization_id,
+            restaurant_id=restaurant_id,
+            user_id=user_id,
+            role=role_enum,
+        )
+        await session.commit()
+        await session.refresh(membership)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
+        ) from exc
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=RestaurantMemberResponse.model_validate(membership),
+        request_id=get_request_id(request),
+    )
+
+
+@router.post(
+    "/{restaurant_id}/branches",
+    response_model=APIResponse[BranchResponse],
+    status_code=status.HTTP_201_CREATED,
+    summary="Create physical branch under restaurant",
+)
+async def create_restaurant_branch(
+    restaurant_id: UUID,
+    payload: BranchCreateRequest,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[BranchResponse]:
+    """Create a physical branch under the specified active restaurant."""
+    _check_perm(tenant, Permission.BRANCH_CREATE)
+    svc = BranchManagementService(session)
+    try:
+        branch = await svc.create_branch(
+            organization_id=tenant.organization_id,
+            restaurant_id=restaurant_id,
+            actor_user_id=tenant.user_id,
+            name=payload.name,
+            slug=payload.slug,
+            timezone=payload.timezone,
+            country_code=payload.country_code,
+            branch_code=payload.branch_code,
+            email=payload.email,
+            phone=payload.phone,
+            address_line_1=payload.address_line_1,
+            address_line_2=payload.address_line_2,
+            city=payload.city,
+            state_region=payload.state_region,
+            postal_code=payload.postal_code,
+            latitude=payload.latitude,
+            longitude=payload.longitude,
+            correlation_id=str(get_request_id(request)),
+        )
+        await session.commit()
+        await session.refresh(branch)
+    except Exception as exc:
+        await session.rollback()
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=BranchResponse.model_validate(branch),
+        request_id=get_request_id(request),
+    )
+
+
+@router.get(
+    "/{restaurant_id}/branches",
+    response_model=APIResponse[list[BranchResponse]],
+    summary="List branches under restaurant",
+)
+async def list_restaurant_branches(
+    restaurant_id: UUID,
+    request: Request,
+    tenant: Annotated[TenantContext, Depends(get_tenant_context_from_request)],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> APIResponse[list[BranchResponse]]:
+    """List all physical branches belonging to the restaurant."""
+    _check_perm(tenant, Permission.BRANCH_READ)
+    svc = BranchManagementService(session)
+    try:
+        items = await svc.list_branches(
+            organization_id=tenant.organization_id, restaurant_id=restaurant_id
+        )
+    except Exception as exc:
+        _handle_error(exc)
+        raise
+
+    return success_response(
+        data=[BranchResponse.model_validate(b) for b in items],
+        request_id=get_request_id(request),
+    )

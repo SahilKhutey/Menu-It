@@ -9,6 +9,8 @@ class Permission(enum.StrEnum):
     # Organization resources
     ORGANIZATION_READ = "organization:read"
     ORGANIZATION_UPDATE = "organization:update"
+    ORGANIZATION_SUSPEND = "organization:suspend"
+    ORGANIZATION_TRANSFER_OWNERSHIP = "organization:transfer_ownership"
     ORGANIZATION_MANAGE_MEMBERS = "organization:manage_members"
 
     # Restaurant resources
@@ -16,6 +18,12 @@ class Permission(enum.StrEnum):
     RESTAURANT_CREATE = "restaurant:create"
     RESTAURANT_UPDATE = "restaurant:update"
     RESTAURANT_ARCHIVE = "restaurant:archive"
+
+    # Branch resources
+    BRANCH_READ = "branch:read"
+    BRANCH_CREATE = "branch:create"
+    BRANCH_UPDATE = "branch:update"
+    BRANCH_MANAGE_ASSIGNMENTS = "branch:manage_assignments"
 
     # Menu resources
     MENU_READ = "menu:read"

@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from menu_it.api.v1.endpoints import (
     auth,
+    branches,
     database_health,
     files,
     health,
@@ -30,3 +31,4 @@ api_router.include_router(identity.router, tags=["Identity"])
 api_router.include_router(sessions.router, tags=["Sessions"])
 api_router.include_router(organizations.router, tags=["Organizations"])
 api_router.include_router(restaurants_router, prefix="/restaurants", tags=["Restaurants"])
+api_router.include_router(branches.router, tags=["Branches"])

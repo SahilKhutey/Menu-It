@@ -1,10 +1,12 @@
-"""Organization membership database model (FCD-04 §7.1)."""
+"""Organization membership database model (FCD-04 §7.1, FCD-14 §5.5)."""
 
 import enum
 import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import (
+    DateTime,
     Enum,
     ForeignKey,
     Index,
@@ -57,6 +59,7 @@ class OrganizationMembership(
             name="uq_organization_membership_user",
         ),
         Index("ix_organization_memberships_user_id", "user_id"),
+        Index("ix_organization_memberships_user_status", "user_id", "status"),
     )
 
     organization_id: Mapped[uuid.UUID] = mapped_column(
@@ -78,6 +81,16 @@ class OrganizationMembership(
         nullable=False,
         default=MembershipStatus.ACTIVE,
     )
+    joined_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    updated_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
 
     organization: Mapped["Organization"] = relationship(
         "Organization",
@@ -86,4 +99,5 @@ class OrganizationMembership(
     user: Mapped["User"] = relationship(
         "User",
         back_populates="organization_memberships",
+        foreign_keys=[user_id],
     )
