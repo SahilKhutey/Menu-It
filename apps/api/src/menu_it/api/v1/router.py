@@ -13,6 +13,7 @@ from menu_it.api.v1.endpoints import (
     metrics,
     notifications,
     organizations,
+    restaurant_configuration,
     sessions,
     system,
 )
@@ -32,3 +33,4 @@ api_router.include_router(sessions.router, tags=["Sessions"])
 api_router.include_router(organizations.router, tags=["Organizations"])
 api_router.include_router(restaurants_router, prefix="/restaurants", tags=["Restaurants"])
 api_router.include_router(branches.router, tags=["Branches"])
+api_router.include_router(restaurant_configuration.router)

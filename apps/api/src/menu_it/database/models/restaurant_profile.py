@@ -136,6 +136,16 @@ class RestaurantProfileRecord(
         nullable=False,
         default=1,
     )
+    short_description: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    cuisine_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    price_range: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    public_email: Mapped[str | None] = mapped_column(String(320), nullable=True)
+    public_phone: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    social_links: Mapped[dict[str, Any]] = mapped_column(
+        JSON().with_variant(JSONB, "postgresql"),
+        nullable=False,
+        default=dict,
+    )
 
     # Relationships
     organization: Mapped["Organization"] = relationship(
